@@ -24,6 +24,6 @@
   },
   "dependencies": {
     "@algo-builder/algob": "^3.2.0",
-    "algosdk": "^1.13.1"
+    "algosdk": "^1.14.0"
   }
 }
