@@ -3,6 +3,14 @@ import algoSdk from 'algosdk';
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
+const server = "https://testnet-algorand.api.purestake.io/ps2";
+const port = "";
+const token = {
+    "x-api-key": "mV *** BY" // fill in yours
+};
+
+let client = new algoSdk.Algodv2(token, server, port);
+
 interface EIP4361Challenge {
     domain: string;                 // Valid URI
     address: string;                // Valid Algo Adress
@@ -10,35 +18,37 @@ interface EIP4361Challenge {
     uri: string;                    // Valid URI
     version: string;                // Set at 1; Used for EIP-4361 version, but there is only one version
     chainId: string;                // Set to 1 since we will be using mainnet
-    nonce: string;                  // Recent block hash
+    nonce: number;                  // Recent block hash
+
     issuedAt: string;               // ISO 8601 Date Specification (new Date().toISOString() in JavaScript)
     expirationDate?: string;        // Same as issuedAt
     notBefore?: string;             // Same as issuedAt
     // requestId?: string;          // Said it was optional and for simplicity, I am leaving out
-    resources?: string[];           // Array of URIs
+    resources?: string[];           // We will use this field for the requested asset IDs, thus it is marked as required
 }
 
 /** The functions in this section are left up to the resource server's implementation. */
 
-//TODO: 
-
-function getChallengeNonce(): string {
-    return "0x123456789";
+//TODO:  
+async function getChallengeNonce(): Promise<number> {
+    let status = await client.status().do();
+    return Number(status.lastRound);
 }
 
-function verifyChallengeNonce(nonce: string): boolean {
+async function verifyChallengeNonce(nonce: number): Promise<boolean> {
+    let block = await client.block(nonce).do()
     return true;
 }
 
-function grantPermissions() {
-    // called after user is fully verified
-    //grant permissions to user
-    //could be a jwt, updating internal DB, or granting one time access to resource
+/** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
+function grantPermissions(assetIds: string[]) {
+    for (const asset of assetIds) {
+        console.log("User has been granted privileges of " + asset);
+    }
 }
 
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
-
 function validateChallenge(challenge: EIP4361Challenge) {
     try {
         if (!URI_REGEX.test(challenge.domain)) {
@@ -126,17 +136,17 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
     const uri = messageArray[5].split(' ')[1];
     const version = messageArray[6].split(':')[1].trim();
     const chainId = messageArray[7].split(':')[1].trim();
-    const nonce = messageArray[8].split(':')[1].trim();
+    const nonce = Number(messageArray[8].split(':')[1].trim());
     const issuedAt = messageArray[9].split(':')[1].trim();
 
     let expirationDate;
     let notBefore;
-    let resources;
+    let resources = [];
     if (messageArray[10].indexOf('Expiration Time:') != -1) {
         expirationDate = messageArray[10].split(':')[1].trim();
     } else if (messageArray[10].indexOf('Not Before:') != -1) {
         notBefore = messageArray[10].split(':')[1].trim();
-    } else if (messageArray[10].indexOf('Resouces:') != -1) {
+    } else if (messageArray[10].indexOf('Resources:') != -1) {
         resources = [];
         for (let i = 11; i < messageArray.length; i++) {
             const resource = messageArray[i].split(' ')[1].trim();
@@ -146,7 +156,7 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
 
     if (messageArray[11].indexOf('Not Before:') != -1) {
         notBefore = messageArray[11].split(':')[1].trim();
-    } else if (messageArray[11].indexOf('Resouces:') != -1) {
+    } else if (messageArray[11].indexOf('Resources:') != -1) {
         resources = [];
         for (let i = 12; i < messageArray.length; i++) {
             const resource = messageArray[i].split(' ')[1].trim();
@@ -154,7 +164,7 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
         }
     }
 
-    if (messageArray[12].indexOf('Resouces:') != -1) {
+    if (messageArray[12].indexOf('Resources:') != -1) {
         resources = [];
         for (let i = 13; i < messageArray.length; i++) {
             const resource = messageArray[i].split(' ')[1].trim();
@@ -169,7 +179,7 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
 
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
-export function createChallenge(
+export async function createChallenge(
     domain: string,
     statement: string,
     address: string,
@@ -186,7 +196,7 @@ export function createChallenge(
             uri,
             version: "1",
             chainId: "1",
-            nonce: getChallengeNonce(),
+            nonce: await getChallengeNonce(),
             issuedAt: new Date().toISOString(),
             expirationDate,
             notBefore,
@@ -203,7 +213,6 @@ export function createChallenge(
 
 export function signChallenge(challenge: string): Uint8Array | string {
     try {
-
         //const signedChallenge = await algo.sdk.signBytes(challenge);
         //or Wallet Connect sign $0 txn with challenge as the note
 
@@ -215,7 +224,7 @@ export function signChallenge(challenge: string): Uint8Array | string {
     }
 }
 
-export function verifyChallenge(originalChallenge: string, signedChallenge: Uint8Array) {
+export async function verifyChallenge(originalChallenge: string, signedChallenge: Uint8Array) {
     try {
         const challenge: EIP4361Challenge = createMessageFromString(originalChallenge);
         validateChallenge(challenge);
@@ -227,9 +236,17 @@ export function verifyChallenge(originalChallenge: string, signedChallenge: Uint
             throw 'Invalid signature';
         }
 
-        //TODO: verify user has all requested ASAs using algosdk
+        let accountInfo = (await client.accountInformation(challenge.address).do());
+        if (challenge.resources) {
+            for (const asset of challenge.resources) {
+                console.log(asset);
+                if (!accountInfo.assets.includes(asset)) {
+                    throw `Address ${challenge.address} does not own requested asset : ${asset}`;
+                }
+            }
 
-        grantPermissions();
+            grantPermissions(challenge.resources);
+        }
 
         return `Successfully granted access via Blockin`;
     } catch (error) {
