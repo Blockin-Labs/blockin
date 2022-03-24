@@ -6,7 +6,7 @@ const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]
 const server = "https://testnet-algorand.api.purestake.io/ps2";
 const port = "";
 const token = {
-    "x-api-key": "mV *** BY" // fill in yours
+    "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"
 };
 
 let client = new algoSdk.Algodv2(token, server, port);
@@ -28,27 +28,58 @@ interface EIP4361Challenge {
 }
 
 /** The functions in this section are left up to the resource server's implementation. */
+async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
+    if (!algoSdk.verifyBytes(originalChallengeToUint8Array, signedChallenge, originalAddress)) {
+        throw 'Invalid signature';
+    }
+}
 
-//TODO:  
 async function getChallengeNonce(): Promise<number> {
     let status = await client.status().do();
-    return Number(status.lastRound);
+    // console.log(status);
+
+    return Number(status['last-round']);
 }
 
 async function verifyChallengeNonce(nonce: number): Promise<boolean> {
-    let block = await client.block(nonce).do()
-    return true;
+    let blockData = await client.block(nonce).do();
+    let blockTimestamp = blockData.block.ts;
+    var currentTimestamp = Math.round((new Date()).getTime() / 1000);
+
+    return blockTimestamp > currentTimestamp - 600; //within last 10 minutes or 600 seconds
 }
 
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
-function grantPermissions(assetIds: string[]) {
+async function grantPermissions(assetIds: string[]) {
     for (const asset of assetIds) {
         console.log("User has been granted privileges of " + asset);
     }
 }
 
+async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
+    /**IMPORTANT: This is only for testing purposes. 
+     * It checks ownership of this random ASA at 
+     * https://goalseeker.purestake.io/algorand/testnet/asset/13365375.
+     * 
+     * Once we add in our own ASAs, this should be removed */
+    address = 'QPIUPDINBLYWPEZYYIOYJLXJSN75KGULUQARUN2SDRR7LSUS2BXCFLI6DY';
+
+    let accountInfo = (await client.accountInformation(address).do());
+    for (const assetId of assetIds) {
+        const requestedAsset = accountInfo.assets.find((elem: any) => elem['asset-id'].toString() === assetId);
+
+        if (!requestedAsset) {
+            throw `Address ${address} does not own requested asset : ${assetId}`;
+        } else {
+            console.log(`Success: Found asset in user's wallet: ${assetId}.`);
+        }
+    }
+}
+
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
+
+
 function validateChallenge(challenge: EIP4361Challenge) {
     try {
         if (!URI_REGEX.test(challenge.domain)) {
@@ -142,37 +173,41 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
     let expirationDate;
     let notBefore;
     let resources = [];
-    if (messageArray[10].indexOf('Expiration Time:') != -1) {
-        expirationDate = messageArray[10].split(':')[1].trim();
-    } else if (messageArray[10].indexOf('Not Before:') != -1) {
-        notBefore = messageArray[10].split(':')[1].trim();
-    } else if (messageArray[10].indexOf('Resources:') != -1) {
-        resources = [];
-        for (let i = 11; i < messageArray.length; i++) {
-            const resource = messageArray[i].split(' ')[1].trim();
-            resources.push(resource);
+    if (messageArray[10]) {
+        if (messageArray[10].indexOf('Expiration Time:') != -1) {
+            expirationDate = messageArray[10].split(':')[1].trim();
+        } else if (messageArray[10].indexOf('Not Before:') != -1) {
+            notBefore = messageArray[10].split(':')[1].trim();
+        } else if (messageArray[10].indexOf('Resources:') != -1) {
+            resources = [];
+            for (let i = 11; i < messageArray.length; i++) {
+                const resource = messageArray[i].split(' ')[1].trim();
+                resources.push(resource);
+            }
         }
     }
 
-    if (messageArray[11].indexOf('Not Before:') != -1) {
-        notBefore = messageArray[11].split(':')[1].trim();
-    } else if (messageArray[11].indexOf('Resources:') != -1) {
-        resources = [];
-        for (let i = 12; i < messageArray.length; i++) {
-            const resource = messageArray[i].split(' ')[1].trim();
-            resources.push(resource);
+    if (messageArray[11]) {
+        if (messageArray[11].indexOf('Not Before:') != -1) {
+            notBefore = messageArray[11].split(':')[1].trim();
+        } else if (messageArray[11].indexOf('Resources:') != -1) {
+            resources = [];
+            for (let i = 12; i < messageArray.length; i++) {
+                const resource = messageArray[i].split(' ')[1].trim();
+                resources.push(resource);
+            }
         }
     }
 
-    if (messageArray[12].indexOf('Resources:') != -1) {
-        resources = [];
-        for (let i = 13; i < messageArray.length; i++) {
-            const resource = messageArray[i].split(' ')[1].trim();
-            resources.push(resource);
+    if (messageArray[12]) {
+        if (messageArray[12].indexOf('Resources:') != -1) {
+            resources = [];
+            for (let i = 13; i < messageArray.length; i++) {
+                const resource = messageArray[i].split(' ')[1].trim();
+                resources.push(resource);
+            }
         }
     }
-
-
 
     return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce };
 }
@@ -211,41 +246,21 @@ export async function createChallenge(
     }
 }
 
-export function signChallenge(challenge: string): Uint8Array | string {
-    try {
-        //const signedChallenge = await algo.sdk.signBytes(challenge);
-        //or Wallet Connect sign $0 txn with challenge as the note
-
-
-        // return "; //return signedChallenge or signed$0Txn as UInt8Array
-        return ""
-    } catch (error: unknown) {
-        return `Error: ${error}`;
-    }
-}
-
 export async function verifyChallenge(originalChallenge: string, signedChallenge: Uint8Array) {
     try {
         const challenge: EIP4361Challenge = createMessageFromString(originalChallenge);
         validateChallenge(challenge);
+        console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
         const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
 
         const originalAddress = challenge.address;
-        if (!algoSdk.verifyBytes(originalChallengeToUint8Array, signedChallenge, originalAddress)) {
-            throw 'Invalid signature';
-        }
+        verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress)
+        console.log("Success: Signature matches address specified within the challenge.");
 
-        let accountInfo = (await client.accountInformation(challenge.address).do());
         if (challenge.resources) {
-            for (const asset of challenge.resources) {
-                console.log(asset);
-                if (!accountInfo.assets.includes(asset)) {
-                    throw `Address ${challenge.address} does not own requested asset : ${asset}`;
-                }
-            }
-
-            grantPermissions(challenge.resources);
+            await verifyOwnershipOfAssets(challenge.address, challenge.resources);
+            await grantPermissions(challenge.resources);
         }
 
         return `Successfully granted access via Blockin`;
