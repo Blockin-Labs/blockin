@@ -47,12 +47,19 @@ function verifyChallengeNonce(nonce) {
 }
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
 function grantPermissions(assetIds) {
-    for (const asset of assetIds) {
-        console.log("User has been granted privileges of " + asset);
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        for (const asset of assetIds) {
+            console.log("User has been granted privileges of " + asset);
+        }
+    });
 }
 function verifyOwnershipOfAssets(address, assetIds) {
     return __awaiter(this, void 0, void 0, function* () {
+        /**IMPORTANT: This is only for testing purposes.
+         * It checks ownership of this random ASA at
+         * https://goalseeker.purestake.io/algorand/testnet/asset/13365375.
+         *
+         * Once we add in our own ASAs, this should be removed */
         address = 'QPIUPDINBLYWPEZYYIOYJLXJSN75KGULUQARUN2SDRR7LSUS2BXCFLI6DY';
         let accountInfo = (yield client.accountInformation(address).do());
         for (const assetId of assetIds) {
@@ -226,7 +233,7 @@ function verifyChallenge(originalChallenge, signedChallenge) {
             console.log("Success: Signature matches address specified within the challenge.");
             if (challenge.resources) {
                 yield verifyOwnershipOfAssets(challenge.address, challenge.resources);
-                grantPermissions(challenge.resources);
+                yield grantPermissions(challenge.resources);
             }
             return `Successfully granted access via Blockin`;
         }

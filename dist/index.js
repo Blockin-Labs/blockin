@@ -1,8 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createChallenge = exports.verifyChallenge = exports.sayHello = void 0;
+exports.makeAssetTransferTxn = exports.makeAssetCreateTxn = exports.makeAssetOptInTxn = exports.createChallenge = exports.verifyChallenge = exports.sayHello = void 0;
 var blockin_1 = require("./blockin");
 Object.defineProperty(exports, "sayHello", { enumerable: true, get: function () { return blockin_1.sayHello; } });
 var verification_1 = require("./verification");
 Object.defineProperty(exports, "verifyChallenge", { enumerable: true, get: function () { return verification_1.verifyChallenge; } });
 Object.defineProperty(exports, "createChallenge", { enumerable: true, get: function () { return verification_1.createChallenge; } });
+var authorization_1 = require("./authorization");
+Object.defineProperty(exports, "makeAssetOptInTxn", { enumerable: true, get: function () { return authorization_1.makeAssetOptInTxn; } });
+Object.defineProperty(exports, "makeAssetCreateTxn", { enumerable: true, get: function () { return authorization_1.makeAssetCreateTxn; } });
+Object.defineProperty(exports, "makeAssetTransferTxn", { enumerable: true, get: function () { return authorization_1.makeAssetTransferTxn; } });
