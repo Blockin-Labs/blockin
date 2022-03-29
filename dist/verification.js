@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,12 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyChallenge = exports.createChallenge = void 0;
-const algosdk_1 = __importDefault(require("algosdk"));
+import algoSdk from 'algosdk';
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/;
 const server = "https://testnet-algorand.api.purestake.io/ps2";
@@ -21,11 +15,11 @@ const port = "";
 const token = {
     "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"
 };
-let client = new algosdk_1.default.Algodv2(token, server, port);
+let client = new algoSdk.Algodv2(token, server, port);
 /** The functions in this section are left up to the resource server's implementation. */
 function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!algosdk_1.default.verifyBytes(originalChallengeToUint8Array, signedChallenge, originalAddress)) {
+        if (!algoSdk.verifyBytes(originalChallengeToUint8Array, signedChallenge, originalAddress)) {
             throw 'Invalid signature';
         }
     });
@@ -80,7 +74,7 @@ function validateChallenge(challenge) {
         if (!URI_REGEX.test(challenge.domain)) {
             throw `Inputted domain (${challenge.domain}) is not a valid URI`;
         }
-        if (!algosdk_1.default.isValidAddress(challenge.address)) {
+        if (!algoSdk.isValidAddress(challenge.address)) {
             throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
         }
         if (!URI_REGEX.test(challenge.uri)) {
@@ -196,7 +190,7 @@ function createMessageFromString(challenge) {
 }
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
-function createChallenge(domain, statement, address, uri, expirationDate, notBefore, resources) {
+export function createChallenge(domain, statement, address, uri, expirationDate, notBefore, resources) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const challenge = {
@@ -220,8 +214,7 @@ function createChallenge(domain, statement, address, uri, expirationDate, notBef
         }
     });
 }
-exports.createChallenge = createChallenge;
-function verifyChallenge(originalChallenge, signedChallenge) {
+export function verifyChallenge(originalChallenge, signedChallenge) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const challenge = createMessageFromString(originalChallenge);
@@ -242,4 +235,3 @@ function verifyChallenge(originalChallenge, signedChallenge) {
         }
     });
 }
-exports.verifyChallenge = verifyChallenge;

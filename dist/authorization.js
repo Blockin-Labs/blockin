@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,27 +7,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeAssetCreateTxn = exports.makeAssetTransferTxn = exports.makeAssetOptInTxn = void 0;
-const algosdk_1 = __importDefault(require("algosdk"));
+import algosdk from 'algosdk';
 const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
 const indexerServer = "https://testnet-algorand.api.purestake.io/idx2";
 const port = "";
 const token = {
-    "x-api-key": "secret_sauce" // fill in yours
+    "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" // fill in yours
 };
-const algodClient = new algosdk_1.default.Algodv2(token, algodServer, port);
-const indexerClient = new algosdk_1.default.Indexer(token, indexerServer, port);
+const algodClient = new algosdk.Algodv2(token, algodServer, port);
+const indexerClient = new algosdk.Indexer(token, indexerServer, port);
 /**
  * Generates an unsigned asset opt-in transaction, to be signed and sent to the algorand network
  * @param receiverAddress
  * @param assetId
  * @returns an unsigned asset opt-in transaction
  */
-function makeAssetOptInTxn(receiverAddress, assetId) {
+export function makeAssetOptInTxn(receiverAddress, assetId) {
     return __awaiter(this, void 0, void 0, function* () {
         const amount = 0;
         const params = yield algodClient.getTransactionParams().do();
@@ -36,11 +30,10 @@ function makeAssetOptInTxn(receiverAddress, assetId) {
         const revocationTarget = undefined;
         const note = undefined;
         // Create opt-in transaction (note that sender and receiver addresses are the same)
-        const txn = algosdk_1.default.makeAssetTransferTxnWithSuggestedParams(receiverAddress, receiverAddress, closeRemainderTo, revocationTarget, amount, note, assetId, params);
+        const txn = algosdk.makeAssetTransferTxnWithSuggestedParams(receiverAddress, receiverAddress, closeRemainderTo, revocationTarget, amount, note, assetId, params);
         return txn;
     });
 }
-exports.makeAssetOptInTxn = makeAssetOptInTxn;
 /**
  * Generates an unsigned asset transfer transaction, to be signed and sent to the algorand network
  * @param senderAddress
@@ -48,7 +41,7 @@ exports.makeAssetOptInTxn = makeAssetOptInTxn;
  * @param assetId
  * @returns an unsigned asset transfer transaction
  */
-function makeAssetTransferTxn(senderAddress, receiverAddress, assetId) {
+export function makeAssetTransferTxn(senderAddress, receiverAddress, assetId) {
     return __awaiter(this, void 0, void 0, function* () {
         const amount = 1;
         const params = yield algodClient.getTransactionParams().do();
@@ -56,11 +49,10 @@ function makeAssetTransferTxn(senderAddress, receiverAddress, assetId) {
         const revocationTarget = undefined;
         const note = undefined;
         // Create asset transfer transaction
-        const txn = algosdk_1.default.makeAssetTransferTxnWithSuggestedParams(senderAddress, receiverAddress, closeRemainderTo, revocationTarget, amount, note, assetId, params);
+        const txn = algosdk.makeAssetTransferTxnWithSuggestedParams(senderAddress, receiverAddress, closeRemainderTo, revocationTarget, amount, note, assetId, params);
         return txn;
     });
 }
-exports.makeAssetTransferTxn = makeAssetTransferTxn;
 /**
  * Generates an unsigned asset creation transaction, to be signed and sent to the algorand network
  * @param senderAddress
@@ -73,11 +65,11 @@ exports.makeAssetTransferTxn = makeAssetTransferTxn;
  * @param clawbackAddr
  * @returns an unsigned asset creation transaction
  */
-function makeAssetCreateTxn(senderAddress, assetName, unitName, total, assetURL, assetMetadataHash, defaultFrozen = false, clawbackAddr = senderAddress) {
+export function makeAssetCreateTxn(senderAddress, assetName, unitName, total, assetURL, assetMetadataHash, defaultFrozen = false, clawbackAddr = senderAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         const decimals = 0;
         const suggestedParams = yield algodClient.getTransactionParams().do();
-        const txn = algosdk_1.default.makeAssetCreateTxnWithSuggestedParamsFromObject({
+        const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
             from: senderAddress,
             total,
             decimals,
@@ -95,4 +87,3 @@ function makeAssetCreateTxn(senderAddress, assetName, unitName, total, assetURL,
         return txn;
     });
 }
-exports.makeAssetCreateTxn = makeAssetCreateTxn;

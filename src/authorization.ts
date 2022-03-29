@@ -5,7 +5,7 @@ const indexerServer = "https://testnet-algorand.api.purestake.io/idx2";
 
 const port = "";
 const token = {
-  "x-api-key": "secret_sauce" // fill in yours
+  "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" // fill in yours
 };
 
 const algodClient = new algosdk.Algodv2(token, algodServer, port);
