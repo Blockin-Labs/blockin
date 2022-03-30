@@ -254,6 +254,8 @@ export async function verifyChallenge(originalChallenge: string, signedChallenge
         const note = transactionObject.note;
         const decodedNote = new TextDecoder().decode(note);
 
+        console.log("NEW IMPLEMENTATION", decodedNote);
+
         const challenge: EIP4361Challenge = createMessageFromString(decodedNote);
         validateChallenge(challenge);
         console.log("Success: Constructed challenge from string and verified it is well-formed.");

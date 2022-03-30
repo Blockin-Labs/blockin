@@ -222,6 +222,7 @@ export function verifyChallenge(originalChallenge, signedChallenge) {
             const transactionObject = JSON.parse(originalChallenge);
             const note = transactionObject.note;
             const decodedNote = new TextDecoder().decode(note);
+            console.log("NEW IMPLEMENTATION", decodedNote);
             const challenge = createMessageFromString(decodedNote);
             validateChallenge(challenge);
             console.log("Success: Constructed challenge from string and verified it is well-formed.");
