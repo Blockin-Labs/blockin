@@ -34,6 +34,29 @@ async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Arra
     }
 }
 
+/**
+ * This function usually is not needed. If it is not needed, just return the input as is.
+ * 
+ * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
+ * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
+ */
+async function getChallengeString(txnObjectStr: string): Promise<string> {
+    const txnDetails = JSON.parse(txnObjectStr);
+    const note = txnDetails.note;
+
+    const tempArr = [];
+    let idx = 0;
+    while (note[idx]) {
+        tempArr.push(note[idx]);
+        idx++;
+    }
+
+    const challengeArrAsBytes = new Uint8Array(tempArr);
+    const challengeString = new TextDecoder().decode(challengeArrAsBytes);
+
+    return challengeString;
+}
+
 async function getChallengeNonce(): Promise<number> {
     let status = await client.status().do();
     // console.log(status);
@@ -248,15 +271,17 @@ export async function createChallenge(
 
 export async function verifyChallenge(originalChallenge: string, signedChallenge: Uint8Array) {
     try {
-        /**SPECIFIC TO OUR IMPLEMENTATION AND HOW STUPID PERA WALLET IS */
-        // console.log(JSON.stringify(txn));
-        const transactionObject = JSON.parse(originalChallenge);
-        const note = transactionObject.note;
-        const decodedNote = new TextDecoder().decode(note);
+        /*
+            Make sure getChallengeString() is consistent with your implementation.
 
-        console.log("NEW IMPLEMENTATION", decodedNote);
+            If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
+            this is where to implement it.
 
-        const challenge: EIP4361Challenge = createMessageFromString(decodedNote);
+            If originalChallenge is already the challenge string, just return the inputted parameter.
+        */
+        const generatedEIP4361ChallengeStr: string = await getChallengeString(originalChallenge);
+
+        const challenge: EIP4361Challenge = createMessageFromString(generatedEIP4361ChallengeStr);
         validateChallenge(challenge);
         console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
@@ -271,22 +296,6 @@ export async function verifyChallenge(originalChallenge: string, signedChallenge
             await grantPermissions(challenge.resources);
         }
 
-        /**WHAT IT SHOULD BE */
-
-        // const challenge: EIP4361Challenge = createMessageFromString(originalChallenge);
-        // validateChallenge(challenge);
-        // console.log("Success: Constructed challenge from string and verified it is well-formed.");
-
-        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
-
-        // const originalAddress = challenge.address;
-        // await verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress)
-        // console.log("Success: Signature matches address specified within the challenge.");
-
-        // if (challenge.resources) {
-        //     await verifyOwnershipOfAssets(challenge.address, challenge.resources);
-        //     await grantPermissions(challenge.resources);
-        // }
 
         return `Successfully granted access via Blockin`;
     } catch (error) {
