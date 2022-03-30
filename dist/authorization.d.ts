@@ -26,4 +26,4 @@ export declare function makeAssetTransferTxn(senderAddress: string, receiverAddr
  * @param clawbackAddr
  * @returns an unsigned asset creation transaction
  */
-export declare function makeAssetCreateTxn(senderAddress: string, assetName: string, unitName: string, total: number, assetURL: string, assetMetadataHash: string, defaultFrozen?: boolean, clawbackAddr?: string): Promise<algosdk.Transaction>;
+export declare function makeAssetCreateTxn(senderAddress: string, assetName: string, unitName: string, total: number, assetURL: string, assetMetadataHash: string | Uint8Array, defaultFrozen?: boolean, clawbackAddr?: string): Promise<algosdk.Transaction>;

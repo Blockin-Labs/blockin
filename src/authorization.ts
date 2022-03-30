@@ -80,7 +80,7 @@ export async function makeAssetTransferTxn(senderAddress: string, receiverAddres
  * @param clawbackAddr 
  * @returns an unsigned asset creation transaction
  */
-export async function makeAssetCreateTxn(senderAddress: string, assetName: string, unitName: string, total: number, assetURL: string, assetMetadataHash: string, defaultFrozen = false, clawbackAddr = senderAddress): Promise<algosdk.Transaction> {
+export async function makeAssetCreateTxn(senderAddress: string, assetName: string, unitName: string, total: number, assetURL: string, assetMetadataHash: string | Uint8Array, defaultFrozen = false, clawbackAddr = senderAddress): Promise<algosdk.Transaction> {
   const decimals = 0
 
   const suggestedParams = await algodClient.getTransactionParams().do()
