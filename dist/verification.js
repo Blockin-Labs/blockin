@@ -24,6 +24,30 @@ function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge
         }
     });
 }
+/**
+ * This function usually is not needed. If it is not needed, just return the input as is.
+ *
+ * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
+ * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
+ */
+function getChallengeString(txnObjectStr) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const txnDetails = JSON.parse(txnObjectStr);
+        const note = txnDetails.note;
+        console.log("NOTE", note);
+        const tempArr = [];
+        let idx = 0;
+        while (note[idx]) {
+            tempArr.push(note[idx]);
+            idx++;
+        }
+        const challengeArrAsBytes = new Uint8Array(tempArr);
+        console.log(challengeArrAsBytes);
+        const challengeString = new TextDecoder().decode(challengeArrAsBytes);
+        console.log(challengeString);
+        return challengeString;
+    });
+}
 function getChallengeNonce() {
     return __awaiter(this, void 0, void 0, function* () {
         let status = yield client.status().do();
@@ -217,13 +241,16 @@ export function createChallenge(domain, statement, address, uri, expirationDate,
 export function verifyChallenge(originalChallenge, signedChallenge) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            /**SPECIFIC TO OUR IMPLEMENTATION AND HOW STUPID PERA WALLET IS */
-            // console.log(JSON.stringify(txn));
-            const transactionObject = JSON.parse(originalChallenge);
-            const note = transactionObject.note;
-            const decodedNote = new TextDecoder().decode(note);
-            console.log("NEW IMPLEMENTATION", decodedNote);
-            const challenge = createMessageFromString(decodedNote);
+            /*
+                Make sure getChallengeString() is consistent with your implementation.
+    
+                If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
+                this is where to implement it.
+    
+                If originalChallenge is already the challenge string, just return the inputted parameter.
+            */
+            const generatedEIP4361ChallengeStr = yield getChallengeString(originalChallenge);
+            const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
             validateChallenge(challenge);
             console.log("Success: Constructed challenge from string and verified it is well-formed.");
             const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
@@ -234,18 +261,6 @@ export function verifyChallenge(originalChallenge, signedChallenge) {
                 yield verifyOwnershipOfAssets(challenge.address, challenge.resources);
                 yield grantPermissions(challenge.resources);
             }
-            /**WHAT IT SHOULD BE */
-            // const challenge: EIP4361Challenge = createMessageFromString(originalChallenge);
-            // validateChallenge(challenge);
-            // console.log("Success: Constructed challenge from string and verified it is well-formed.");
-            // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
-            // const originalAddress = challenge.address;
-            // await verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress)
-            // console.log("Success: Signature matches address specified within the challenge.");
-            // if (challenge.resources) {
-            //     await verifyOwnershipOfAssets(challenge.address, challenge.resources);
-            //     await grantPermissions(challenge.resources);
-            // }
             return `Successfully granted access via Blockin`;
         }
         catch (error) {
