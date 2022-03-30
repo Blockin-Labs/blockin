@@ -43,6 +43,7 @@ async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Arra
 async function getChallengeString(txnObjectStr: string): Promise<string> {
     const txnDetails = JSON.parse(txnObjectStr);
     const note = txnDetails.note;
+    console.log("NOTE", note);
 
     const tempArr = [];
     let idx = 0;
@@ -52,7 +53,10 @@ async function getChallengeString(txnObjectStr: string): Promise<string> {
     }
 
     const challengeArrAsBytes = new Uint8Array(tempArr);
+    console.log(challengeArrAsBytes);
+
     const challengeString = new TextDecoder().decode(challengeArrAsBytes);
+    console.log(challengeString);
 
     return challengeString;
 }
