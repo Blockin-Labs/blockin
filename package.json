@@ -24,6 +24,7 @@
     "algosdk": "^1.15.0"
   },
   "dependencies": {
-    "@algo-builder/algob": "^3.2.0"
+    "@algo-builder/algob": "^3.2.0",
+    "tweetnacl": "^1.0.3"
   }
 }
