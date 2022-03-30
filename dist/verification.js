@@ -217,17 +217,34 @@ export function createChallenge(domain, statement, address, uri, expirationDate,
 export function verifyChallenge(originalChallenge, signedChallenge) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const challenge = createMessageFromString(originalChallenge);
+            /**SPECIFIC TO OUR IMPLEMENTATION AND HOW STUPID PERA WALLET IS */
+            // console.log(JSON.stringify(txn));
+            const transactionObject = JSON.parse(originalChallenge);
+            const note = transactionObject.note;
+            const decodedNote = new TextDecoder().decode(note);
+            const challenge = createMessageFromString(decodedNote);
             validateChallenge(challenge);
             console.log("Success: Constructed challenge from string and verified it is well-formed.");
             const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
             const originalAddress = challenge.address;
-            verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
+            yield verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
             console.log("Success: Signature matches address specified within the challenge.");
             if (challenge.resources) {
                 yield verifyOwnershipOfAssets(challenge.address, challenge.resources);
                 yield grantPermissions(challenge.resources);
             }
+            /**WHAT IT SHOULD BE */
+            // const challenge: EIP4361Challenge = createMessageFromString(originalChallenge);
+            // validateChallenge(challenge);
+            // console.log("Success: Constructed challenge from string and verified it is well-formed.");
+            // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+            // const originalAddress = challenge.address;
+            // await verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress)
+            // console.log("Success: Signature matches address specified within the challenge.");
+            // if (challenge.resources) {
+            //     await verifyOwnershipOfAssets(challenge.address, challenge.resources);
+            //     await grantPermissions(challenge.resources);
+            // }
             return `Successfully granted access via Blockin`;
         }
         catch (error) {
