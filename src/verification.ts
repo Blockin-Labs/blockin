@@ -40,22 +40,17 @@ async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Arra
  * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
  * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
  */
-async function getChallengeString(txnObjectStr: string): Promise<string> {
-    const txnDetails = JSON.parse(txnObjectStr);
-    const note = txnDetails.note;
-    console.log("NOTE", note);
+async function getChallengeString(txnBytes: Uint8Array): Promise<string> {
+    const txnString = new TextDecoder().decode(txnBytes);
 
-    const tempArr = [];
-    let idx = 0;
-    while (note[idx]) {
-        tempArr.push(note[idx]);
+    const bytes = [];
+    let idx = txnString.indexOf('note') + 7;
+    while (txnBytes[idx] !== 163) {
+        bytes.push(txnBytes[idx]);
         idx++;
     }
 
-    const challengeArrAsBytes = new Uint8Array(tempArr);
-    console.log(challengeArrAsBytes);
-
-    const challengeString = new TextDecoder().decode(challengeArrAsBytes);
+    const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
     console.log(challengeString);
 
     return challengeString;
@@ -273,7 +268,7 @@ export async function createChallenge(
     }
 }
 
-export async function verifyChallenge(originalChallenge: string, signedChallenge: Uint8Array) {
+export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array) {
     try {
         /*
             Make sure getChallengeString() is consistent with your implementation.
@@ -289,10 +284,10 @@ export async function verifyChallenge(originalChallenge: string, signedChallenge
         validateChallenge(challenge);
         console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
-        const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
 
         const originalAddress = challenge.address;
-        await verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress)
+        await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
         console.log("Success: Signature matches address specified within the challenge.");
 
         if (challenge.resources) {

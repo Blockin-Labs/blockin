@@ -30,20 +30,16 @@ function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge
  * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
  * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
  */
-function getChallengeString(txnObjectStr) {
+function getChallengeString(txnBytes) {
     return __awaiter(this, void 0, void 0, function* () {
-        const txnDetails = JSON.parse(txnObjectStr);
-        const note = txnDetails.note;
-        console.log("NOTE", note);
-        const tempArr = [];
-        let idx = 0;
-        while (note[idx]) {
-            tempArr.push(note[idx]);
+        const txnString = new TextDecoder().decode(txnBytes);
+        const bytes = [];
+        let idx = txnString.indexOf('note') + 7;
+        while (txnBytes[idx] !== 163) {
+            bytes.push(txnBytes[idx]);
             idx++;
         }
-        const challengeArrAsBytes = new Uint8Array(tempArr);
-        console.log(challengeArrAsBytes);
-        const challengeString = new TextDecoder().decode(challengeArrAsBytes);
+        const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
         console.log(challengeString);
         return challengeString;
     });
@@ -253,9 +249,9 @@ export function verifyChallenge(originalChallenge, signedChallenge) {
             const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
             validateChallenge(challenge);
             console.log("Success: Constructed challenge from string and verified it is well-formed.");
-            const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+            // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
             const originalAddress = challenge.address;
-            yield verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
+            yield verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
             console.log("Success: Signature matches address specified within the challenge.");
             if (challenge.resources) {
                 yield verifyOwnershipOfAssets(challenge.address, challenge.resources);
