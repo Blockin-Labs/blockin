@@ -69,7 +69,7 @@ async function verifyChallengeNonce(nonce: number): Promise<boolean> {
     let blockTimestamp = blockData.block.ts;
     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
 
-    return blockTimestamp > currentTimestamp - 600; //within last 10 minutes or 600 seconds
+    return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
 }
 
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
