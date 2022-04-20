@@ -20,7 +20,6 @@ interface EIP4361Challenge {
     version: string;                // Set at 1; Used for EIP-4361 version, but there is only one version
     chainId: string;                // Set to 1 since we will be using mainnet
     nonce: number;                  // Recent block hash
-
     issuedAt: string;               // ISO 8601 Date Specification (new Date().toISOString() in JavaScript)
     expirationDate?: string;        // Same as issuedAt
     notBefore?: string;             // Same as issuedAt
@@ -80,15 +79,12 @@ async function grantPermissions(assetIds: string[]) {
 }
 
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
-    /**IMPORTANT: This is only for testing purposes. 
-     * It checks ownership of this random ASA at 
-     * https://goalseeker.purestake.io/algorand/testnet/asset/13365375.
-     * 
-     * Once we add in our own ASAs, this should be removed */
-    address = 'QPIUPDINBLYWPEZYYIOYJLXJSN75KGULUQARUN2SDRR7LSUS2BXCFLI6DY';
+    const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
 
     let accountInfo = (await client.accountInformation(address).do());
     for (const assetId of assetIds) {
+        if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */
+
         const requestedAsset = accountInfo.assets.find((elem: any) => elem['asset-id'].toString() === assetId);
 
         if (!requestedAsset) {
