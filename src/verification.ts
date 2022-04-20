@@ -83,6 +83,7 @@ async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
 
     let accountInfo = (await client.accountInformation(address).do());
     for (const assetId of assetIds) {
+        console.log(whitelistedAssets, assetId);
         if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */
 
         const requestedAsset = accountInfo.assets.find((elem: any) => elem['asset-id'].toString() === assetId);
