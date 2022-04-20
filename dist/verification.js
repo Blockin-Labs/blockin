@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import algoSdk, { decodeAddress } from 'algosdk';
 import nacl from 'tweetnacl';
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
@@ -18,12 +9,10 @@ const token = {
 };
 let client = new algoSdk.Algodv2(token, server, port);
 /** The functions in this section are left up to the resource server's implementation. */
-function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, decodeAddress(originalAddress).publicKey)) {
-            throw 'Invalid signature';
-        }
-    });
+async function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
+    if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, decodeAddress(originalAddress).publicKey)) {
+        throw 'Invalid signature';
+    }
 }
 /**
  * This function usually is not needed. If it is not needed, just return the input as is.
@@ -31,60 +20,50 @@ function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge
  * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
  * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
  */
-function getChallengeString(txnBytes) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const txnString = new TextDecoder().decode(txnBytes);
-        const bytes = [];
-        let idx = txnString.indexOf('note') + 7;
-        while (txnBytes[idx] !== 163) {
-            bytes.push(txnBytes[idx]);
-            idx++;
-        }
-        const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
-        console.log(challengeString);
-        return challengeString;
-    });
+async function getChallengeString(txnBytes) {
+    const txnString = new TextDecoder().decode(txnBytes);
+    const bytes = [];
+    let idx = txnString.indexOf('note') + 7;
+    while (txnBytes[idx] !== 163) {
+        bytes.push(txnBytes[idx]);
+        idx++;
+    }
+    const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
+    console.log(challengeString);
+    return challengeString;
 }
-function getChallengeNonce() {
-    return __awaiter(this, void 0, void 0, function* () {
-        let status = yield client.status().do();
-        // console.log(status);
-        return Number(status['last-round']);
-    });
+async function getChallengeNonce() {
+    let status = await client.status().do();
+    // console.log(status);
+    return Number(status['last-round']);
 }
-function verifyChallengeNonce(nonce) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let blockData = yield client.block(nonce).do();
-        let blockTimestamp = blockData.block.ts;
-        var currentTimestamp = Math.round((new Date()).getTime() / 1000);
-        return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
-    });
+async function verifyChallengeNonce(nonce) {
+    let blockData = await client.block(nonce).do();
+    let blockTimestamp = blockData.block.ts;
+    var currentTimestamp = Math.round((new Date()).getTime() / 1000);
+    return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
 }
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
-function grantPermissions(assetIds) {
-    return __awaiter(this, void 0, void 0, function* () {
-        for (const asset of assetIds) {
-            console.log("User has been granted privileges of " + asset);
-        }
-    });
+async function grantPermissions(assetIds) {
+    for (const asset of assetIds) {
+        console.log("User has been granted privileges of " + asset);
+    }
 }
-function verifyOwnershipOfAssets(address, assetIds) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
-        let accountInfo = (yield client.accountInformation(address).do());
-        for (const assetId of assetIds) {
-            console.log(whitelistedAssets, assetId);
-            if (whitelistedAssets.includes(assetId))
-                continue; //** THIS IS SPECIFIC TO OUR DEMO */
-            const requestedAsset = accountInfo.assets.find((elem) => elem['asset-id'].toString() === assetId);
-            if (!requestedAsset) {
-                throw `Address ${address} does not own requested asset : ${assetId}`;
-            }
-            else {
-                console.log(`Success: Found asset in user's wallet: ${assetId}.`);
-            }
+async function verifyOwnershipOfAssets(address, assetIds) {
+    const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
+    let accountInfo = (await client.accountInformation(address).do());
+    for (const assetId of assetIds) {
+        console.log(whitelistedAssets, assetId);
+        if (whitelistedAssets.includes(assetId))
+            continue; //** THIS IS SPECIFIC TO OUR DEMO */
+        const requestedAsset = accountInfo.assets.find((elem) => elem['asset-id'].toString() === assetId);
+        if (!requestedAsset) {
+            throw `Address ${address} does not own requested asset : ${assetId}`;
         }
-    });
+        else {
+            console.log(`Success: Found asset in user's wallet: ${assetId}.`);
+        }
+    }
 }
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
@@ -209,57 +188,53 @@ function createMessageFromString(challenge) {
 }
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
-export function createChallenge(domain, statement, address, uri, expirationDate, notBefore, resources) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const challenge = {
-                domain,
-                statement,
-                address,
-                uri,
-                version: "1",
-                chainId: "1",
-                nonce: yield getChallengeNonce(),
-                issuedAt: new Date().toISOString(),
-                expirationDate,
-                notBefore,
-                resources
-            };
-            validateChallenge(challenge); // will throw error if invalid
-            return constructMessageString(challenge);
-        }
-        catch (error) {
-            return `Error: ${error}`;
-        }
-    });
+export async function createChallenge(domain, statement, address, uri, expirationDate, notBefore, resources) {
+    try {
+        const challenge = {
+            domain,
+            statement,
+            address,
+            uri,
+            version: "1",
+            chainId: "1",
+            nonce: await getChallengeNonce(),
+            issuedAt: new Date().toISOString(),
+            expirationDate,
+            notBefore,
+            resources
+        };
+        validateChallenge(challenge); // will throw error if invalid
+        return constructMessageString(challenge);
+    }
+    catch (error) {
+        return `Error: ${error}`;
+    }
 }
-export function verifyChallenge(originalChallenge, signedChallenge) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            /*
-                Make sure getChallengeString() is consistent with your implementation.
-    
-                If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
-                this is where to implement it.
-    
-                If originalChallenge is already the challenge string, just return the inputted parameter.
-            */
-            const generatedEIP4361ChallengeStr = yield getChallengeString(originalChallenge);
-            const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
-            validateChallenge(challenge);
-            console.log("Success: Constructed challenge from string and verified it is well-formed.");
-            // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
-            const originalAddress = challenge.address;
-            yield verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
-            console.log("Success: Signature matches address specified within the challenge.");
-            if (challenge.resources) {
-                yield verifyOwnershipOfAssets(challenge.address, challenge.resources);
-                yield grantPermissions(challenge.resources);
-            }
-            return `Successfully granted access via Blockin`;
+export async function verifyChallenge(originalChallenge, signedChallenge) {
+    try {
+        /*
+            Make sure getChallengeString() is consistent with your implementation.
+
+            If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
+            this is where to implement it.
+
+            If originalChallenge is already the challenge string, just return the inputted parameter.
+        */
+        const generatedEIP4361ChallengeStr = await getChallengeString(originalChallenge);
+        const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
+        validateChallenge(challenge);
+        console.log("Success: Constructed challenge from string and verified it is well-formed.");
+        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+        const originalAddress = challenge.address;
+        await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
+        console.log("Success: Signature matches address specified within the challenge.");
+        if (challenge.resources) {
+            await verifyOwnershipOfAssets(challenge.address, challenge.resources);
+            await grantPermissions(challenge.resources);
         }
-        catch (error) {
-            return `Error: ${error}`;
-        }
-    });
+        return `Successfully granted access via Blockin`;
+    }
+    catch (error) {
+        return `Error: ${error}`;
+    }
 }
