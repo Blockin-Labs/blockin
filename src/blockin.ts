@@ -2,6 +2,9 @@
 // Also, immediately return instead of storing as variable before returning?
 // Also, are we even using sha256AsString method??
 
+import { Interface } from "readline";
+import { IClient } from "./types";
+
 /**
  * Encodes a string message as UTF-8 and converts to SHA256 hash as an ArrayBuffer.
  * Then converts ArrayBuffer to an Array
@@ -24,13 +27,15 @@ export async function sha256(message: string): Promise<Uint8Array> {
 //     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');   // convert bytes to hex string 
 // }
 
+let client: IClient | undefined = undefined
 
-let client: any = undefined
-
-export function setClient(newClient: any) {
+export function setClient(newClient: IClient) {
     client = newClient
 }
 
-export function getClient() {
+export function getClient(): IClient {
+    if (!client) {
+        throw "ERROR: Client is undefied"
+    }
     return client
 }

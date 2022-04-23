@@ -1,13 +1,14 @@
 import algosdk from 'algosdk';
-import { sha256 } from '.';
+import { getClient } from './blockin';
+import { IClient } from './types';
 
-const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
-const indexerServer = "https://testnet-algorand.api.purestake.io/idx2";
+try {
+  var client: IClient = getClient()
+}
+catch (e: any) {
+  console.log(e)
+}
 
-const port = "";
-const token = {
-  "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" // fill in yours
-};
 
 /**
  * Generates an unsigned asset opt-in transaction, to be signed and sent to the algorand network
@@ -15,73 +16,28 @@ const token = {
  * @param assetId 
  * @returns an unsigned asset opt-in transaction
  */
-export async function makeAssetOptInTxn(receiverAddress: string, assetId: number): Promise<algosdk.Transaction> {
-  const algodClient = new algosdk.Algodv2(token, algodServer, port);
-
-  const amount = 0;
-  const params = await algodClient.getTransactionParams().do();
-  const closeRemainderTo = undefined;
-  const revocationTarget = undefined;
-  const note = undefined;
+export async function makeAssetOptInTxn(
+  from: string,
+  to: string,
+  closeRemainderTo: string | undefined,
+  revocationTarget: string | undefined,
+  amount: number | bigint,
+  note: Uint8Array | undefined,
+  assetIndex: number,
+  rekeyTo?: string | undefined
+) {
 
   // Create opt-in transaction (note that sender and receiver addresses are the same)
-  const txn = algosdk.makeAssetTransferTxnWithSuggestedParams(
-    receiverAddress,
-    receiverAddress,
+  return client.makeAssetTransferTxn(
+    from,
+    to,
     closeRemainderTo,
     revocationTarget,
     amount,
     note,
-    assetId,
-    params
+    assetIndex,
+    rekeyTo
   );
-
-  return txn;
-}
-
-export async function signAssetOptInTxn(receiverAddress: string, assetId: number, sign: (txns: algosdk.Transaction | algosdk.Transaction[]) => Uint8Array | Uint8Array[]) {
-  const algodClient = new algosdk.Algodv2(token, algodServer, port);
-
-  const txns = [await makeAssetOptInTxn(receiverAddress, assetId)]
-
-  //get the tx signed, most likely using bound function
-  const stxs: Uint8Array | Uint8Array[] = await sign(txns)
-
-  const sentTx = await algodClient.sendRawTransaction(stxs).do();
-
-  console.log("Transaction : " + sentTx.txId);
-  console.log("Asset ID: " + "lookup asset id")
-}
-
-/**
- * Generates an unsigned asset transfer transaction, to be signed and sent to the algorand network
- * @param senderAddress 
- * @param receiverAddress 
- * @param assetId 
- * @returns an unsigned asset transfer transaction
- */
-export async function makeAssetTransferTxn(senderAddress: string, receiverAddress: string, assetId: number): Promise<algosdk.Transaction> {
-  const algodClient = new algosdk.Algodv2(token, algodServer, port);
-
-  const amount = 1;
-  const params = await algodClient.getTransactionParams().do();
-  const closeRemainderTo = undefined;
-  const revocationTarget = undefined;
-  const note = undefined;
-
-  // Create asset transfer transaction
-  const txn = algosdk.makeAssetTransferTxnWithSuggestedParams(
-    senderAddress,
-    receiverAddress,
-    closeRemainderTo,
-    revocationTarget,
-    amount,
-    note,
-    assetId,
-    params
-  );
-
-  return txn
 }
 
 /**
@@ -96,51 +52,80 @@ export async function makeAssetTransferTxn(senderAddress: string, receiverAddres
  * @param clawbackAddr 
  * @returns an unsigned asset creation transaction
  */
-export async function makeAssetCreateTxn(senderAddress: string, assetName: string, unitName: string, total: number, assetURL: string, assetMetadataHash: string | Uint8Array, defaultFrozen = false, clawbackAddr = senderAddress): Promise<algosdk.Transaction> {
-  const algodClient = new algosdk.Algodv2(token, algodServer, port);
-
+export async function makeAssetCreateTxn(from: string, assetName: string, unitName: string, total: number, assetURL: string, assetMetadataHash: string | Uint8Array, defaultFrozen = false, clawback = from): Promise<algosdk.Transaction> {
   const decimals = 0
-
-  const suggestedParams = await algodClient.getTransactionParams().do()
-  const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-    from: senderAddress,
-
+  return await client.createTxn({
+    from,
     total,
     decimals,
-
     assetName,
     unitName,
     assetURL,
     assetMetadataHash,
     defaultFrozen,
-
-    freeze: senderAddress,
-    manager: senderAddress,
-    clawback: clawbackAddr,
-    reserve: senderAddress,
-
-    suggestedParams,
+    freeze: from,
+    manager: from,
+    clawback,
+    reserve: from
   });
-
-  return txn
 }
 
-export async function txIdToAssetId(txId: string): Promise<string> {
-  const indexerClient = new algosdk.Indexer(token, indexerServer, port);
-  const foundTx = await indexerClient.lookupTransactionByID(txId).do();
-  return foundTx.assetIndex
-}
+// export async function sendTx(stxs: Uint8Array | Uint8Array[]) {
+//   const sentTx = await client.sendTx(stxs)
+//   console.log("Transaction : " + sentTx.txId);
+//   console.log("Asset ID: " + "lookup asset id")
+//   return sentTx
+// }
 
-export async function signAssetCreateTxn(senderAddress: string, assetMetadataHash: string, sign: (txns: algosdk.Transaction | algosdk.Transaction[]) => Uint8Array | Uint8Array[]) {
-  const algodClient = new algosdk.Algodv2(token, algodServer, port);
+// async function txIdToAssetId(txId: string): Promise<string> {
+//   return client.getAssetIndex(txId)
+// }
 
-  const txns = [await makeAssetCreateTxn(senderAddress, "Blockin", "AUTH", 1, "blockin", assetMetadataHash)]
+// //get the tx signed, most likely using bound function
+// //Generate an opt in tx
+// // Sign transaction
+// // txns is an array of algosdk.Transaction like below
+// // i.e txns = [txn, ...someotherTxns], but we've only built one transaction in our case
+// export async function createRequestParams(): Promise<any> {
+//   const txns = [await makeAssetOptInTxn(optInParams)]
+//   return txns.map(txn => {
+//     return {
+//         txn: Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64"),
+//         message: 'Description of transaction being signed',
+//         // Note: if the transaction does not need to be signed (because it's part of an atomic group
+//         // that will be signed by another party), specify an empty singers array like so:
+//         // signers: [],
+//     };
+//   });
+// }
 
-  //get the tx signed, most likely using bound function
-  const stxs: Uint8Array | Uint8Array[] = await sign(txns)
+// async function createAssetCreateTxn(senderAddress: string, assetMetadataHash: string) {
+//   const txns = [await makeAssetCreateTxn(senderAddress, "Blockin", "AUTH", 1, "blockin", assetMetadataHash)]
+//   return txns
+// }
 
-  const sentTx = await algodClient.sendRawTransaction(stxs).do();
 
-  console.log("Transaction : " + sentTx.txId);
-  console.log("Asset ID: " + "lookup asset id")
-}
+// /**
+//  * Generates an unsigned asset transfer transaction, to be signed and sent to the algorand network
+//  * @param senderAddress 
+//  * @param receiverAddress 
+//  * @param assetId 
+//  * @returns an unsigned asset transfer transaction
+//  */
+// async function makeAssetTransferTxn(senderAddress: string, receiverAddress: string, assetId: number): Promise<algosdk.Transaction> {
+//   const amount = 1;
+//   const closeRemainderTo = undefined;
+//   const revocationTarget = undefined;
+//   const note = undefined;
+
+//   // Create asset transfer transaction
+//   return client.makeAssetTransferTxnWithSuggestedParams(
+//     senderAddress,
+//     receiverAddress,
+//     closeRemainderTo,
+//     revocationTarget,
+//     amount,
+//     note,
+//     assetId
+//   );
+// }

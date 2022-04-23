@@ -1,16 +1,17 @@
 import algoSdk, { decodeAddress } from 'algosdk';
-import nacl, { verify } from 'tweetnacl';
+import nacl from 'tweetnacl';
+import { getClient } from './blockin';
+import { IClient } from './types';
 
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
-const server = "https://testnet-algorand.api.purestake.io/ps2";
-const port = "";
-const token = {
-    "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"
-};
-
-let client = new algoSdk.Algodv2(token, server, port);
+try {
+    var client: IClient = getClient()
+}
+catch (e: any) {
+    console.log(e)
+}
 
 interface EIP4361Challenge {
     domain: string;                 // Valid URI
@@ -57,14 +58,14 @@ async function getChallengeString(txnBytes: Uint8Array): Promise<string> {
 }
 
 async function getChallengeNonce(): Promise<number> {
-    let status = await client.status().do();
+    let status = await client.getStatus()
     // console.log(status);
 
     return Number(status['last-round']);
 }
 
 async function verifyChallengeNonce(nonce: number): Promise<boolean> {
-    let blockData = await client.block(nonce).do();
+    let blockData = await client.getBlock(nonce)
     let blockTimestamp = blockData.block.ts;
     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
 
@@ -81,7 +82,7 @@ async function grantPermissions(assetIds: string[]) {
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
     const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
 
-    let accountInfo = (await client.accountInformation(address).do());
+    let accountInfo = (await client.getAccountInfo(address));
     for (const assetId of assetIds) {
         console.log(whitelistedAssets, assetId);
         if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */
