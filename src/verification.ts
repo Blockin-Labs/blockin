@@ -1,6 +1,6 @@
 import algoSdk, { decodeAddress } from 'algosdk';
 import nacl from 'tweetnacl';
-import { getClient } from './blockin';
+import { getClient, getWallet } from './blockin';
 import { IClient } from './types';
 
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
@@ -8,6 +8,7 @@ const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]
 
 try {
     var client: IClient = getClient()
+    var wallet: any = getWallet()
 }
 catch (e: any) {
     console.log(e)
@@ -299,4 +300,11 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     } catch (error) {
         return `Error: ${error}`;
     }
+}
+
+export async function signChallenge(message: string) {
+    const txn = await client.makePaymentTxn(wallet.account, wallet.account, 0, message)
+    const unsighedTxnStr = client.getUnsignedTxnAsStr(txn)
+    const result = await wallet.signTxn(unsighedTxnStr, message)
+    return { txn, result }
 }

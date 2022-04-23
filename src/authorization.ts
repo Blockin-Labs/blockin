@@ -1,9 +1,10 @@
 import algosdk from 'algosdk';
-import { getClient } from './blockin';
+import { getClient, getWallet } from './blockin';
 import { IClient } from './types';
 
 try {
   var client: IClient = getClient()
+  var wallet: any = getWallet()
 }
 catch (e: any) {
   console.log(e)

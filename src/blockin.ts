@@ -39,3 +39,16 @@ export function getClient(): IClient {
     }
     return client
 }
+
+let wallet: any = undefined
+
+export function setWallet(newWallet: any) {
+    wallet = newWallet
+}
+
+export function getWallet(): any {
+    if (!wallet) {
+        throw "ERROR: Wallet is undefied"
+    }
+    return wallet
+}
