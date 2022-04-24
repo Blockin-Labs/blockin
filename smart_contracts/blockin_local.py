@@ -1,10 +1,22 @@
 from pyteal import *
+from algosdk.future import transaction
+from algosdk.v2client import algod
 import os
 import pathlib
+from util import deploy
+
 #if Resource: application_args = (user_address, asset_total, asset_unit_name, asset_name, asset_url, asset_metadata_hash, asset_manager_address)
+# Resource must include the address of the apat field of their no_op txn
 #if User: application_args = ()
 # User must include the ASA ID in the apas field of their no_op txn
 
+class LocalState:
+    SCHEMA: transaction.StateSchema = transaction.StateSchema(num_uints=1, num_byte_slices=0)
+    class Variables:
+        ASSET: TealType.bytes = Bytes("asset")
+
+class GlobalState:
+    SCHEMA: transaction.StateSchema = transaction.StateSchema(num_uints=0, num_byte_slices=0)
 
 def approval_program():
 
@@ -26,13 +38,11 @@ def approval_program():
             TxnField.config_asset_clawback: Txn.application_args[6]
         }),
         InnerTxnBuilder.Submit(),
-        #TODO: NEEDS TO STORE CREATED ASSET_ID BUT STILL FIGURING IT OUT
-        #App.localPut(Txn.accounts[1], Itob(Int(0)), InnerTxn.created_asset_id()),
-        App.localPut(Txn.accounts[1], Itob(Int(0)), Int(InnerTxn.created_asset_id().field.id)),
+        App.localPut(Txn.accounts[1], LocalState.Variables.ASSET, InnerTxn.created_asset_id()),
         Return(Int(1))
     ])
 
-    user_asa_info = App.localGetEx(Txn.sender(), Int(0), Itob(Int(0)))
+    user_asa_info = App.localGetEx(Txn.sender(), Int(0), LocalState.Variables.ASSET)
     user_has_asa = Seq([
         user_asa_info,
         If(user_asa_info.hasValue(), user_asa_info.value(), Int(0))
@@ -85,10 +95,20 @@ def clear_program():
     return program
 
 
-with open(os.path.join(pathlib.Path(__file__).parent, 'blockin_local_approval.teal'), 'w') as f:
-    compiled = compileTeal(approval_program(), Mode.Application, version=5)
-    f.write(compiled)
+def main():
+    # Compile to TEAL
+    with open(os.path.join(pathlib.Path(__file__).parent, 'blockin_local_approval.teal'), 'w') as f:
+        approval_teal = compileTeal(approval_program(), Mode.Application, version=5)
+        f.write(approval_teal)
 
-with open(os.path.join(pathlib.Path(__file__).parent, 'blockin_local_clear.teal'), 'w') as f:
-    compiled = compileTeal(clear_program(), Mode.Application, version=5)
-    f.write(compiled)
+    with open(os.path.join(pathlib.Path(__file__).parent, 'blockin_local_clear.teal'), 'w') as f:
+        clear_teal = compileTeal(clear_program(), Mode.Application, version=5)
+        f.write(clear_teal)
+
+    # initialize an algodClient
+    algod_client = algod.AlgodClient("API TOKEN", "API_ADDRESS")
+
+    # Create & Deploy the Application
+    deploy(algod_client, "CREATOR_PRIVATE_KEY", approval_teal, clear_teal, GlobalState.SCHEMA, LocalState.SCHEMA)
+
+main()

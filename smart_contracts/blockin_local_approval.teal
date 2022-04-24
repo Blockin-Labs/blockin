@@ -51,8 +51,7 @@ txn Sender
 bnz main_l21
 txn Sender
 int 0
-int 0
-itob
+byte "asset"
 app_local_get_ex
 store 0
 store 1
@@ -109,9 +108,8 @@ txna ApplicationArgs 6
 itxn_field ConfigAssetClawback
 itxn_submit
 txna Accounts 1
-int 0
-itob
-int 60
+byte "asset"
+itxn CreatedAssetID
 app_local_put
 int 1
 return
