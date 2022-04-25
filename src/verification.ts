@@ -79,13 +79,9 @@ async function grantPermissions(assetIds: string[]) {
 }
 
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
-    const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
 
     let accountInfo = (await client.accountInformation(address).do());
     for (const assetId of assetIds) {
-        console.log(whitelistedAssets, assetId);
-        if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */
-
         const requestedAsset = accountInfo.assets.find((elem: any) => elem['asset-id'].toString() === assetId);
 
         if (!requestedAsset) {
@@ -98,7 +94,6 @@ async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
 
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
-
 
 function validateChallenge(challenge: EIP4361Challenge) {
     try {
