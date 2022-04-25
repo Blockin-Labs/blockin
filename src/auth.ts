@@ -24,9 +24,13 @@ catch (e: any) {
 export async function createTxn(assetParams: CreateAssetParamsType): Promise<any> {
     // const decimals = 0
     return await client.createTxn({
-        to: assetParams.to, 
+        from: assetParams.from,
+        to: "Blockin", 
         assetName: assetParams.assetName, 
         assetURL: assetParams.assetURL, 
+        note: "blockin-demo",
+        amount: 1,
+        closeRemainderTo: "AUTH", 
         unitName: assetParams.unitName, 
         decimals: assetParams.decimals,
         total: assetParams.total, 

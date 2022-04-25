@@ -108,10 +108,14 @@ export interface EIP4361Challenge {
 
 // Define required params and allow for extra params
 export type CreateAssetParamsType = {
+    from: string,
     to: string, 
     total: number, 
     decimals: number,
     assetName: string, 
+    note: string,
+    amount: number,
+    closeRemainderTo: string,
     unitName: string, 
     assetURL: string, 
     assetMetadataHash: string | Uint8Array, 
