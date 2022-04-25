@@ -4,26 +4,29 @@
 
 import { IClient } from "./types";
 
-export class Blockin {
-    client: IClient;
-    wallet: any;
+let client: IClient | undefined = undefined
 
-    constructor(client: IClient, wallet: any) {
-        this.client = client
-        this.wallet = wallet
-    }
+export function setClient(client: IClient) {
+    client = client
+}
 
-    /**
-     * Encodes a string message as UTF-8 and converts to SHA256 hash as an ArrayBuffer.
-     * Then converts ArrayBuffer to an Array
-     * @param message The string to covert
-     * @returns SHA256 hash of message, as an array
-     */
-    public async sha256(message: string): Promise<Uint8Array> {
-        const msgBuffer = new TextEncoder().encode(message);    // encode as UTF-8               
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);    // hash the message
-        return new Uint8Array(hashBuffer);   // Convert ArrayBuffer to Array
+export function getClient() {
+    if (!client) {
+        throw "ERROR: Client is undefined"
     }
+    return client
+}
+
+/**
+ * Encodes a string message as UTF-8 and converts to SHA256 hash as an ArrayBuffer.
+ * Then converts ArrayBuffer to an Array
+ * @param message The string to covert
+ * @returns SHA256 hash of message, as an array
+ */
+export async function sha256(message: string): Promise<Uint8Array> {
+    const msgBuffer = new TextEncoder().encode(message);    // encode as UTF-8               
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);    // hash the message
+    return new Uint8Array(hashBuffer);   // Convert ArrayBuffer to Array
 }
 
 // /**

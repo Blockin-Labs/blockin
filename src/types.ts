@@ -35,37 +35,19 @@ interface ISendTx {
 }
 
 interface ICreateTxn {
-    (createTxParams: {
-        from: string;
-        total: number | bigint;
-        decimals: number;
-        assetName: string;
-        unitName: string;
-        assetURL: string;
-        assetMetadataHash: string | Uint8Array;
-        defaultFrozen: boolean;
-        freeze: string;
-        manager: string;
-        clawback: string;
-        reserve: string;
-    }): Promise<any>
+    (assetParams: CreateAssetParamsType): Promise<any>
 }
 
 interface IMakePaymentTxn {
     (from: string, to: string, amount: number | bigint, note: string): Promise<any>
 }
 
+interface IMakeAssetOptInTxn {
+    (assetParams: OptInAssetParamsType): Promise<any>
+}
+
 interface IMakeAssetTransferTxn {
-    (
-        from: string,
-        to: string,
-        closeRemainderTo: string | undefined,
-        revocationTarget: string | undefined,
-        amount: number | bigint,
-        note: Uint8Array | undefined,
-        assetIndex: number,
-        rekeyTo?: string | undefined
-    ): Promise<any>
+    (assetParams: TransferAssetParamsType): Promise<any>
 }
 
 interface IGetOriginalSignature {
@@ -101,6 +83,7 @@ export interface IClient {
     sendTx: ISendTx,
     createTxn: ICreateTxn,
     makePaymentTxn: IMakePaymentTxn,
+    makeAssetOptInTxn: IMakeAssetOptInTxn,
     makeAssetTransferTxn: IMakeAssetTransferTxn,
     getOriginalSignature: IGetOriginalSignature,
     getSignature: IGetSignature,
@@ -121,4 +104,34 @@ export interface EIP4361Challenge {
     notBefore?: string;             // Same as issuedAt
     // requestId?: string;          // Said it was optional and for simplicity, I am leaving out
     resources?: string[];           // We will use this field for the requested asset IDs, thus it is marked as required
+}
+
+// Define required params and allow for extra params
+export type CreateAssetParamsType = {
+    to: string, 
+    total: number, 
+    decimals: number,
+    assetName: string, 
+    unitName: string, 
+    assetURL: string, 
+    assetMetadataHash: string | Uint8Array, 
+    extras?: any
+}
+
+export type OptInAssetParamsType = {
+    to: string,
+    assetIndex: number,
+    amount?: number | bigint,
+    note?: Uint8Array | undefined,
+}
+
+export type TransferAssetParamsType = {
+    to: string,
+    from: string,
+    closeRemainderTo: string | undefined,
+    revocationTarget: string | undefined,
+    amount: number | bigint,
+    note: Uint8Array | undefined,
+    assetIndex: number,
+    extras: any
 }

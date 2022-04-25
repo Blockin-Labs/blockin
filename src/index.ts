@@ -1,4 +1,4 @@
-export { IClient } from './types'
-export { Blockin } from './blockin' // sha256AsString
-export { Creator } from './creator'
-export { Verifier } from './verifier'
+export { IClient, CreateAssetParamsType } from './types'
+export { setClient, getClient, sha256 } from './blockin' // sha256AsString
+export { createTxn, createOptInTxn, makeAssetTransferTxn, sendTx } from './auth'
+export { createChallenge, createUnsignedTxn, verifyChallenge } from './verify'
