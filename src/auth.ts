@@ -1,6 +1,7 @@
 // This file handles creating, opting in to, and transfering an auth asset from resource to owner
 import { getClient } from "./blockin";
-import { IClient, CreateAssetParams, OptInAssetParams, TransferAssetParams } from "./types";
+import { IClient } from './@types/Client'
+import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams } from "./@types/auth";
 
 try {
     var client: IClient = getClient()
@@ -47,10 +48,11 @@ export async function createAssetTxn(createAssetParams: CreateAssetParams): Prom
  * Generates an unsigned asset opt-in transaction, to be signed and sent to the algorand network
  * @returns an unsigned asset opt-in transaction
  */
-export async function createAssetOptInTxn(optInAssetParams: OptInAssetParams): Promise<any> {
+export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetParams): Promise<any> {
     const {
         to,
         from = to,
+        amount = 1,
         assetIndex,
         extras = undefined
     } = optInAssetParams
@@ -58,6 +60,7 @@ export async function createAssetOptInTxn(optInAssetParams: OptInAssetParams): P
     return await client.makeAssetOptInTxn({
         to,
         from,
+        amount,
         assetIndex,
         ...extras
     });
@@ -67,7 +70,7 @@ export async function createAssetOptInTxn(optInAssetParams: OptInAssetParams): P
  * Generates an unsigned asset transfer transaction, to be signed and sent to the algorand network
  * @returns an unsigned asset transfer transaction
  */
- export async function createAssetTransferTxn(transferAssetParams: TransferAssetParams): Promise<any> {
+ export async function createAssetTransferTxn(transferAssetParams: CreateTransferAssetParams): Promise<any> {
     const {
         to,
         from,
@@ -87,6 +90,6 @@ export async function createAssetOptInTxn(optInAssetParams: OptInAssetParams): P
     });
 }
 
-export async function sendAssetTxn(stxs: Uint8Array | Uint8Array[]) {
-    return await client.sendTxn(stxs)
+export async function sendAssetTxn(stx: Uint8Array) {
+    return await client.sendTxn(stx)
 }

@@ -1,4 +1,37 @@
-export { IClient } from './types'
-export { setClient, getClient } from './blockin' 
-export { createAssetTxn, createAssetOptInTxn, createAssetTransferTxn, sendAssetTxn} from './auth'
-export { createChallenge, createUnsignedPaymentTxn, verifyChallenge } from './verify'
+export { 
+    IClient, 
+    MakeAssetParams, 
+    MakeOptInAssetParams, 
+    MakePaymentParams, 
+    MakeTransferAssetParams 
+} from './@types/Client'
+
+export {
+    CreateAssetParams, 
+    CreatePaymentParams, 
+    CreateOptInAssetParams, 
+    CreateTransferAssetParams, 
+} from './@types/auth'
+
+export {
+    EIP4361Challenge,
+    ChallengeParams
+} from './@types/verify'
+
+export { 
+    setClient, 
+    getClient 
+} from './blockin' 
+
+export { 
+    createAssetTxn, 
+    createAssetOptInTxn, 
+    createAssetTransferTxn, 
+    sendAssetTxn
+} from './auth'
+
+export { 
+    createChallenge, 
+    createPaymentTxn, 
+    verifyChallenge 
+} from './verify'

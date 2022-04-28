@@ -1,4 +1,4 @@
-import { IClient } from "./types";
+import { IClient } from "./@types/Client";
 
 let client: IClient | undefined = undefined
 

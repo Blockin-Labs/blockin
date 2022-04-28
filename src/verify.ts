@@ -1,7 +1,8 @@
 import nacl from "tweetnacl";
 import { getClient } from "./blockin";
-import { ChallengeParams, CreatePaymentParams, EIP4361Challenge, IClient } from "./types";
-
+import { IClient } from './@types/Client'
+import { CreatePaymentParams } from "./@types/auth";
+import { ChallengeParams, EIP4361Challenge } from './@types/verify'
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
@@ -85,7 +86,7 @@ export async function createPaymentTxn(createPaymentParams: CreatePaymentParams)
         note,
         extras
     })
-    return client.getUnsignedTxnAsStr(challenge)
+    return client.convertTxnToStr(challenge)
 }
 
 /**
@@ -128,10 +129,8 @@ export async function verifyChallenge(unsignedChallenge: Uint8Array, signedChall
 }
 
 async function verifyChallengeNonce(nonce: number): Promise<boolean> {
-    let blockData = await client.getBlock(nonce)
-    let blockTimestamp = blockData.block.ts;
+    let blockTimestamp = await client.getBlockTimestamp(nonce)
     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
-
     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
 }
 
@@ -189,8 +188,6 @@ function validateChallenge(challenge: EIP4361Challenge) {
 
 async function getChallengeNonce(): Promise<number> {
     let status = await client.getStatus()
-    // console.log(status);
-
     return Number(status['last-round']);
 }
 
@@ -300,7 +297,7 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
 
 /** The functions in this section are left up to the resource server's implementation. */
 async function verifyChallengeSignature(unsignedChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
-    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, client.decodeAddressGetPubKey(originalAddress))) {
+    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, client.getPublicKey(originalAddress))) {
         throw 'Invalid signature';
     }
 }
@@ -308,12 +305,12 @@ async function verifyChallengeSignature(unsignedChallengeToUint8Array: Uint8Arra
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
     const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
 
-    let accountInfo = (await client.getAccountInfo(address));
+    let assets = (await client.getAssets(address));
     for (const assetId of assetIds) {
         console.log(whitelistedAssets, assetId);
         if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */
 
-        const requestedAsset = accountInfo.assets.find((elem: any) => elem['asset-id'].toString() === assetId);
+        const requestedAsset = assets.find((elem: any) => elem['asset-id'].toString() === assetId);
 
         if (!requestedAsset) {
             throw `Address ${address} does not own requested asset : ${assetId}`;
