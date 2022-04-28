@@ -1,4 +1,4 @@
-export { IClient, CreateAssetParamsType } from './types'
+export { IClient } from './types'
 export { setClient, getClient } from './blockin' 
-export { createTxn, createOptInTxn, makeAssetTransferTxn, sendTx } from './auth'
-export { createChallenge, createUnsignedTxn, verifyChallenge } from './verify'
+export { createAssetTxn, createAssetOptInTxn, createAssetTransferTxn, sendAssetTxn} from './auth'
+export { createChallenge, createUnsignedPaymentTxn, verifyChallenge } from './verify'

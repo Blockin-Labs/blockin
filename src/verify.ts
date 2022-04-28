@@ -1,6 +1,6 @@
 import nacl from "tweetnacl";
 import { getClient } from "./blockin";
-import { EIP4361Challenge, IClient } from "./types";
+import { ChallengeParams, CreatePaymentParams, EIP4361Challenge, IClient } from "./types";
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
@@ -14,25 +14,41 @@ catch (e: any) {
 
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
-export async function createChallenge(
-    domain: string,
-    statement: string,
-    address: string,
-    uri: string,
-    expirationDate?: string,
-    notBefore?: string,
-    resources?: string[]
-) {
+/**
+ * Creates a challenge to be signed by Wallet Provider to prove identity
+ * @param domain 
+ * @param statement 
+ * @param address 
+ * @param uri 
+ * @param expirationDate 
+ * @param notBefore 
+ * @param resources 
+ * @returns 
+ */
+export async function createChallenge(challengeParams: ChallengeParams) {
+    const {
+        domain,
+        statement,
+        address,
+        uri,
+        version = "1",
+        chainId = "1",
+        issuedAt = new Date().toISOString(),
+        expirationDate = "",
+        notBefore = "",
+        resources = undefined
+    } = challengeParams
+
     try {
         const challenge: EIP4361Challenge = {
             domain,
             statement,
             address,
             uri,
-            version: "1",
-            chainId: "1",
+            version,
+            chainId,
             nonce: await getChallengeNonce(),
-            issuedAt: new Date().toISOString(),
+            issuedAt,
             expirationDate,
             notBefore,
             resources
@@ -46,26 +62,58 @@ export async function createChallenge(
     }
 }
 
-export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array) {
+/**
+ * Creates a dummy unsiged payment txn sending 0 from wallet to wallet
+ * Wallet Provider can then sign this dummy txn to prove their identity
+ * @param account 
+ * @param message 
+ * @returns 
+ */
+export async function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<string> {
+    const {
+        to,
+        from = to,
+        amount = 1,
+        note = 'This is a payment txn created with Blockin',
+        extras = undefined
+    } = createPaymentParams
+
+    const challenge = await client.makePaymentTxn({
+        to,
+        from,
+        amount,
+        note,
+        extras
+    })
+    return client.getUnsignedTxnAsStr(challenge)
+}
+
+/**
+ * Verifies that the challenge was signed by the account belonging to the asset
+ * @param unsignedChallenge 
+ * @param signedChallenge 
+ * @returns 
+ */
+export async function verifyChallenge(unsignedChallenge: Uint8Array, signedChallenge: Uint8Array) {
     try {
         /*
             Make sure getChallengeString() is consistent with your implementation.
 
-            If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
+            If unsignedChallenge is a stringified JSON and you need to parse the challenge string out of it,
             this is where to implement it.
 
-            If originalChallenge is already the challenge string, just return the inputted parameter.
+            If unsignedChallenge is already the challenge string, just return the inputted parameter.
         */
-        const generatedEIP4361ChallengeStr: string = await getChallengeString(originalChallenge);
+        const generatedEIP4361ChallengeStr: string = await getChallengeString(unsignedChallenge);
 
         const challenge: EIP4361Challenge = createMessageFromString(generatedEIP4361ChallengeStr);
         validateChallenge(challenge);
         console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
-        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+        // const unsignedChallengeToUint8Array = new TextEncoder().encode(unsignedChallenge);
 
         const originalAddress = challenge.address;
-        await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
+        await verifyChallengeSignature(unsignedChallenge, signedChallenge, originalAddress)
         console.log("Success: Signature matches address specified within the challenge.");
 
         if (challenge.resources) {
@@ -77,13 +125,6 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     } catch (error) {
         return `Error: ${error}`;
     }
-}
-
-export async function createUnsignedTxn(account: string, message: string) {
-    const originalChallenge = await client.makePaymentTxn(account, account, 0, message)
-    return client.getUnsignedTxnAsStr(originalChallenge)
-    // const signedChallenge = await wallet.signTxn(unsighedTxnStr, message)
-    // return { originalChallenge, signedChallenge }
 }
 
 async function verifyChallengeNonce(nonce: number): Promise<boolean> {
@@ -258,8 +299,8 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
 }
 
 /** The functions in this section are left up to the resource server's implementation. */
-async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
-    if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, client.decodeAddressGetPubKey(originalAddress))) {
+async function verifyChallengeSignature(unsignedChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
+    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, client.decodeAddressGetPubKey(originalAddress))) {
         throw 'Invalid signature';
     }
 }
