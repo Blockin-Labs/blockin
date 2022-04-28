@@ -18,10 +18,10 @@ export type ChallengeParams = {
     statement: string,
     address: string,
     uri: string,
-    version: string,
-    chainId: string,
-    issuedAt: string,
-    expirationDate: string,
-    notBefore: string,
-    resources: any
+    version?: string,
+    chainId?: string,
+    issuedAt?: string,
+    expirationDate?: string,
+    notBefore?: string,
+    resources?: any
 }

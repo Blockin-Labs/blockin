@@ -27,7 +27,7 @@ export {
     createAssetTxn, 
     createAssetOptInTxn, 
     createAssetTransferTxn, 
-    sendAssetTxn
+    sendTxn
 } from './auth'
 
 export { 

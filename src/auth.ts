@@ -90,6 +90,6 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     });
 }
 
-export async function sendAssetTxn(stx: Uint8Array) {
+export async function sendTxn(stx: Uint8Array) {
     return await client.sendTxn(stx)
 }

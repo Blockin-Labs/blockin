@@ -3,6 +3,7 @@ import { getClient } from "./blockin";
 import { IClient } from './@types/Client'
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
+import { decodeUnsignedTransaction, encodeUnsignedTransaction } from "algosdk";
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
@@ -70,7 +71,7 @@ export async function createChallenge(challengeParams: ChallengeParams) {
  * @param message 
  * @returns 
  */
-export async function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<string> {
+export async function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<any> {
     const {
         to,
         from = to,
@@ -86,7 +87,7 @@ export async function createPaymentTxn(createPaymentParams: CreatePaymentParams)
         note,
         extras
     })
-    return client.convertTxnToStr(challenge)
+    return challenge
 }
 
 /**
@@ -95,7 +96,7 @@ export async function createPaymentTxn(createPaymentParams: CreatePaymentParams)
  * @param signedChallenge 
  * @returns 
  */
-export async function verifyChallenge(unsignedChallenge: Uint8Array, signedChallenge: Uint8Array) {
+export async function verifyChallenge(unsignedChallenge: any, signedChallenge: Uint8Array) {
     try {
         /*
             Make sure getChallengeString() is consistent with your implementation.
@@ -105,7 +106,7 @@ export async function verifyChallenge(unsignedChallenge: Uint8Array, signedChall
 
             If unsignedChallenge is already the challenge string, just return the inputted parameter.
         */
-        const generatedEIP4361ChallengeStr: string = await getChallengeString(unsignedChallenge);
+        const generatedEIP4361ChallengeStr: string = await getChallengeString(encodeUnsignedTransaction(unsignedChallenge));
 
         const challenge: EIP4361Challenge = createMessageFromString(generatedEIP4361ChallengeStr);
         validateChallenge(challenge);
