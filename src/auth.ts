@@ -1,13 +1,11 @@
 // This file handles creating, opting in to, and transfering an auth asset from resource to owner
-import { getClient } from "./blockin";
 import { IClient } from './@types/Client'
 import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams } from "./@types/auth";
 
-try {
-    var client: IClient = getClient()
-}
-catch (e: any) {
-    console.log(e)
+var client: IClient
+
+export function initializeAuth(client: IClient) {
+    client = client
 }
 
 /**

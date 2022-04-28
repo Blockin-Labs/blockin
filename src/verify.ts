@@ -1,5 +1,4 @@
 import nacl from "tweetnacl";
-import { getClient } from "./blockin";
 import { IClient } from './@types/Client'
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
@@ -7,11 +6,10 @@ import { decodeUnsignedTransaction, encodeUnsignedTransaction } from "algosdk";
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
-try {
-    var client: IClient = getClient()
-}
-catch (e: any) {
-    console.log(e)
+var client: IClient
+
+export function initializeVerify(client: IClient) {
+    client = client
 }
 
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
