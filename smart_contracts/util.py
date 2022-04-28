@@ -20,7 +20,7 @@ def create_app(client, private_key, approval_program, clear_program, global_sche
     sender = account.address_from_private_key(private_key)
 
     # declare on_complete as NoOp
-    on_complete = transaction.OnComplete.NoOpOC.real
+    on_complete = transaction.OnComplete.UpdateApplicationOC.real
 
     # get node suggested parameters
     params = client.suggested_params()

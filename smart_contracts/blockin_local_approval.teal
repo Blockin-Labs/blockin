@@ -48,36 +48,35 @@ main_l14:
 global CreatorAddress
 txn Sender
 ==
-bnz main_l21
+bnz main_l18
 txn Sender
-int 0
+global CurrentApplicationID
 byte "asset"
 app_local_get_ex
 store 0
 store 1
 load 0
-bnz main_l20
-int 0
-main_l17:
-bnz main_l19
+bnz main_l17
 err
-main_l19:
+main_l17:
+global CurrentApplicationID
+txna Assets 0
+asset_holding_get AssetBalance
+store 2
+store 3
 itxn_begin
 int axfer
 itxn_field TypeEnum
 txn Sender
 itxn_field AssetReceiver
-int 1000
+load 3
 itxn_field AssetAmount
 load 1
 itxn_field XferAsset
 itxn_submit
 int 1
 return
-main_l20:
-load 1
-b main_l17
-main_l21:
+main_l18:
 txn NumAppArgs
 int 7
 ==
