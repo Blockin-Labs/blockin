@@ -1,15 +1,15 @@
 import nacl from "tweetnacl";
-import { IClient } from './@types/Client'
+import { IChainDriver } from './@types/ChainDriver'
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
-import { decodeUnsignedTransaction, encodeUnsignedTransaction } from "algosdk";
+import { encodeUnsignedTransaction } from "algosdk";
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
-var client: IClient
+var chainDriver: IChainDriver
 
-export function initializeVerify(client: IClient) {
-    client = client
+export function initializeVerify(driver: IChainDriver) {
+    chainDriver = driver
 }
 
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
@@ -78,12 +78,12 @@ export async function createPaymentTxn(createPaymentParams: CreatePaymentParams)
         extras = undefined
     } = createPaymentParams
 
-    const challenge = await client.makePaymentTxn({
+    const challenge = await chainDriver.makePaymentTxn({
         to,
         from,
         amount,
         note,
-        extras
+        ...extras
     })
     return challenge
 }
@@ -128,7 +128,7 @@ export async function verifyChallenge(unsignedChallenge: any, signedChallenge: U
 }
 
 async function verifyChallengeNonce(nonce: number): Promise<boolean> {
-    let blockTimestamp = await client.getBlockTimestamp(nonce)
+    let blockTimestamp = await chainDriver.getBlockTimestamp(nonce)
     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
 }
@@ -141,7 +141,7 @@ function validateChallenge(challenge: EIP4361Challenge) {
             throw `Inputted domain (${challenge.domain}) is not a valid URI`;
         }
 
-        if (!client.isValidAddress(challenge.address)) {
+        if (!chainDriver.isValidAddress(challenge.address)) {
             throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
         }
 
@@ -186,7 +186,7 @@ function validateChallenge(challenge: EIP4361Challenge) {
 }
 
 async function getChallengeNonce(): Promise<number> {
-    let status = await client.getStatus()
+    let status = await chainDriver.getStatus()
     return Number(status['last-round']);
 }
 
@@ -296,7 +296,7 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
 
 /** The functions in this section are left up to the resource server's implementation. */
 async function verifyChallengeSignature(unsignedChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
-    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, client.getPublicKey(originalAddress))) {
+    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
         throw 'Invalid signature';
     }
 }
@@ -304,7 +304,7 @@ async function verifyChallengeSignature(unsignedChallengeToUint8Array: Uint8Arra
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
     const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
 
-    let assets = (await client.getAssets(address));
+    let assets = (await chainDriver.getAssets(address));
     for (const assetId of assetIds) {
         console.log(whitelistedAssets, assetId);
         if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */

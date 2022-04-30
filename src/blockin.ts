@@ -1,18 +1,9 @@
-import { IClient } from "./@types/Client";
+import { IChainDriver } from "./@types/ChainDriver";
 import { initializeAuth } from "./auth";
 import { initializeVerify } from "./verify";
 
-let client: IClient | undefined = undefined
-
-export function setClient(client: IClient) {
-    client = client
-    initializeVerify(client)
-    initializeAuth(client)
+export function setChainDriver(driver: IChainDriver) {
+    initializeVerify(driver)
+    initializeAuth(driver)
 }
 
-export function getClient() {
-    if (!client) {
-        throw "ERROR: Client is undefined"
-    }
-    return client
-}

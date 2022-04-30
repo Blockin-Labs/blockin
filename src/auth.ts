@@ -1,11 +1,11 @@
 // This file handles creating, opting in to, and transfering an auth asset from resource to owner
-import { IClient } from './@types/Client'
+import { IChainDriver } from './@types/ChainDriver'
 import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams } from "./@types/auth";
 
-var client: IClient
+var chainDriver: IChainDriver
 
-export function initializeAuth(client: IClient) {
-    client = client
+export function initializeAuth(driver: IChainDriver) {
+    chainDriver = driver
 }
 
 /**
@@ -27,7 +27,7 @@ export async function createAssetTxn(createAssetParams: CreateAssetParams): Prom
         extras = undefined
     } = createAssetParams
 
-    return await client.makeAssetTxn({
+    return await chainDriver.makeAssetTxn({
         from,
         to, 
         assetName,
@@ -55,7 +55,7 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
         extras = undefined
     } = optInAssetParams
 
-    return await client.makeAssetOptInTxn({
+    return await chainDriver.makeAssetOptInTxn({
         to,
         from,
         amount,
@@ -78,7 +78,7 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
         extras = undefined
     } = transferAssetParams
     
-    return await client.makeAssetTransferTxn({
+    return await chainDriver.makeAssetTransferTxn({
         to,
         from,
         amount,
@@ -89,5 +89,5 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
 }
 
 export async function sendTxn(stx: Uint8Array) {
-    return await client.sendTxn(stx)
+    return await chainDriver.sendTxn(stx)
 }

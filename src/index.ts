@@ -1,10 +1,10 @@
 export { 
-    IClient, 
+    IChainDriver, 
     MakeAssetParams, 
     MakeOptInAssetParams, 
     MakePaymentParams, 
     MakeTransferAssetParams 
-} from './@types/Client'
+} from './@types/ChainDriver'
 
 export {
     CreateAssetParams, 
@@ -19,9 +19,12 @@ export {
 } from './@types/verify'
 
 export { 
-    setClient, 
-    getClient 
+    setChainDriver, 
 } from './blockin' 
+
+export {
+    AlgoDriver
+} from './ChainDrivers/AlgoDriver'
 
 export { 
     createAssetTxn, 

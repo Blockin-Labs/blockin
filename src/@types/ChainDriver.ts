@@ -10,7 +10,7 @@ interface IConvertTxnToStr {(txn: any): string}
 interface IIsValidAddress {(address: string): boolean}
 interface IGetPublicKey {(address: string): Uint8Array}
 
-export interface IClient {
+export interface IChainDriver {
     server: string,
     indexerServer: string,
     port: string,
