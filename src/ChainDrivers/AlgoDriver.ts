@@ -122,12 +122,14 @@ export class AlgoDriver implements IChainDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to transfer asset ${assetIndex} to ${to}`)
     }
 
-    async sendTxn(signedTxnResult: any): Promise<any> {
+    async sendTxn(signedTxnResult: any, txnId: string): Promise<any> {
         const txns: Uint8Array[] = signedTxnResult.map((element: any) => {
             return new Uint8Array(Buffer.from(element, "base64"))
         })
         // const encodedStx = new TextEncoder().encode(stx)
-        return await this.client.sendRawTransaction(txns).do();
+        const sentTxn = await this.client.sendRawTransaction(txns).do();
+        await algosdk.waitForConfirmation(this.client, txnId, 4);
+        return sentTxn
     }
 
     async getAssets(address: string): Promise<any> {
@@ -161,7 +163,8 @@ export class AlgoDriver implements IChainDriver {
     private createUniversalTxn(algoTxn: Transaction, message: string): UniversalTxn {
         return {
             txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
-            message
+            message,
+            txnId: algoTxn.txID()
         }
     }
 }

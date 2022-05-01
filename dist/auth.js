@@ -42,6 +42,6 @@ export async function createAssetTransferTxn(transferAssetParams) {
         note,
         assetIndex }, extras));
 }
-export async function sendTxn(stx) {
-    return await chainDriver.sendTxn(stx);
+export async function sendTxn(stx, txnId) {
+    return await chainDriver.sendTxn(stx, txnId);
 }

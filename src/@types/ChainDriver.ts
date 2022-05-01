@@ -1,17 +1,17 @@
 export type UniversalTxn = {
     txn: string;
     message: string;
+    txnId: string
 }
 
 interface IMakeAssetTxn {(assetParams: MakeAssetParams): Promise<UniversalTxn>}
 interface IMakeAssetOptInTxn {(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>}
 interface IMakeAssetTransferTxn {(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>}
 interface IMakePaymentTxn {(assetParams: MakePaymentParams): Promise<UniversalTxn>}
-interface ISendTx {(stx: Uint8Array): Promise<any>}
+interface ISendTx {(stx: Uint8Array, txnId: string): Promise<any>}
 interface IGetAssets {(address: string): Promise<any>}
 interface IGetStatus {(): Promise<Record<string, any>>}
 interface IGetBlock {(nonce: number): Promise<any>}
-interface IConvertTxnToStr {(txn: any): string}
 interface IIsValidAddress {(address: string): boolean}
 interface IGetPublicKey {(address: string): Uint8Array}
 

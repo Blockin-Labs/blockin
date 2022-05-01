@@ -53,12 +53,14 @@ export class AlgoDriver {
             suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to transfer asset ${assetIndex} to ${to}`);
     }
-    async sendTxn(signedTxnResult) {
+    async sendTxn(signedTxnResult, txnId) {
         const txns = signedTxnResult.map((element) => {
             return new Uint8Array(Buffer.from(element, "base64"));
         });
         // const encodedStx = new TextEncoder().encode(stx)
-        return await this.client.sendRawTransaction(txns).do();
+        const sentTxn = await this.client.sendRawTransaction(txns).do();
+        await algosdk.waitForConfirmation(this.client, txnId, 4);
+        return sentTxn;
     }
     async getAssets(address) {
         const accountInfo = await this.client.accountInformation(address).do();
@@ -85,7 +87,8 @@ export class AlgoDriver {
     createUniversalTxn(algoTxn, message) {
         return {
             txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
-            message
+            message,
+            txnId: algoTxn.txID()
         };
     }
 }
