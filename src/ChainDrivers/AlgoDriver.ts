@@ -1,20 +1,18 @@
 import algosdk, { decodeAddress, Transaction } from 'algosdk';
-import { 
-    IChainDriver, 
-    MakeAssetParams, 
-    MakeOptInAssetParams, 
-    MakePaymentParams, 
-    MakeTransferAssetParams 
- } from '../@types/ChainDriver'
+import {
+    IChainDriver,
+    MakeAssetParams,
+    MakeOptInAssetParams,
+    MakePaymentParams,
+    MakeTransferAssetParams,
+    UniversalTxn
+} from '../@types/ChainDriver'
 
 export class AlgoDriver implements IChainDriver {
     server: string = "https://testnet-algorand.api.purestake.io/ps2";
     indexerServer: string = "https://testnet-algorand.api.purestake.io/idx2";
     port: string = "";
-    token: any = {
-        "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"
-    };
-
+    token: any = {"x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"};
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
 
@@ -23,53 +21,53 @@ export class AlgoDriver implements IChainDriver {
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }
 
-    async makeAssetTxn(assetParams: MakeAssetParams) {  
+    async makeAssetTxn(assetParams: MakeAssetParams) {
         const {
             from,
-            to, 
-            assetName, 
-            assetURL, 
+            to,
+            assetName,
+            assetURL,
             note,
             amount,
-            unitName, 
+            unitName,
             decimals,
-            total, 
-            assetMetadataHash, 
-            extras 
-        }  = assetParams
+            total,
+            assetMetadataHash,
+            extras
+        } = assetParams
         // Hash the metadata
         const metaDataBuffer = new TextEncoder().encode(assetMetadataHash);    // encode as UTF-8               
         const metaDataHashBuffer = await crypto.subtle.digest('SHA-256', metaDataBuffer);    // hash the message
         const hashedMetaData = new Uint8Array(metaDataHashBuffer);   // Convert ArrayBuffer to Array
-
         const suggestedParams = await this.getTransactionParams()
-        return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+        const algoTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
             from,
-            to, 
-            assetName, 
-            assetURL, 
+            to,
+            assetName,
+            assetURL,
             note: new TextEncoder().encode(note),
             amount,
-            unitName, 
+            unitName,
             decimals,
-            total, 
+            total,
             assetMetadataHash: hashedMetaData,
             suggestedParams,
             ...extras
         })
+        return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`)
     }
 
     async makePaymentTxn(assetParams: MakePaymentParams) {
         const {
             to,
-            from, 
+            from,
             amount,
             note,
             extras
         } = assetParams
 
         const suggestedParams = await this.getTransactionParams()
-        return algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+        const algoTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
             from,
             to,
             amount,
@@ -77,6 +75,7 @@ export class AlgoDriver implements IChainDriver {
             suggestedParams,
             ...extras
         })
+        return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`)
     }
 
     async makeAssetOptInTxn(assetParams: MakeOptInAssetParams) {
@@ -84,24 +83,20 @@ export class AlgoDriver implements IChainDriver {
             to,
             from,
             amount,
-            assetIndex, 
+            assetIndex,
             extras
         } = assetParams
 
         const suggestedParams = await this.getTransactionParams()
-        const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-            from, 
-            to, 
+        const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+            from,
+            to,
             amount,
             assetIndex,
-            suggestedParams, 
+            suggestedParams,
             ...extras
         });
-        const signTxnObj = {
-            txn: Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64"),
-            message: 'Description of transaction being signed'
-        }
-        return [[signTxnObj]]
+        return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`)
     }
 
     async makeAssetTransferTxn(assetParams: MakeTransferAssetParams) {
@@ -115,7 +110,7 @@ export class AlgoDriver implements IChainDriver {
         } = assetParams
 
         const suggestedParams = await this.getTransactionParams()
-        return algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
             from,
             to,
             amount,
@@ -124,6 +119,7 @@ export class AlgoDriver implements IChainDriver {
             suggestedParams,
             ...extras
         });
+        return this.createUniversalTxn(algoTxn, `Sign this txn to transfer asset ${assetIndex} to ${to}`)
     }
 
     async sendTxn(stx: Uint8Array): Promise<any> {
@@ -160,7 +156,10 @@ export class AlgoDriver implements IChainDriver {
         return decodeAddress(address).publicKey
     }
 
-    convertTxnToStr(txn: Transaction): string {
-        return Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64")
+    private createUniversalTxn(algoTxn: Transaction, message: string): UniversalTxn {
+        return {
+            txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
+            message
+        }
     }
 }

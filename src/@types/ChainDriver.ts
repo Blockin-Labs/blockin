@@ -1,7 +1,12 @@
-interface IMakeAssetTxn {(assetParams: MakeAssetParams): Promise<any>}
-interface IMakeAssetOptInTxn {(assetParams: MakeOptInAssetParams): Promise<any>}
-interface IMakeAssetTransferTxn {(assetParams: MakeTransferAssetParams): Promise<any>}
-interface IMakePaymentTxn {(assetParams: MakePaymentParams): Promise<any>}
+export type UniversalTxn = {
+    txn: string;
+    message: string;
+}
+
+interface IMakeAssetTxn {(assetParams: MakeAssetParams): Promise<UniversalTxn>}
+interface IMakeAssetOptInTxn {(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>}
+interface IMakeAssetTransferTxn {(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>}
+interface IMakePaymentTxn {(assetParams: MakePaymentParams): Promise<UniversalTxn>}
 interface ISendTx {(stx: Uint8Array): Promise<any>}
 interface IGetAssets {(address: string): Promise<any>}
 interface IGetStatus {(): Promise<Record<string, any>>}
@@ -25,7 +30,6 @@ export interface IChainDriver {
     getStatus: IGetStatus,
     getAssets: IGetAssets,
     getBlockTimestamp: IGetBlock,
-    convertTxnToStr: IConvertTxnToStr
     isValidAddress: IIsValidAddress,
     getPublicKey: IGetPublicKey
 }
