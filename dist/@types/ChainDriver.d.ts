@@ -1,14 +1,18 @@
+export declare type UniversalTxn = {
+    txn: string;
+    message: string;
+};
 interface IMakeAssetTxn {
-    (assetParams: MakeAssetParams): Promise<any>;
+    (assetParams: MakeAssetParams): Promise<UniversalTxn>;
 }
 interface IMakeAssetOptInTxn {
-    (assetParams: MakeOptInAssetParams): Promise<any>;
+    (assetParams: MakeOptInAssetParams): Promise<UniversalTxn>;
 }
 interface IMakeAssetTransferTxn {
-    (assetParams: MakeTransferAssetParams): Promise<any>;
+    (assetParams: MakeTransferAssetParams): Promise<UniversalTxn>;
 }
 interface IMakePaymentTxn {
-    (assetParams: MakePaymentParams): Promise<any>;
+    (assetParams: MakePaymentParams): Promise<UniversalTxn>;
 }
 interface ISendTx {
     (stx: Uint8Array): Promise<any>;
@@ -21,9 +25,6 @@ interface IGetStatus {
 }
 interface IGetBlock {
     (nonce: number): Promise<any>;
-}
-interface IConvertTxnToStr {
-    (txn: any): string;
 }
 interface IIsValidAddress {
     (address: string): boolean;
@@ -46,7 +47,6 @@ export interface IChainDriver {
     getStatus: IGetStatus;
     getAssets: IGetAssets;
     getBlockTimestamp: IGetBlock;
-    convertTxnToStr: IConvertTxnToStr;
     isValidAddress: IIsValidAddress;
     getPublicKey: IGetPublicKey;
 }

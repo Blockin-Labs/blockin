@@ -4,9 +4,7 @@ export class AlgoDriver {
         this.server = "https://testnet-algorand.api.purestake.io/ps2";
         this.indexerServer = "https://testnet-algorand.api.purestake.io/idx2";
         this.port = "";
-        this.token = {
-            "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"
-        };
+        this.token = { "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" };
         this.client = new algosdk.Algodv2(this.token, this.server, this.port);
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }
@@ -17,44 +15,43 @@ export class AlgoDriver {
         const metaDataHashBuffer = await crypto.subtle.digest('SHA-256', metaDataBuffer); // hash the message
         const hashedMetaData = new Uint8Array(metaDataHashBuffer); // Convert ArrayBuffer to Array
         const suggestedParams = await this.getTransactionParams();
-        return algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject(Object.assign({ from,
+        const algoTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
             assetName,
             assetURL, note: new TextEncoder().encode(note), amount,
             unitName,
             decimals,
             total, assetMetadataHash: hashedMetaData, suggestedParams }, extras));
+        return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`);
     }
     async makePaymentTxn(assetParams) {
         const { to, from, amount, note, extras } = assetParams;
         const suggestedParams = await this.getTransactionParams();
-        return algosdk.makePaymentTxnWithSuggestedParamsFromObject(Object.assign({ from,
+        const algoTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
             amount, note: new Uint8Array(Buffer.from(note)), suggestedParams }, extras));
+        return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`);
     }
     async makeAssetOptInTxn(assetParams) {
         const { to, from, amount, assetIndex, extras } = assetParams;
         const suggestedParams = await this.getTransactionParams();
-        const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
+        const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
             amount,
             assetIndex,
             suggestedParams }, extras));
-        const signTxnObj = {
-            txn: Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64"),
-            message: 'Description of transaction being signed'
-        };
-        return [[signTxnObj]];
+        return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`);
     }
     async makeAssetTransferTxn(assetParams) {
         const { to, from, amount, note, assetIndex, extras } = assetParams;
         const suggestedParams = await this.getTransactionParams();
-        return algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
+        const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
             amount,
             note,
             assetIndex,
             suggestedParams }, extras));
+        return this.createUniversalTxn(algoTxn, `Sign this txn to transfer asset ${assetIndex} to ${to}`);
     }
     async sendTxn(stx) {
         // const encodedStx = new TextEncoder().encode(stx)
@@ -83,7 +80,10 @@ export class AlgoDriver {
         // return new TextDecoder('utf-8').decode(utfPublicKey)
         return decodeAddress(address).publicKey;
     }
-    convertTxnToStr(txn) {
-        return Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64");
+    createUniversalTxn(algoTxn, message) {
+        return {
+            txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
+            message
+        };
     }
 }
