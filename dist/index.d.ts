@@ -1,4 +1,4 @@
-export { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakePaymentParams, MakeTransferAssetParams } from './@types/ChainDriver';
+export { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from './@types/ChainDriver';
 export { CreateAssetParams, CreatePaymentParams, CreateOptInAssetParams, CreateTransferAssetParams, } from './@types/auth';
 export { EIP4361Challenge, ChallengeParams } from './@types/verify';
 export { setChainDriver, } from './blockin';

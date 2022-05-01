@@ -3,7 +3,8 @@ export {
     MakeAssetParams, 
     MakeOptInAssetParams, 
     MakePaymentParams, 
-    MakeTransferAssetParams 
+    MakeTransferAssetParams,
+    UniversalTxn
 } from './@types/ChainDriver'
 
 export {
