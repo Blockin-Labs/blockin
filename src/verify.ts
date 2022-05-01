@@ -1,5 +1,5 @@
 import nacl from "tweetnacl";
-import { IChainDriver } from './@types/ChainDriver'
+import { IChainDriver, UniversalTxn } from './@types/ChainDriver'
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
 import { encodeUnsignedTransaction } from "algosdk";
@@ -69,7 +69,7 @@ export async function createChallenge(challengeParams: ChallengeParams) {
  * @param message 
  * @returns 
  */
-export async function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<any> {
+export async function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<UniversalTxn> {
     const {
         to,
         from = to,
@@ -78,14 +78,13 @@ export async function createPaymentTxn(createPaymentParams: CreatePaymentParams)
         extras = undefined
     } = createPaymentParams
 
-    const challenge = await chainDriver.makePaymentTxn({
+    return await chainDriver.makePaymentTxn({
         to,
         from,
         amount,
         note,
         ...extras
     })
-    return challenge
 }
 
 /**

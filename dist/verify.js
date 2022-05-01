@@ -51,11 +51,10 @@ export async function createChallenge(challengeParams) {
  */
 export async function createPaymentTxn(createPaymentParams) {
     const { to, from = to, amount = 1, note = 'This is a payment txn created with Blockin', extras = undefined } = createPaymentParams;
-    const challenge = await chainDriver.makePaymentTxn(Object.assign({ to,
+    return await chainDriver.makePaymentTxn(Object.assign({ to,
         from,
         amount,
         note }, extras));
-    return challenge;
 }
 /**
  * Verifies that the challenge was signed by the account belonging to the asset

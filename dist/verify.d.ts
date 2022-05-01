@@ -1,4 +1,4 @@
-import { IChainDriver } from './@types/ChainDriver';
+import { IChainDriver, UniversalTxn } from './@types/ChainDriver';
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
@@ -21,7 +21,7 @@ export declare function createChallenge(challengeParams: ChallengeParams): Promi
  * @param message
  * @returns
  */
-export declare function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<any>;
+export declare function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<UniversalTxn>;
 /**
  * Verifies that the challenge was signed by the account belonging to the asset
  * @param unsignedChallenge
