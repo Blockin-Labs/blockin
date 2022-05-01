@@ -9,7 +9,7 @@ export type CreateAssetParams = {
     unitName?: string, 
     decimals?: number,
     total?: number, 
-    assetMetadataHash?: string | Uint8Array, 
+    assetMetadata?: string, 
     extras?: any
 }
 

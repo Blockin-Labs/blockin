@@ -9,9 +9,9 @@ export class AlgoDriver {
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }
     async makeAssetTxn(assetParams) {
-        const { from, to, assetName, assetURL, note, amount, unitName, decimals, total, assetMetadataHash, extras } = assetParams;
+        const { from, to, assetName, assetURL, note, amount, unitName, decimals, total, assetMetadata, extras } = assetParams;
         // Hash the metadata
-        const metaDataBuffer = new TextEncoder().encode(assetMetadataHash); // encode as UTF-8               
+        const metaDataBuffer = new TextEncoder().encode(assetMetadata); // encode as UTF-8               
         const metaDataHashBuffer = await crypto.subtle.digest('SHA-256', metaDataBuffer); // hash the message
         const hashedMetaData = new Uint8Array(metaDataHashBuffer); // Convert ArrayBuffer to Array
         const suggestedParams = await this.getTransactionParams();

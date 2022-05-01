@@ -23,7 +23,7 @@ export async function createAssetTxn(createAssetParams: CreateAssetParams): Prom
         unitName = '',
         decimals = 0,
         total = 1,
-        assetMetadataHash = '',
+        assetMetadata = '',
         extras = undefined
     } = createAssetParams
 
@@ -37,7 +37,7 @@ export async function createAssetTxn(createAssetParams: CreateAssetParams): Prom
         unitName, 
         decimals,
         total, 
-        assetMetadataHash,
+        assetMetadata,
         ...extras
     });
 }

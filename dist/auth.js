@@ -7,7 +7,7 @@ export function initializeAuth(driver) {
  * @returns an unsigned asset creation transaction
  */
 export async function createAssetTxn(createAssetParams) {
-    const { from, to = 'Blockin', assetName = 'Blockin Access Token', assetURL = '', note = 'This is an access token created with Blockin', amount = 1, unitName = '', decimals = 0, total = 1, assetMetadataHash = '', extras = undefined } = createAssetParams;
+    const { from, to = 'Blockin', assetName = 'Blockin Access Token', assetURL = '', note = 'This is an access token created with Blockin', amount = 1, unitName = '', decimals = 0, total = 1, assetMetadata = '', extras = undefined } = createAssetParams;
     return await chainDriver.makeAssetTxn(Object.assign({ from,
         to,
         assetName,
@@ -17,7 +17,7 @@ export async function createAssetTxn(createAssetParams) {
         unitName,
         decimals,
         total,
-        assetMetadataHash }, extras));
+        assetMetadata }, extras));
 }
 /**
  * Generates an unsigned asset opt-in transaction, to be signed and sent to the algorand network

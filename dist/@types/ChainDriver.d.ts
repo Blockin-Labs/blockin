@@ -61,7 +61,7 @@ export declare type MakeAssetParams = {
     unitName: string;
     decimals: number;
     total: number;
-    assetMetadataHash: string;
+    assetMetadata: string;
     extras: any;
 };
 export declare type MakeOptInAssetParams = {
