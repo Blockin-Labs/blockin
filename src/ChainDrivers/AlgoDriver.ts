@@ -57,6 +57,7 @@ export class AlgoDriver implements IChainDriver {
             decimals,
             total,
             // assetMetadataHash: hashedMetaData,
+            assetMetadataHash: assetMetadata,
             suggestedParams,
             ...extras
         })
