@@ -1,0 +1,114 @@
+#pragma version 5
+txn OnCompletion
+int NoOp
+==
+bnz main_l14
+txn OnCompletion
+int OptIn
+==
+bnz main_l13
+txn OnCompletion
+int CloseOut
+==
+bnz main_l12
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l9
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l6
+err
+main_l6:
+global CreatorAddress
+txn Sender
+==
+bnz main_l8
+err
+main_l8:
+int 1
+return
+main_l9:
+global CreatorAddress
+txn Sender
+==
+bnz main_l11
+err
+main_l11:
+int 1
+return
+main_l12:
+int 1
+return
+main_l13:
+int 1
+return
+main_l14:
+global CreatorAddress
+txn Sender
+==
+bnz main_l18
+txn Sender
+global CurrentApplicationID
+byte "asset"
+app_local_get_ex
+store 0
+store 1
+load 0
+bnz main_l17
+err
+main_l17:
+global CurrentApplicationID
+txna Assets 0
+asset_holding_get AssetBalance
+store 2
+store 3
+itxn_begin
+int axfer
+itxn_field TypeEnum
+txn Sender
+itxn_field AssetReceiver
+load 3
+itxn_field AssetAmount
+load 1
+itxn_field XferAsset
+itxn_submit
+int 1
+return
+main_l18:
+txn NumAppArgs
+int 7
+==
+assert
+itxn_begin
+int acfg
+itxn_field TypeEnum
+txna ApplicationArgs 1
+btoi
+itxn_field ConfigAssetTotal
+int 0
+itxn_field ConfigAssetDecimals
+txna ApplicationArgs 2
+itxn_field ConfigAssetUnitName
+txna ApplicationArgs 3
+itxn_field ConfigAssetName
+txna ApplicationArgs 4
+itxn_field ConfigAssetURL
+txna ApplicationArgs 5
+itxn_field ConfigAssetMetadataHash
+txna ApplicationArgs 6
+itxn_field ConfigAssetManager
+txna ApplicationArgs 6
+itxn_field ConfigAssetReserve
+txna ApplicationArgs 6
+itxn_field ConfigAssetFreeze
+txna ApplicationArgs 6
+itxn_field ConfigAssetClawback
+itxn_submit
+txna Accounts 1
+byte "asset"
+itxn CreatedAssetID
+app_local_put
+int 1
+return

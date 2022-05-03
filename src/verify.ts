@@ -136,8 +136,16 @@ async function verifyChallengeNonce(nonce: number): Promise<boolean> {
     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
 }
 
+/** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
+async function grantPermissions(assetIds: string[]) {
+    for (const asset of assetIds) {
+        console.log("User has been granted privileges of " + asset);
+    }
+}
+
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
+
 function validateChallenge(challenge: EIP4361Challenge) {
     try {
         if (!URI_REGEX.test(challenge.domain)) {
@@ -322,9 +330,3 @@ async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
     }
 }
 
-/** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
-function grantPermissions(assetIds: string[]) {
-    for (const asset of assetIds) {
-        console.log("User has been granted privileges of " + asset);
-    }
-}
