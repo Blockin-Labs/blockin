@@ -12,6 +12,10 @@ export function initializeVerify(driver: IChainDriver) {
     chainDriver = driver
 }
 
+export async function getAssetDetails(txnId: string) {
+    return await chainDriver.getAssetDetails(txnId)
+}
+
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
 /**

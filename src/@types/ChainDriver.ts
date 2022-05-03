@@ -15,6 +15,7 @@ interface IGetStatus {(): Promise<Record<string, any>>}
 interface IGetBlock {(nonce: number): Promise<any>}
 interface IIsValidAddress {(address: string): boolean}
 interface IGetPublicKey {(address: string): Uint8Array}
+interface IGetAssetDetails {(txnId: string): Promise<any>}
 
 export interface IChainDriver {
     server: string,
@@ -32,7 +33,8 @@ export interface IChainDriver {
     getAssets: IGetAssets,
     getBlockTimestamp: IGetBlock,
     isValidAddress: IIsValidAddress,
-    getPublicKey: IGetPublicKey
+    getPublicKey: IGetPublicKey,
+    getAssetDetails: IGetAssetDetails
 }
 
 export type MakeAssetParams = {
