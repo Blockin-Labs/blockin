@@ -1,4 +1,5 @@
 import algosdk, { decodeAddress } from 'algosdk';
+const { subtle } = require('crypto').webcrypto;
 export class AlgoDriver {
     constructor() {
         this.server = "https://testnet-algorand.api.purestake.io/ps2";
@@ -11,9 +12,9 @@ export class AlgoDriver {
     async makeAssetTxn(assetParams) {
         const { from, to, assetName, assetURL, note, amount, unitName, decimals, total, assetMetadata, extras } = assetParams;
         // Hash the metadata
-        const metaDataBuffer = new TextEncoder().encode(assetMetadata); // encode as UTF-8               
-        const metaDataHashBuffer = await crypto.subtle.digest('SHA-256', metaDataBuffer); // hash the message
-        const hashedMetaData = new Uint8Array(metaDataHashBuffer); // Convert ArrayBuffer to Array
+        // const metaDataBuffer = new TextEncoder().encode(assetMetadata);    // encode as UTF-8  
+        // const metaDataHashBuffer = await subtle.digest('SHA-256', metaDataBuffer);    // hash the message
+        // const hashedMetaData = new Uint8Array(metaDataHashBuffer);   // Convert ArrayBuffer to Array
         const suggestedParams = await this.getTransactionParams();
         const algoTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
@@ -21,7 +22,9 @@ export class AlgoDriver {
             assetURL, note: new TextEncoder().encode(note), amount,
             unitName,
             decimals,
-            total, assetMetadataHash: hashedMetaData, suggestedParams }, extras));
+            total,
+            // assetMetadataHash: hashedMetaData,
+            suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`);
     }
     async makePaymentTxn(assetParams) {
@@ -88,7 +91,8 @@ export class AlgoDriver {
         return {
             txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
             message,
-            txnId: algoTxn.txID()
+            txnId: algoTxn.txID().toString(),
+            nativeTxn: algoTxn
         };
     }
 }

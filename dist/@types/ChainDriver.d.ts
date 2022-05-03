@@ -2,6 +2,7 @@ export declare type UniversalTxn = {
     txn: string;
     message: string;
     txnId: string;
+    nativeTxn: any;
 };
 interface IMakeAssetTxn {
     (assetParams: MakeAssetParams): Promise<UniversalTxn>;

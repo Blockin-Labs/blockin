@@ -84,10 +84,11 @@ export async function verifyChallenge(unsignedChallenge, signedChallenge) {
             await verifyOwnershipOfAssets(challenge.address, challenge.resources);
             grantPermissions(challenge.resources);
         }
-        return `Successfully granted access via Blockin`;
+        return true;
     }
     catch (error) {
-        return `Error: ${error}`;
+        console.log(`Error: ${error}`);
+        return false;
     }
 }
 async function verifyChallengeNonce(nonce) {

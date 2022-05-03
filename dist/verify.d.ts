@@ -28,4 +28,4 @@ export declare function createPaymentTxn(createPaymentParams: CreatePaymentParam
  * @param signedChallenge
  * @returns
  */
-export declare function verifyChallenge(unsignedChallenge: any, signedChallenge: Uint8Array): Promise<string>;
+export declare function verifyChallenge(unsignedChallenge: any, signedChallenge: Uint8Array): Promise<boolean>;
