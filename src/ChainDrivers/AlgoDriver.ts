@@ -37,9 +37,9 @@ export class AlgoDriver implements IChainDriver {
             extras
         } = assetParams
         // Hash the metadata
-        const metaDataBuffer = new TextEncoder().encode(assetMetadata);    // encode as UTF-8  
-        const metaDataHashBuffer = await subtle.digest('SHA-256', metaDataBuffer);    // hash the message
-        const hashedMetaData = new Uint8Array(metaDataHashBuffer);   // Convert ArrayBuffer to Array
+        // const metaDataBuffer = new TextEncoder().encode(assetMetadata);    // encode as UTF-8  
+        // const metaDataHashBuffer = await subtle.digest('SHA-256', metaDataBuffer);    // hash the message
+        // const hashedMetaData = new Uint8Array(metaDataHashBuffer);   // Convert ArrayBuffer to Array
         const suggestedParams = await this.getTransactionParams()
         const algoTxn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
             from,
@@ -51,7 +51,7 @@ export class AlgoDriver implements IChainDriver {
             unitName,
             decimals,
             total,
-            assetMetadataHash: hashedMetaData,
+            // assetMetadataHash: hashedMetaData,
             suggestedParams,
             ...extras
         })
