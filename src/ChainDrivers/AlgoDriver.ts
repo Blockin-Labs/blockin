@@ -7,7 +7,6 @@ import {
     MakeTransferAssetParams,
     UniversalTxn
 } from '../@types/ChainDriver'
-const { subtle } = require('crypto').webcrypto;
 
 export class AlgoDriver implements IChainDriver {
     server: string = "https://testnet-algorand.api.purestake.io/ps2";
