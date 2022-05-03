@@ -1,5 +1,4 @@
 import nacl from "tweetnacl";
-import { encodeUnsignedTransaction } from "algosdk";
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/;
 var chainDriver;
@@ -61,43 +60,48 @@ export async function createPaymentTxn(createPaymentParams) {
 }
 /**
  * Verifies that the challenge was signed by the account belonging to the asset
- * @param unsignedChallenge
+ * @param originalChallenge
  * @param signedChallenge
  * @returns
  */
-export async function verifyChallenge(unsignedChallenge, signedChallenge) {
+export async function verifyChallenge(originalChallenge, signedChallenge) {
     try {
         /*
             Make sure getChallengeString() is consistent with your implementation.
 
-            If unsignedChallenge is a stringified JSON and you need to parse the challenge string out of it,
+            If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
             this is where to implement it.
 
-            If unsignedChallenge is already the challenge string, just return the inputted parameter.
+            If originalChallenge is already the challenge string, just return the inputted parameter.
         */
-        const generatedEIP4361ChallengeStr = await getChallengeString(encodeUnsignedTransaction(unsignedChallenge));
+        const generatedEIP4361ChallengeStr = await getChallengeString(originalChallenge);
         const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
         validateChallenge(challenge);
         console.log("Success: Constructed challenge from string and verified it is well-formed.");
-        // const unsignedChallengeToUint8Array = new TextEncoder().encode(unsignedChallenge);
+        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
         const originalAddress = challenge.address;
-        await verifyChallengeSignature(unsignedChallenge, signedChallenge, originalAddress);
+        await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
         console.log("Success: Signature matches address specified within the challenge.");
         if (challenge.resources) {
             await verifyOwnershipOfAssets(challenge.address, challenge.resources);
             grantPermissions(challenge.resources);
         }
-        return true;
+        return `Successfully granted access via Blockin`;
     }
     catch (error) {
-        console.log(`Error: ${error}`);
-        return false;
+        return `Error: ${error}`;
     }
 }
 async function verifyChallengeNonce(nonce) {
     let blockTimestamp = await chainDriver.getBlockTimestamp(nonce);
     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
+}
+/** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
+async function grantPermissions(assetIds) {
+    for (const asset of assetIds) {
+        console.log("User has been granted privileges of " + asset);
+    }
 }
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
@@ -243,18 +247,14 @@ function createMessageFromString(challenge) {
     return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce };
 }
 /** The functions in this section are left up to the resource server's implementation. */
-async function verifyChallengeSignature(unsignedChallengeToUint8Array, signedChallenge, originalAddress) {
-    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
+async function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
+    if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
         throw 'Invalid signature';
     }
 }
 async function verifyOwnershipOfAssets(address, assetIds) {
-    const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
     let assets = (await chainDriver.getAssets(address));
     for (const assetId of assetIds) {
-        console.log(whitelistedAssets, assetId);
-        if (whitelistedAssets.includes(assetId))
-            continue; //** THIS IS SPECIFIC TO OUR DEMO */
         const requestedAsset = assets.find((elem) => elem['asset-id'].toString() === assetId);
         if (!requestedAsset) {
             throw `Address ${address} does not own requested asset : ${assetId}`;
@@ -262,11 +262,5 @@ async function verifyOwnershipOfAssets(address, assetIds) {
         else {
             console.log(`Success: Found asset in user's wallet: ${assetId}.`);
         }
-    }
-}
-/** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
-function grantPermissions(assetIds) {
-    for (const asset of assetIds) {
-        console.log("User has been granted privileges of " + asset);
     }
 }

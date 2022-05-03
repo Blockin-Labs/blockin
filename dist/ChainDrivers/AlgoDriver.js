@@ -10,7 +10,11 @@ export class AlgoDriver {
     }
     async makeAssetTxn(assetParams) {
         const { from, to, assetName, assetURL, note, amount, unitName, decimals, total, assetMetadata, extras = {
-            defaultFrozen: false
+            defaultFrozen: false,
+            clawback: from,
+            freeze: from,
+            manager: from,
+            reserve: from
         } } = assetParams;
         // Hash the metadata
         // const metaDataBuffer = new TextEncoder().encode(assetMetadata);    // encode as UTF-8  
@@ -25,7 +29,7 @@ export class AlgoDriver {
             decimals,
             total,
             // assetMetadataHash: hashedMetaData,
-            suggestedParams, defaultFrozen: extras.defaultFrozen }, extras));
+            suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`);
     }
     async makePaymentTxn(assetParams) {
@@ -37,25 +41,29 @@ export class AlgoDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`);
     }
     async makeAssetOptInTxn(assetParams) {
-        const { to, from, amount, assetIndex, extras = {
+        const { to, from, assetIndex, extras = {
+            amount: 0,
+            note: undefined,
             closeRemainderTo: undefined,
             revocationTarget: undefined
         } } = assetParams;
         const suggestedParams = await this.getTransactionParams();
         const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
-            amount,
             assetIndex,
-            suggestedParams, closeRemainderTo: extras.closeRemainderTo, revocationTarget: extras.revocationTarget }, extras));
+            suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`);
     }
     async makeAssetTransferTxn(assetParams) {
-        const { to, from, amount, note, assetIndex, extras } = assetParams;
+        const { to, from, assetIndex, extras = {
+            amount: 1,
+            note: 'Transfer this asset',
+            closeRemainderTo: undefined,
+            revocationTarget: undefined
+        } } = assetParams;
         const suggestedParams = await this.getTransactionParams();
         const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
-            amount,
-            note,
             assetIndex,
             suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to transfer asset ${assetIndex} to ${to}`);

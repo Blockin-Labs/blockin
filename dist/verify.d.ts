@@ -25,8 +25,8 @@ export declare function createChallenge(challengeParams: ChallengeParams): Promi
 export declare function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<UniversalTxn>;
 /**
  * Verifies that the challenge was signed by the account belonging to the asset
- * @param unsignedChallenge
+ * @param originalChallenge
  * @param signedChallenge
  * @returns
  */
-export declare function verifyChallenge(unsignedChallenge: any, signedChallenge: Uint8Array): Promise<boolean>;
+export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array): Promise<string>;

@@ -72,7 +72,6 @@ export declare type MakeAssetParams = {
 export declare type MakeOptInAssetParams = {
     to: string;
     from: string;
-    amount: number | bigint;
     assetIndex: number;
     extras: any;
 };
