@@ -1,5 +1,4 @@
 import algosdk, { decodeAddress } from 'algosdk';
-const { subtle } = require('crypto').webcrypto;
 export class AlgoDriver {
     constructor() {
         this.server = "https://testnet-algorand.api.purestake.io/ps2";
