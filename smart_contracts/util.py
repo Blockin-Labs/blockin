@@ -66,3 +66,4 @@ def deploy(algod_client, creator_private_key, approval_teal, clear_teal, global_
     app_id = create_app(algod_client, creator_private_key, approval_program_compiled, clear_state_program_compiled, global_schema, local_schema)
 
     print(f"Deployed app with id: {app_id}")
+    return app_id

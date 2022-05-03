@@ -104,7 +104,7 @@ def clear_program():
     return program
 
 
-def main():
+def create(API_TOKEN, API_URL, MNEMONIC, upload=False):
     # Compile to TEAL
     with open(os.path.join(pathlib.Path(__file__).parent, 'blockin_local_approval.teal'), 'w') as f:
         approval_teal = compileTeal(
@@ -115,18 +115,12 @@ def main():
         clear_teal = compileTeal(clear_program(), Mode.Application, version=5)
         f.write(clear_teal)
 
-    if True:
-        API_TOKEN = "YOUR API TOKEN"
-        API_URL = "YOUR API URL"
-        MNEMONIC = "YOUR ADDRESS MNEMONIC"
+    if upload:
         
         # initialize an algodClient
         algod_client = algod.AlgodClient(API_TOKEN, API_URL, {
             "x-api-key": API_TOKEN})
 
         # Create & Deploy the Application
-        deploy(algod_client, get_private_key_from_mnemonic(MNEMONIC),
+        return deploy(algod_client, get_private_key_from_mnemonic(MNEMONIC),
                approval_teal, clear_teal, GlobalState.SCHEMA, LocalState.SCHEMA)
-
-
-main()

@@ -1,0 +1,237 @@
+#pragma version 5
+txn OnCompletion
+int NoOp
+==
+bnz main_l14
+txn OnCompletion
+int OptIn
+==
+bnz main_l13
+txn OnCompletion
+int CloseOut
+==
+bnz main_l12
+txn OnCompletion
+int UpdateApplication
+==
+bnz main_l9
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l6
+err
+main_l6:
+global CreatorAddress
+txn Sender
+==
+bnz main_l8
+err
+main_l8:
+int 1
+return
+main_l9:
+global CreatorAddress
+txn Sender
+==
+bnz main_l11
+err
+main_l11:
+int 1
+return
+main_l12:
+int 1
+return
+main_l13:
+int 1
+return
+main_l14:
+global CreatorAddress
+txn Sender
+==
+bnz main_l24
+int 64
+store 0
+int 0
+store 1
+main_l16:
+load 1
+int 64
+<
+bnz main_l20
+main_l17:
+load 0
+int 64
+==
+bnz main_l19
+global CurrentApplicationID
+txna Assets 0
+asset_holding_get AssetBalance
+store 5
+store 6
+load 5
+assert
+itxn_begin
+int axfer
+itxn_field TypeEnum
+txn Sender
+itxn_field AssetReceiver
+load 6
+itxn_field AssetAmount
+byte "asset_"
+load 0
+itob
+concat
+app_global_get
+int 32
+int 8
+extract3
+btoi
+itxn_field XferAsset
+itxn_submit
+int 1
+return
+main_l19:
+err
+main_l20:
+byte "asset_"
+load 1
+itob
+concat
+app_global_get
+int 0
+!=
+bnz main_l22
+main_l21:
+load 1
+int 1
++
+store 1
+b main_l16
+main_l22:
+byte "asset_"
+load 1
+itob
+concat
+app_global_get
+store 2
+load 2
+int 0
+int 32
+extract3
+txn Sender
+==
+bz main_l21
+load 1
+store 0
+b main_l17
+main_l24:
+int 64
+store 0
+global Round
+store 4
+int 0
+store 1
+main_l25:
+load 1
+int 64
+<
+bnz main_l29
+main_l26:
+load 0
+int 64
+==
+bnz main_l28
+txn NumAppArgs
+int 7
+==
+assert
+itxn_begin
+int acfg
+itxn_field TypeEnum
+txna ApplicationArgs 1
+btoi
+itxn_field ConfigAssetTotal
+int 0
+itxn_field ConfigAssetDecimals
+txna ApplicationArgs 2
+itxn_field ConfigAssetUnitName
+txna ApplicationArgs 3
+itxn_field ConfigAssetName
+txna ApplicationArgs 4
+itxn_field ConfigAssetURL
+txna ApplicationArgs 5
+itxn_field ConfigAssetMetadataHash
+txna ApplicationArgs 6
+itxn_field ConfigAssetManager
+txna ApplicationArgs 6
+itxn_field ConfigAssetReserve
+txna ApplicationArgs 6
+itxn_field ConfigAssetFreeze
+txna ApplicationArgs 6
+itxn_field ConfigAssetClawback
+itxn_submit
+byte "asset_"
+load 0
+itob
+concat
+txna ApplicationArgs 0
+itxn CreatedAssetID
+itob
+concat
+global Round
+itob
+concat
+app_global_put
+int 1
+return
+main_l28:
+err
+main_l29:
+byte "asset_"
+load 1
+itob
+concat
+app_global_get
+int 0
+!=
+bnz main_l31
+load 1
+store 0
+b main_l26
+main_l31:
+byte "asset_"
+load 1
+itob
+concat
+app_global_get
+store 2
+load 2
+int 32
+int 8
++
+int 8
+extract3
+btoi
+store 3
+load 3
+global Round
+int 72
+-
+<=
+load 3
+load 4
+<
+&&
+bnz main_l33
+main_l32:
+load 1
+int 1
++
+store 1
+b main_l25
+main_l33:
+load 1
+store 0
+load 3
+store 4
+b main_l32
