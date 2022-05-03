@@ -33,7 +33,9 @@ export class AlgoDriver implements IChainDriver {
             decimals,
             total,
             assetMetadata,
-            extras
+            extras = {
+                defaultFrozen: false
+            }
         } = assetParams
         // Hash the metadata
         // const metaDataBuffer = new TextEncoder().encode(assetMetadata);    // encode as UTF-8  
@@ -52,6 +54,7 @@ export class AlgoDriver implements IChainDriver {
             total,
             // assetMetadataHash: hashedMetaData,
             suggestedParams,
+            defaultFrozen: extras.defaultFrozen,
             ...extras
         })
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`)
@@ -84,7 +87,10 @@ export class AlgoDriver implements IChainDriver {
             from,
             amount,
             assetIndex,
-            extras
+            extras = {
+                closeRemainderTo: undefined,
+                revocationTarget: undefined
+            }
         } = assetParams
 
         const suggestedParams = await this.getTransactionParams()
@@ -94,6 +100,8 @@ export class AlgoDriver implements IChainDriver {
             amount,
             assetIndex,
             suggestedParams,
+            closeRemainderTo: extras.closeRemainderTo,
+            revocationTarget: extras.revocationTarget,
             ...extras
         });
         return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`)

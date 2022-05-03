@@ -50,7 +50,7 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     const {
         to,
         from = to,
-        amount = 1,
+        amount = 0,
         assetIndex,
         extras = undefined
     } = optInAssetParams

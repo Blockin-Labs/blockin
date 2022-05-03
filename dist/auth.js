@@ -24,7 +24,7 @@ export async function createAssetTxn(createAssetParams) {
  * @returns an unsigned asset opt-in transaction
  */
 export async function createAssetOptInTxn(optInAssetParams) {
-    const { to, from = to, amount = 1, assetIndex, extras = undefined } = optInAssetParams;
+    const { to, from = to, amount = 0, assetIndex, extras = undefined } = optInAssetParams;
     return await chainDriver.makeAssetOptInTxn(Object.assign({ to,
         from,
         amount,

@@ -9,7 +9,9 @@ export class AlgoDriver {
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }
     async makeAssetTxn(assetParams) {
-        const { from, to, assetName, assetURL, note, amount, unitName, decimals, total, assetMetadata, extras } = assetParams;
+        const { from, to, assetName, assetURL, note, amount, unitName, decimals, total, assetMetadata, extras = {
+            defaultFrozen: false
+        } } = assetParams;
         // Hash the metadata
         // const metaDataBuffer = new TextEncoder().encode(assetMetadata);    // encode as UTF-8  
         // const metaDataHashBuffer = await subtle.digest('SHA-256', metaDataBuffer);    // hash the message
@@ -23,7 +25,7 @@ export class AlgoDriver {
             decimals,
             total,
             // assetMetadataHash: hashedMetaData,
-            suggestedParams }, extras));
+            suggestedParams, defaultFrozen: extras.defaultFrozen }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`);
     }
     async makePaymentTxn(assetParams) {
@@ -35,13 +37,16 @@ export class AlgoDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`);
     }
     async makeAssetOptInTxn(assetParams) {
-        const { to, from, amount, assetIndex, extras } = assetParams;
+        const { to, from, amount, assetIndex, extras = {
+            closeRemainderTo: undefined,
+            revocationTarget: undefined
+        } } = assetParams;
         const suggestedParams = await this.getTransactionParams();
         const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
             amount,
             assetIndex,
-            suggestedParams }, extras));
+            suggestedParams, closeRemainderTo: extras.closeRemainderTo, revocationTarget: extras.revocationTarget }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`);
     }
     async makeAssetTransferTxn(assetParams) {
