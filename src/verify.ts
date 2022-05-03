@@ -2,7 +2,7 @@ import nacl from "tweetnacl";
 import { IChainDriver, UniversalTxn } from './@types/ChainDriver'
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
-import { encodeUnsignedTransaction } from "algosdk";
+
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
@@ -93,30 +93,30 @@ export async function createPaymentTxn(createPaymentParams: CreatePaymentParams)
 
 /**
  * Verifies that the challenge was signed by the account belonging to the asset
- * @param unsignedChallenge 
+ * @param originalChallenge 
  * @param signedChallenge 
  * @returns 
  */
-export async function verifyChallenge(unsignedChallenge: any, signedChallenge: Uint8Array) {
+export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array) {
     try {
         /*
             Make sure getChallengeString() is consistent with your implementation.
 
-            If unsignedChallenge is a stringified JSON and you need to parse the challenge string out of it,
+            If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
             this is where to implement it.
 
-            If unsignedChallenge is already the challenge string, just return the inputted parameter.
+            If originalChallenge is already the challenge string, just return the inputted parameter.
         */
-        const generatedEIP4361ChallengeStr: string = await getChallengeString(encodeUnsignedTransaction(unsignedChallenge));
+        const generatedEIP4361ChallengeStr: string = await getChallengeString(originalChallenge);
 
         const challenge: EIP4361Challenge = createMessageFromString(generatedEIP4361ChallengeStr);
         validateChallenge(challenge);
         console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
-        // const unsignedChallengeToUint8Array = new TextEncoder().encode(unsignedChallenge);
+        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
 
         const originalAddress = challenge.address;
-        await verifyChallengeSignature(unsignedChallenge, signedChallenge, originalAddress)
+        await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
         console.log("Success: Signature matches address specified within the challenge.");
 
         if (challenge.resources) {
@@ -306,20 +306,16 @@ function createMessageFromString(challenge: string): EIP4361Challenge {
 }
 
 /** The functions in this section are left up to the resource server's implementation. */
-async function verifyChallengeSignature(unsignedChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
-    if (!nacl.sign.detached.verify(unsignedChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
+async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
+    if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
         throw 'Invalid signature';
     }
 }
 
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
-    const whitelistedAssets = ['99999991', '99999992', '99999993', '99999994', '99999995'];
 
     let assets = (await chainDriver.getAssets(address));
     for (const assetId of assetIds) {
-        console.log(whitelistedAssets, assetId);
-        if (whitelistedAssets.includes(assetId)) continue; //** THIS IS SPECIFIC TO OUR DEMO */
-
         const requestedAsset = assets.find((elem: any) => elem['asset-id'].toString() === assetId);
 
         if (!requestedAsset) {
