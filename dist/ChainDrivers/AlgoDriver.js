@@ -69,6 +69,9 @@ export class AlgoDriver {
         await algosdk.waitForConfirmation(this.client, txnId, 4);
         return sentTxn;
     }
+    async getAssetDetails(txnId) {
+        return await this.indexer.lookupTransactionByID(txnId).do();
+    }
     async getAssets(address) {
         const accountInfo = await this.client.accountInformation(address).do();
         return accountInfo.assets;

@@ -34,6 +34,9 @@ interface IIsValidAddress {
 interface IGetPublicKey {
     (address: string): Uint8Array;
 }
+interface IGetAssetDetails {
+    (txnId: string): Promise<any>;
+}
 export interface IChainDriver {
     server: string;
     indexerServer: string;
@@ -51,6 +54,7 @@ export interface IChainDriver {
     getBlockTimestamp: IGetBlock;
     isValidAddress: IIsValidAddress;
     getPublicKey: IGetPublicKey;
+    getAssetDetails: IGetAssetDetails;
 }
 export declare type MakeAssetParams = {
     from: string;

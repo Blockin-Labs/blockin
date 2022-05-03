@@ -13,6 +13,7 @@ export declare class AlgoDriver implements IChainDriver {
     makeAssetOptInTxn(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>;
     makeAssetTransferTxn(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>;
     sendTxn(signedTxnResult: any, txnId: string): Promise<any>;
+    getAssetDetails(txnId: string): Promise<any>;
     getAssets(address: string): Promise<any>;
     getStatus(): Promise<Record<string, any>>;
     getBlockTimestamp(nonce: number): Promise<string>;
