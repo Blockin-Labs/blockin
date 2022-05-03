@@ -27,9 +27,9 @@ export class AlgoDriver {
             assetURL, note: new TextEncoder().encode(note), amount,
             unitName,
             decimals,
-            total,
+            total, 
             // assetMetadataHash: hashedMetaData,
-            suggestedParams }, extras));
+            assetMetadataHash: assetMetadata, suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`);
     }
     async makePaymentTxn(assetParams) {
