@@ -21,6 +21,7 @@ export {
 
 export { 
     setChainDriver, 
+    sha256
 } from './blockin' 
 
 export {
