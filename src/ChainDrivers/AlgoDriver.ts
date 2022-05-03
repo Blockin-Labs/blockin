@@ -34,7 +34,11 @@ export class AlgoDriver implements IChainDriver {
             total,
             assetMetadata,
             extras = {
-                defaultFrozen: false
+                defaultFrozen: false,
+                clawback: from,
+                freeze: from,
+                manager: from,
+                reserve: from
             }
         } = assetParams
         // Hash the metadata
@@ -54,7 +58,6 @@ export class AlgoDriver implements IChainDriver {
             total,
             // assetMetadataHash: hashedMetaData,
             suggestedParams,
-            defaultFrozen: extras.defaultFrozen,
             ...extras
         })
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`)
@@ -85,9 +88,10 @@ export class AlgoDriver implements IChainDriver {
         const {
             to,
             from,
-            amount,
             assetIndex,
             extras = {
+                amount: 0,
+                note: undefined,
                 closeRemainderTo: undefined,
                 revocationTarget: undefined
             }
@@ -97,11 +101,8 @@ export class AlgoDriver implements IChainDriver {
         const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
             from,
             to,
-            amount,
             assetIndex,
             suggestedParams,
-            closeRemainderTo: extras.closeRemainderTo,
-            revocationTarget: extras.revocationTarget,
             ...extras
         });
         return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`)
@@ -111,18 +112,19 @@ export class AlgoDriver implements IChainDriver {
         const {
             to,
             from,
-            amount,
-            note,
             assetIndex,
-            extras
+            extras = {
+                amount: 1,
+                note: 'Transfer this asset',
+                closeRemainderTo: undefined,
+                revocationTarget: undefined
+            }
         } = assetParams
 
         const suggestedParams = await this.getTransactionParams()
         const algoTxn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
             from,
             to,
-            amount,
-            note,
             assetIndex,
             suggestedParams,
             ...extras

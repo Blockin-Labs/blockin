@@ -50,7 +50,6 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     const {
         to,
         from = to,
-        amount = 0,
         assetIndex,
         extras = undefined
     } = optInAssetParams
@@ -58,7 +57,6 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     return await chainDriver.makeAssetOptInTxn({
         to,
         from,
-        amount,
         assetIndex,
         ...extras
     });
@@ -72,8 +70,6 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     const {
         to,
         from,
-        amount = 1,
-        note = 'Transfer this asset',
         assetIndex,
         extras = undefined
     } = transferAssetParams
@@ -81,8 +77,6 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     return await chainDriver.makeAssetTransferTxn({
         to,
         from,
-        amount,
-        note,
         assetIndex,
         ...extras
     });

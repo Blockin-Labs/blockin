@@ -16,7 +16,6 @@ export type CreateAssetParams = {
 export type CreateOptInAssetParams = {
     to: string, 
     from?: string,
-    amount?: number | bigint,
     assetIndex: number,
     extras?: any
 }

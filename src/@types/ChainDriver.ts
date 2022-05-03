@@ -54,7 +54,6 @@ export type MakeAssetParams = {
 export type MakeOptInAssetParams = {
     to: string, 
     from: string,
-    amount: number | bigint,
     assetIndex: number,
     extras: any
 }
