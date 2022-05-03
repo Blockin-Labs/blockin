@@ -165,7 +165,7 @@ export class AlgoDriver implements IChainDriver {
         return {
             txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
             message,
-            txnId: algoTxn.txID()
+            txnId: algoTxn.txID().toString()
         }
     }
 }
