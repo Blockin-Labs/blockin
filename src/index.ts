@@ -1,17 +1,17 @@
-export { 
-    IChainDriver, 
-    MakeAssetParams, 
-    MakeOptInAssetParams, 
-    MakePaymentParams, 
+export {
+    IChainDriver,
+    MakeAssetParams,
+    MakeOptInAssetParams,
+    MakePaymentParams,
     MakeTransferAssetParams,
     UniversalTxn
 } from './@types/ChainDriver'
 
 export {
-    CreateAssetParams, 
-    CreatePaymentParams, 
-    CreateOptInAssetParams, 
-    CreateTransferAssetParams, 
+    CreateAssetParams,
+    CreatePaymentParams,
+    CreateOptInAssetParams,
+    CreateTransferAssetParams,
 } from './@types/auth'
 
 export {
@@ -19,26 +19,27 @@ export {
     ChallengeParams
 } from './@types/verify'
 
-export { 
-    setChainDriver, 
+export {
+    setChainDriver,
     sha256
-} from './blockin' 
+} from './blockin'
 
 export {
     AlgoDriver
 } from './ChainDrivers/AlgoDriver'
 
-export { 
-    createAssetTxn, 
-    createAssetOptInTxn, 
-    createAssetTransferTxn, 
+export {
+    createAssetTxn,
+    createAssetOptInTxn,
+    createAssetTransferTxn,
     sendTxn
 } from './auth'
 
-export { 
-    createChallenge, 
-    createPaymentTxn, 
+export {
+    createChallenge,
+    createPaymentTxn,
     verifyChallenge,
     getAssetDetails,
-    getAllAssets
+    getAllAssets,
+    lookupTransactionById
 } from './verify'

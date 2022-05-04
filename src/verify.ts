@@ -12,6 +12,10 @@ export function initializeVerify(driver: IChainDriver) {
     chainDriver = driver
 }
 
+export async function lookupTransactionById(txnID: string) {
+    return await chainDriver.lookupTransactionById(txnID);
+}
+
 export async function getAssetDetails(txnId: string) {
     return await chainDriver.getAssetDetails(txnId)
 }

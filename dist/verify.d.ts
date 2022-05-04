@@ -2,6 +2,7 @@ import { IChainDriver, UniversalTxn } from './@types/ChainDriver';
 import { CreatePaymentParams } from "./@types/auth";
 import { ChallengeParams } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
+export declare function lookupTransactionById(txnID: string): Promise<any>;
 export declare function getAssetDetails(txnId: string): Promise<any>;
 /**
  * Creates a challenge to be signed by Wallet Provider to prove identity

@@ -5,6 +5,9 @@ var chainDriver;
 export function initializeVerify(driver) {
     chainDriver = driver;
 }
+export async function lookupTransactionById(txnID) {
+    return await chainDriver.lookupTransactionById(txnID);
+}
 export async function getAssetDetails(txnId) {
     return await chainDriver.getAssetDetails(txnId);
 }
