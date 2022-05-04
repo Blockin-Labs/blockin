@@ -37,7 +37,6 @@ export {
 
 export {
     createChallenge,
-    createPaymentTxn,
     verifyChallenge,
     getAssetDetails,
     getAllAssets,

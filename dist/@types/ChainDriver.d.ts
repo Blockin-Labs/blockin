@@ -13,9 +13,6 @@ interface IMakeAssetOptInTxn {
 interface IMakeAssetTransferTxn {
     (assetParams: MakeTransferAssetParams): Promise<UniversalTxn>;
 }
-interface IMakePaymentTxn {
-    (assetParams: MakePaymentParams): Promise<UniversalTxn>;
-}
 interface ISendTx {
     (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any>;
 }
@@ -50,7 +47,6 @@ export interface IChainDriver {
     makeAssetTxn: IMakeAssetTxn;
     makeAssetOptInTxn: IMakeAssetOptInTxn;
     makeAssetTransferTxn: IMakeAssetTransferTxn;
-    makePaymentTxn: IMakePaymentTxn;
     sendTxn: ISendTx;
     getStatus: IGetStatus;
     getAssets: IGetAssets;

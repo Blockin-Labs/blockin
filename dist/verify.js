@@ -48,20 +48,6 @@ export async function createChallenge(challengeParams) {
     }
 }
 /**
- * Creates a dummy unsiged payment txn sending 0 from wallet to wallet
- * Wallet Provider can then sign this dummy txn to prove their identity
- * @param account
- * @param message
- * @returns
- */
-export async function createPaymentTxn(createPaymentParams) {
-    const { to, from = to, amount = 1, note = 'This is a payment txn created with Blockin', extras = undefined } = createPaymentParams;
-    return await chainDriver.makePaymentTxn(Object.assign({ to,
-        from,
-        amount,
-        note }, extras));
-}
-/**
  * Verifies that the challenge was signed by the account belonging to the asset
  * @param originalChallenge
  * @param signedChallenge

@@ -1,5 +1,4 @@
-import { IChainDriver, UniversalTxn } from './@types/ChainDriver';
-import { CreatePaymentParams } from "./@types/auth";
+import { IChainDriver } from './@types/ChainDriver';
 import { ChallengeParams } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
 export declare function lookupTransactionById(txnID: string): Promise<any>;
@@ -16,14 +15,6 @@ export declare function getAssetDetails(txnId: string): Promise<any>;
  * @returns
  */
 export declare function createChallenge(challengeParams: ChallengeParams): Promise<string>;
-/**
- * Creates a dummy unsiged payment txn sending 0 from wallet to wallet
- * Wallet Provider can then sign this dummy txn to prove their identity
- * @param account
- * @param message
- * @returns
- */
-export declare function createPaymentTxn(createPaymentParams: CreatePaymentParams): Promise<UniversalTxn>;
 /**
  * Verifies that the challenge was signed by the account belonging to the asset
  * @param originalChallenge
