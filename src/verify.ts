@@ -42,8 +42,8 @@ export async function createChallenge(challengeParams: ChallengeParams) {
         version = "1",
         chainId = "1",
         issuedAt = new Date().toISOString(),
-        expirationDate = "",
-        notBefore = "",
+        expirationDate = undefined,
+        notBefore = undefined,
         resources = undefined
     } = challengeParams
 

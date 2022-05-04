@@ -25,7 +25,7 @@ export async function getAssetDetails(txnId) {
  * @returns
  */
 export async function createChallenge(challengeParams) {
-    const { domain, statement, address, uri, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = "", notBefore = "", resources = undefined } = challengeParams;
+    const { domain, statement, address, uri, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
     try {
         const challenge = {
             domain,
