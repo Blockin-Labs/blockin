@@ -16,4 +16,4 @@ export declare function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPa
  * @returns an unsigned asset transfer transaction
  */
 export declare function createAssetTransferTxn(transferAssetParams: CreateTransferAssetParams): Promise<UniversalTxn>;
-export declare function sendTxn(stx: Uint8Array, txnId: string): Promise<any>;
+export declare function sendTxn(stx: Uint8Array | Uint8Array[], txnId: string): Promise<any>;

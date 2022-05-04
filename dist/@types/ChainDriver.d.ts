@@ -17,7 +17,7 @@ interface IMakePaymentTxn {
     (assetParams: MakePaymentParams): Promise<UniversalTxn>;
 }
 interface ISendTx {
-    (stx: Uint8Array, txnId: string): Promise<any>;
+    (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any>;
 }
 interface IGetAssets {
     (address: string): Promise<any>;

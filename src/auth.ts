@@ -82,6 +82,6 @@ export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetPara
     });
 }
 
-export async function sendTxn(stx: Uint8Array, txnId: string) {
+export async function sendTxn(stx: Uint8Array | Uint8Array[], txnId: string) {
     return await chainDriver.sendTxn(stx, txnId)
 }
