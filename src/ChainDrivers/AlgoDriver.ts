@@ -178,7 +178,7 @@ export class AlgoDriver implements IChainDriver {
 
     private createUniversalTxn(algoTxn: Transaction, message: string): UniversalTxn {
         return {
-            txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
+            txn: algosdk.encodeUnsignedTransaction(algoTxn),
             message,
             txnId: algoTxn.txID().toString(),
             nativeTxn: algoTxn

@@ -1,5 +1,5 @@
 export type UniversalTxn = {
-    txn: string;
+    txn: Uint8Array;
     message: string;
     txnId: string,
     nativeTxn: any

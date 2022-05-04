@@ -105,7 +105,7 @@ export class AlgoDriver {
     }
     createUniversalTxn(algoTxn, message) {
         return {
-            txn: Buffer.from(algosdk.encodeUnsignedTransaction(algoTxn)).toString("base64"),
+            txn: algosdk.encodeUnsignedTransaction(algoTxn),
             message,
             txnId: algoTxn.txID().toString(),
             nativeTxn: algoTxn
