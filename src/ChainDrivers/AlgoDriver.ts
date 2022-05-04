@@ -116,7 +116,7 @@ export class AlgoDriver implements IChainDriver {
             assetIndex,
             extras = {
                 amount: 1,
-                note: 'Transfer this asset',
+                note: new TextEncoder().encode('Transfer this asset'),
                 closeRemainderTo: undefined,
                 revocationTarget: undefined
             }

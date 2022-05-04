@@ -57,7 +57,7 @@ export class AlgoDriver {
     async makeAssetTransferTxn(assetParams) {
         const { to, from, assetIndex, extras = {
             amount: 1,
-            note: 'Transfer this asset',
+            note: new TextEncoder().encode('Transfer this asset'),
             closeRemainderTo: undefined,
             revocationTarget: undefined
         } } = assetParams;
