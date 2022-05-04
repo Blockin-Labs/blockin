@@ -37,6 +37,9 @@ interface IGetPublicKey {
 interface IGetAssetDetails {
     (txnId: string): Promise<any>;
 }
+interface ILookupTransactionById {
+    (txnId: string): Promise<any>;
+}
 export interface IChainDriver {
     server: string;
     indexerServer: string;
@@ -55,6 +58,7 @@ export interface IChainDriver {
     isValidAddress: IIsValidAddress;
     getPublicKey: IGetPublicKey;
     getAssetDetails: IGetAssetDetails;
+    lookupTransactionById: ILookupTransactionById;
 }
 export declare type MakeAssetParams = {
     from: string;

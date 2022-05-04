@@ -12,7 +12,7 @@ export class AlgoDriver implements IChainDriver {
     server: string = "https://testnet-algorand.api.purestake.io/ps2";
     indexerServer: string = "https://testnet-algorand.api.purestake.io/idx2";
     port: string = "";
-    token: any = {"x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy"};
+    token: any = { "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" };
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
 
@@ -142,6 +142,11 @@ export class AlgoDriver implements IChainDriver {
         const sentTxn = await this.client.sendRawTransaction(signedTxnResult).do();
         await algosdk.waitForConfirmation(this.client, txnId, 4);
         return sentTxn
+    }
+
+    async lookupTransactionById(txnId: string) {
+        const txnDetails = await this.indexer.lookupTransactionByID(txnId).do();
+        return txnDetails;
     }
 
     async getAssetDetails(assetId: string | Number): Promise<any> {

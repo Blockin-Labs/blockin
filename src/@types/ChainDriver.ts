@@ -5,17 +5,18 @@ export type UniversalTxn = {
     nativeTxn: any
 }
 
-interface IMakeAssetTxn {(assetParams: MakeAssetParams): Promise<UniversalTxn>}
-interface IMakeAssetOptInTxn {(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>}
-interface IMakeAssetTransferTxn {(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>}
-interface IMakePaymentTxn {(assetParams: MakePaymentParams): Promise<UniversalTxn>}
-interface ISendTx {(stx: Uint8Array | Uint8Array[], txnId: string): Promise<any>}
-interface IGetAssets {(address: string): Promise<any>}
-interface IGetStatus {(): Promise<Record<string, any>>}
-interface IGetBlock {(nonce: number): Promise<any>}
-interface IIsValidAddress {(address: string): boolean}
-interface IGetPublicKey {(address: string): Uint8Array}
-interface IGetAssetDetails {(txnId: string): Promise<any>}
+interface IMakeAssetTxn { (assetParams: MakeAssetParams): Promise<UniversalTxn> }
+interface IMakeAssetOptInTxn { (assetParams: MakeOptInAssetParams): Promise<UniversalTxn> }
+interface IMakeAssetTransferTxn { (assetParams: MakeTransferAssetParams): Promise<UniversalTxn> }
+interface IMakePaymentTxn { (assetParams: MakePaymentParams): Promise<UniversalTxn> }
+interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
+interface IGetAssets { (address: string): Promise<any> }
+interface IGetStatus { (): Promise<Record<string, any>> }
+interface IGetBlock { (nonce: number): Promise<any> }
+interface IIsValidAddress { (address: string): boolean }
+interface IGetPublicKey { (address: string): Uint8Array }
+interface IGetAssetDetails { (txnId: string): Promise<any> }
+interface ILookupTransactionById { (txnId: string): Promise<any> }
 
 export interface IChainDriver {
     server: string,
@@ -34,25 +35,26 @@ export interface IChainDriver {
     getBlockTimestamp: IGetBlock,
     isValidAddress: IIsValidAddress,
     getPublicKey: IGetPublicKey,
-    getAssetDetails: IGetAssetDetails
+    getAssetDetails: IGetAssetDetails,
+    lookupTransactionById: ILookupTransactionById
 }
 
 export type MakeAssetParams = {
     from: string,
-    to: string, 
-    assetName: string, 
-    assetURL: string, 
+    to: string,
+    assetName: string,
+    assetURL: string,
     note: string,
     amount: number,
-    unitName: string, 
+    unitName: string,
     decimals: number,
-    total: number, 
-    assetMetadata: string, 
+    total: number,
+    assetMetadata: string,
     extras: any
 }
 
 export type MakeOptInAssetParams = {
-    to: string, 
+    to: string,
     from: string,
     assetIndex: number,
     extras: any
@@ -68,7 +70,7 @@ export type MakeTransferAssetParams = {
 }
 
 export type MakePaymentParams = {
-    to: string, 
+    to: string,
     from: string,
     amount: number | bigint,
     note: string,
