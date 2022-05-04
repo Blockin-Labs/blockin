@@ -40,5 +40,5 @@ export {
     createPaymentTxn, 
     verifyChallenge,
     getAssetDetails,
-    getAssets
+    getAllAssets
 } from './verify'

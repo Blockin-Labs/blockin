@@ -30,4 +30,4 @@ export declare function createPaymentTxn(createPaymentParams: CreatePaymentParam
  * @returns
  */
 export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array): Promise<string>;
-export declare function getAssets(address: string): Promise<any>;
+export declare function getAllAssets(address: string): Promise<any>;
