@@ -312,6 +312,10 @@ async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Arra
     }
 }
 
+async function getAssets(address: string) {
+    return (await chainDriver.getAssets(address))
+}
+
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
 
     let assets = (await chainDriver.getAssets(address));

@@ -252,6 +252,9 @@ async function verifyChallengeSignature(originalChallengeToUint8Array, signedCha
         throw 'Invalid signature';
     }
 }
+async function getAssets(address) {
+    return (await chainDriver.getAssets(address));
+}
 async function verifyOwnershipOfAssets(address, assetIds) {
     let assets = (await chainDriver.getAssets(address));
     for (const assetId of assetIds) {
