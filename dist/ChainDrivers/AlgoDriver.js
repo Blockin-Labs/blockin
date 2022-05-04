@@ -1,10 +1,11 @@
 import algosdk, { decodeAddress } from 'algosdk';
 export class AlgoDriver {
-    constructor() {
+    constructor(API_KEY) {
         this.server = "https://testnet-algorand.api.purestake.io/ps2";
         this.indexerServer = "https://testnet-algorand.api.purestake.io/idx2";
         this.port = "";
-        this.token = { "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" };
+        this.token = {};
+        this.token = { "x-api-key": API_KEY ? API_KEY : '' };
         this.client = new algosdk.Algodv2(this.token, this.server, this.port);
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }

@@ -7,7 +7,7 @@ export declare class AlgoDriver implements IChainDriver {
     token: any;
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
-    constructor();
+    constructor(API_KEY: string);
     makeAssetTxn(assetParams: MakeAssetParams): Promise<UniversalTxn>;
     makePaymentTxn(assetParams: MakePaymentParams): Promise<UniversalTxn>;
     makeAssetOptInTxn(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>;

@@ -12,11 +12,12 @@ export class AlgoDriver implements IChainDriver {
     server: string = "https://testnet-algorand.api.purestake.io/ps2";
     indexerServer: string = "https://testnet-algorand.api.purestake.io/idx2";
     port: string = "";
-    token: any = { "x-api-key": "H4sefDbnoL8GO8ooRkxQM6CePHih5XDQ405mcBKy" };
+    token: any = {};
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
 
-    constructor() {
+    constructor(API_KEY: string) {
+        this.token = { "x-api-key": API_KEY ? API_KEY : '' }
         this.client = new algosdk.Algodv2(this.token, this.server, this.port);
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }
