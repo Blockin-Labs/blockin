@@ -16,7 +16,7 @@ export class AlgoDriver implements IChainDriver {
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
 
-    constructor(API_KEY: string) {
+    constructor(API_KEY?: string) {
         this.token = { "x-api-key": API_KEY ? API_KEY : '' }
         this.client = new algosdk.Algodv2(this.token, this.server, this.port);
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
