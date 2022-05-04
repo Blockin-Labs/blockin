@@ -69,11 +69,12 @@ export class AlgoDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to transfer asset ${assetIndex} to ${to}`);
     }
     async sendTxn(signedTxnResult, txnId) {
-        const txns = signedTxnResult.map((element) => {
-            return new Uint8Array(Buffer.from(element, "base64"));
-        });
+        // const txns: Uint8Array[] = signedTxnResult.map((element: any) => {
+        //     return new Uint8Array(Buffer.from(element, "base64"))
+        // })
         // const encodedStx = new TextEncoder().encode(stx)
-        const sentTxn = await this.client.sendRawTransaction(txns).do();
+        // const sentTxn = await this.client.sendRawTransaction(txns).do();
+        const sentTxn = await this.client.sendRawTransaction(signedTxnResult).do();
         await algosdk.waitForConfirmation(this.client, txnId, 4);
         return sentTxn;
     }
