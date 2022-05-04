@@ -143,8 +143,9 @@ export class AlgoDriver implements IChainDriver {
         return sentTxn
     }
 
-    async getAssetDetails(txnId: string): Promise<any> {
-        return await this.indexer.lookupTransactionByID(txnId).do();
+    async getAssetDetails(assetId: string | Number): Promise<any> {
+        let accountInfo = (await this.client.getAssetByID(Number(assetId)).do());
+        return accountInfo.params;
     }
 
     async getAssets(address: string): Promise<any> {
