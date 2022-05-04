@@ -312,7 +312,7 @@ async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Arra
     }
 }
 
-async function getAssets(address: string) {
+export async function getAssets(address: string) {
     return (await chainDriver.getAssets(address))
 }
 
