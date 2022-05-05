@@ -187,16 +187,16 @@ function createMessageFromString(challenge) {
     const version = messageArray[6].split(':')[1].trim();
     const chainId = messageArray[7].split(':')[1].trim();
     const nonce = Number(messageArray[8].split(':')[1].trim());
-    const issuedAt = messageArray[9].split(':')[1].trim();
+    const issuedAt = messageArray[9].split(':').slice(1).join(':').trim();
     let expirationDate;
     let notBefore;
     let resources = [];
     if (messageArray[10]) {
         if (messageArray[10].indexOf('Expiration Time:') != -1) {
-            expirationDate = messageArray[10].split(':')[1].trim();
+            expirationDate = messageArray[10].split(':').slice(1).join(':').trim();
         }
         else if (messageArray[10].indexOf('Not Before:') != -1) {
-            notBefore = messageArray[10].split(':')[1].trim();
+            notBefore = messageArray[10].split(':').slice(1).join(':').trim();
         }
         else if (messageArray[10].indexOf('Resources:') != -1) {
             resources = [];
@@ -208,7 +208,7 @@ function createMessageFromString(challenge) {
     }
     if (messageArray[11]) {
         if (messageArray[11].indexOf('Not Before:') != -1) {
-            notBefore = messageArray[11].split(':')[1].trim();
+            notBefore = messageArray[11].split(':').slice(1).join(':').trim();
         }
         else if (messageArray[11].indexOf('Resources:') != -1) {
             resources = [];
