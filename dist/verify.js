@@ -123,7 +123,7 @@ function validateChallenge(challenge) {
     }
     if (challenge.resources) {
         for (const resource of challenge.resources) {
-            if (!resource.startsWith('Asset ID: ') || !URI_REGEX.test(resource)) {
+            if (!resource.startsWith('Asset ID: ') && !URI_REGEX.test(resource)) {
                 throw `Inputted resource in resources (${resource}) does not start with 'Asset ID: ' and is not a valid URI`;
             }
         }
