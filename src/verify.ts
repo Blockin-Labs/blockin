@@ -143,14 +143,6 @@ function validateChallenge(challenge: EIP4361Challenge) {
         throw `Inputted URI (${challenge.uri}) is not a valid URI`;
     }
 
-    if (challenge.version !== "1") {
-        throw `Invalid version. Must == 1`;
-    }
-
-    if (challenge.chainId !== "1") {
-        throw `Invalid chainId. Must == 1`;
-    }
-
     if (!verifyChallengeNonce(challenge.nonce)) {
         throw `Illegal nonce (${challenge.nonce}) specified`;
     }
