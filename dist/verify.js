@@ -87,7 +87,7 @@ async function grantPermissions(assetIds) {
         if (!assetIdStr.startsWith('Asset ID:')) {
             continue;
         }
-        const assetId = assetIdStr.substring(7);
+        const assetId = assetIdStr.substring(10);
         console.log("User has been granted privileges of " + assetId);
     }
 }
@@ -201,7 +201,7 @@ function createMessageFromString(challenge) {
         else if (messageArray[10].indexOf('Resources:') != -1) {
             resources = [];
             for (let i = 11; i < messageArray.length; i++) {
-                const resource = messageArray[i].split(' ')[1].trim();
+                const resource = messageArray[i].split(' ').slice(1).join(' ').trim();
                 resources.push(resource);
             }
         }
@@ -213,7 +213,7 @@ function createMessageFromString(challenge) {
         else if (messageArray[11].indexOf('Resources:') != -1) {
             resources = [];
             for (let i = 12; i < messageArray.length; i++) {
-                const resource = messageArray[i].split(' ')[1].trim();
+                const resource = messageArray[i].split(' ').slice(1).join(' ').trim();
                 resources.push(resource);
             }
         }
@@ -222,7 +222,7 @@ function createMessageFromString(challenge) {
         if (messageArray[12].indexOf('Resources:') != -1) {
             resources = [];
             for (let i = 13; i < messageArray.length; i++) {
-                const resource = messageArray[i].split(' ')[1].trim();
+                const resource = messageArray[i].split(' ').slice(1).join(' ').trim();
                 resources.push(resource);
             }
         }
@@ -244,7 +244,7 @@ async function verifyOwnershipOfAssets(address, assetIds) {
         if (!assetIdStr.startsWith('Asset ID:')) {
             continue;
         }
-        const assetId = assetIdStr.substring(7);
+        const assetId = assetIdStr.substring(10);
         const requestedAsset = assets.find((elem) => elem['asset-id'].toString() === assetId);
         if (!requestedAsset) {
             throw `Address ${address} does not own requested asset : ${assetId}`;
