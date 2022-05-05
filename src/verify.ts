@@ -44,7 +44,7 @@ export async function createChallenge(challengeParams: ChallengeParams) {
         expirationDate = undefined,
         notBefore = undefined,
         resources = undefined
-    } = challengeParams
+    } = challengeParams;
 
     try {
         const challenge: EIP4361Challenge = {
@@ -90,7 +90,14 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     validateChallenge(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
-    // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+    const currDate = new Date();
+    if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
+        throw `Error: Challenge expired: ${challenge.expirationDate}`
+    }
+
+    if (challenge.notBefore && currDate <= new Date(challenge.notBefore)) {
+        throw `Error: Challenge invalid until: ${challenge.notBefore}`
+    }
 
     const originalAddress = challenge.address;
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
@@ -123,7 +130,6 @@ async function grantPermissions(assetIds: string[]) {
 
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
-
 function validateChallenge(challenge: EIP4361Challenge) {
     if (!URI_REGEX.test(challenge.domain)) {
         throw `Inputted domain (${challenge.domain}) is not a valid URI`;

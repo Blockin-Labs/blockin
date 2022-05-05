@@ -66,7 +66,13 @@ export async function verifyChallenge(originalChallenge, signedChallenge) {
     const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
     validateChallenge(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
-    // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+    const currDate = new Date();
+    if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
+        throw `Error: Challenge expired: ${challenge.expirationDate}`;
+    }
+    if (challenge.notBefore && currDate <= new Date(challenge.notBefore)) {
+        throw `Error: Challenge invalid until: ${challenge.notBefore}`;
+    }
     const originalAddress = challenge.address;
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
     console.log("Success: Signature matches address specified within the challenge.");
