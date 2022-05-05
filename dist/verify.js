@@ -54,32 +54,27 @@ export async function createChallenge(challengeParams) {
  * @returns
  */
 export async function verifyChallenge(originalChallenge, signedChallenge) {
-    try {
-        /*
-            Make sure getChallengeString() is consistent with your implementation.
+    /*
+        Make sure getChallengeString() is consistent with your implementation.
 
-            If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
-            this is where to implement it.
+        If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
+        this is where to implement it.
 
-            If originalChallenge is already the challenge string, just return the inputted parameter.
-        */
-        const generatedEIP4361ChallengeStr = await getChallengeString(originalChallenge);
-        const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
-        validateChallenge(challenge);
-        console.log("Success: Constructed challenge from string and verified it is well-formed.");
-        // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
-        const originalAddress = challenge.address;
-        await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
-        console.log("Success: Signature matches address specified within the challenge.");
-        if (challenge.resources) {
-            await verifyOwnershipOfAssets(challenge.address, challenge.resources);
-            grantPermissions(challenge.resources);
-        }
-        return `Successfully granted access via Blockin`;
+        If originalChallenge is already the challenge string, just return the inputted parameter.
+    */
+    const generatedEIP4361ChallengeStr = await getChallengeString(originalChallenge);
+    const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
+    validateChallenge(challenge);
+    console.log("Success: Constructed challenge from string and verified it is well-formed.");
+    // const originalChallengeToUint8Array = new TextEncoder().encode(originalChallenge);
+    const originalAddress = challenge.address;
+    await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
+    console.log("Success: Signature matches address specified within the challenge.");
+    if (challenge.resources) {
+        await verifyOwnershipOfAssets(challenge.address, challenge.resources);
+        grantPermissions(challenge.resources);
     }
-    catch (error) {
-        return `Error: ${error}`;
-    }
+    return `Successfully granted access via Blockin`;
 }
 async function verifyChallengeNonce(nonce) {
     let blockTimestamp = await chainDriver.getBlockTimestamp(nonce);
@@ -88,8 +83,12 @@ async function verifyChallengeNonce(nonce) {
 }
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
 async function grantPermissions(assetIds) {
-    for (const asset of assetIds) {
-        console.log("User has been granted privileges of " + asset);
+    for (const assetIdStr of assetIds) {
+        if (!assetIdStr.startsWith('Asset ID:')) {
+            continue;
+        }
+        const assetId = assetIdStr.substring(7);
+        console.log("User has been granted privileges of " + assetId);
     }
 }
 /** The functions in this section are standard and should not be edited, except for possibly the function
@@ -124,8 +123,8 @@ function validateChallenge(challenge) {
     }
     if (challenge.resources) {
         for (const resource of challenge.resources) {
-            if (!URI_REGEX.test(resource)) {
-                throw `Inputted resource in resources (${resource}) is not a valid URI`;
+            if (!resource.startsWith('Asset ID: ') || !URI_REGEX.test(resource)) {
+                throw `Inputted resource in resources (${resource}) does not start with 'Asset ID: ' and is not a valid URI`;
             }
         }
     }
@@ -241,7 +240,11 @@ export async function getAllAssets(address) {
 }
 async function verifyOwnershipOfAssets(address, assetIds) {
     let assets = (await chainDriver.getAssets(address));
-    for (const assetId of assetIds) {
+    for (const assetIdStr of assetIds) {
+        if (!assetIdStr.startsWith('Asset ID:')) {
+            continue;
+        }
+        const assetId = assetIdStr.substring(7);
         const requestedAsset = assets.find((elem) => elem['asset-id'].toString() === assetId);
         if (!requestedAsset) {
             throw `Address ${address} does not own requested asset : ${assetId}`;
