@@ -1,4 +1,4 @@
-export {
+export type {
     IChainDriver,
     MakeAssetParams,
     MakeOptInAssetParams,
@@ -7,14 +7,14 @@ export {
     UniversalTxn
 } from './@types/ChainDriver'
 
-export {
+export type {
     CreateAssetParams,
     CreatePaymentParams,
     CreateOptInAssetParams,
     CreateTransferAssetParams,
 } from './@types/auth'
 
-export {
+export type {
     EIP4361Challenge,
     ChallengeParams
 } from './@types/verify'
