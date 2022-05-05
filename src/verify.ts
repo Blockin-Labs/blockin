@@ -1,6 +1,5 @@
 import nacl from "tweetnacl";
-import { IChainDriver, UniversalTxn } from './@types/ChainDriver'
-import { CreatePaymentParams } from "./@types/auth";
+import { IChainDriver } from './@types/ChainDriver'
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
@@ -126,52 +125,48 @@ async function grantPermissions(assetIds: string[]) {
  *  calls of the functions from above if edited. */
 
 function validateChallenge(challenge: EIP4361Challenge) {
-    try {
-        if (!URI_REGEX.test(challenge.domain)) {
-            throw `Inputted domain (${challenge.domain}) is not a valid URI`;
-        }
+    if (!URI_REGEX.test(challenge.domain)) {
+        throw `Inputted domain (${challenge.domain}) is not a valid URI`;
+    }
 
-        if (!chainDriver.isValidAddress(challenge.address)) {
-            throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
-        }
+    if (!chainDriver.isValidAddress(challenge.address)) {
+        throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
+    }
 
-        if (!URI_REGEX.test(challenge.uri)) {
-            throw `Inputted URI (${challenge.uri}) is not a valid URI`;
-        }
+    if (!URI_REGEX.test(challenge.uri)) {
+        throw `Inputted URI (${challenge.uri}) is not a valid URI`;
+    }
 
-        if (challenge.version !== "1") {
-            throw `Invalid version. Must == 1`;
-        }
+    if (challenge.version !== "1") {
+        throw `Invalid version. Must == 1`;
+    }
 
-        if (challenge.chainId !== "1") {
-            throw `Invalid chainId. Must == 1`;
-        }
+    if (challenge.chainId !== "1") {
+        throw `Invalid chainId. Must == 1`;
+    }
 
-        if (!verifyChallengeNonce(challenge.nonce)) {
-            throw `Illegal nonce (${challenge.nonce}) specified`;
-        }
+    if (!verifyChallengeNonce(challenge.nonce)) {
+        throw `Illegal nonce (${challenge.nonce}) specified`;
+    }
 
-        if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
-            throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
-        }
+    if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
+        throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
+    }
 
-        if (challenge.expirationDate && !ISO8601_DATE_REGEX.test(challenge.expirationDate)) {
-            throw `Inputted expiration date (${challenge.expirationDate}) is not in valid ISO 8601 format`;
-        }
+    if (challenge.expirationDate && !ISO8601_DATE_REGEX.test(challenge.expirationDate)) {
+        throw `Inputted expiration date (${challenge.expirationDate}) is not in valid ISO 8601 format`;
+    }
 
-        if (challenge.notBefore && !ISO8601_DATE_REGEX.test(challenge.notBefore)) {
-            throw `Inputted not before date (${challenge.notBefore}) is not in valid ISO 8601 format`;
-        }
+    if (challenge.notBefore && !ISO8601_DATE_REGEX.test(challenge.notBefore)) {
+        throw `Inputted not before date (${challenge.notBefore}) is not in valid ISO 8601 format`;
+    }
 
-        if (challenge.resources) {
-            for (const resource of challenge.resources) {
-                if (!URI_REGEX.test(resource)) {
-                    throw `Inputted resource in resources (${resource}) is not a valid URI`;
-                }
+    if (challenge.resources) {
+        for (const resource of challenge.resources) {
+            if (!URI_REGEX.test(resource)) {
+                throw `Inputted resource in resources (${resource}) is not a valid URI`;
             }
         }
-    } catch (error: unknown) {
-        return `Error: ${error}`;
     }
 }
 

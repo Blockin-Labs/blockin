@@ -95,44 +95,39 @@ async function grantPermissions(assetIds) {
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
 function validateChallenge(challenge) {
-    try {
-        if (!URI_REGEX.test(challenge.domain)) {
-            throw `Inputted domain (${challenge.domain}) is not a valid URI`;
-        }
-        if (!chainDriver.isValidAddress(challenge.address)) {
-            throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
-        }
-        if (!URI_REGEX.test(challenge.uri)) {
-            throw `Inputted URI (${challenge.uri}) is not a valid URI`;
-        }
-        if (challenge.version !== "1") {
-            throw `Invalid version. Must == 1`;
-        }
-        if (challenge.chainId !== "1") {
-            throw `Invalid chainId. Must == 1`;
-        }
-        if (!verifyChallengeNonce(challenge.nonce)) {
-            throw `Illegal nonce (${challenge.nonce}) specified`;
-        }
-        if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
-            throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
-        }
-        if (challenge.expirationDate && !ISO8601_DATE_REGEX.test(challenge.expirationDate)) {
-            throw `Inputted expiration date (${challenge.expirationDate}) is not in valid ISO 8601 format`;
-        }
-        if (challenge.notBefore && !ISO8601_DATE_REGEX.test(challenge.notBefore)) {
-            throw `Inputted not before date (${challenge.notBefore}) is not in valid ISO 8601 format`;
-        }
-        if (challenge.resources) {
-            for (const resource of challenge.resources) {
-                if (!URI_REGEX.test(resource)) {
-                    throw `Inputted resource in resources (${resource}) is not a valid URI`;
-                }
+    if (!URI_REGEX.test(challenge.domain)) {
+        throw `Inputted domain (${challenge.domain}) is not a valid URI`;
+    }
+    if (!chainDriver.isValidAddress(challenge.address)) {
+        throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
+    }
+    if (!URI_REGEX.test(challenge.uri)) {
+        throw `Inputted URI (${challenge.uri}) is not a valid URI`;
+    }
+    if (challenge.version !== "1") {
+        throw `Invalid version. Must == 1`;
+    }
+    if (challenge.chainId !== "1") {
+        throw `Invalid chainId. Must == 1`;
+    }
+    if (!verifyChallengeNonce(challenge.nonce)) {
+        throw `Illegal nonce (${challenge.nonce}) specified`;
+    }
+    if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
+        throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
+    }
+    if (challenge.expirationDate && !ISO8601_DATE_REGEX.test(challenge.expirationDate)) {
+        throw `Inputted expiration date (${challenge.expirationDate}) is not in valid ISO 8601 format`;
+    }
+    if (challenge.notBefore && !ISO8601_DATE_REGEX.test(challenge.notBefore)) {
+        throw `Inputted not before date (${challenge.notBefore}) is not in valid ISO 8601 format`;
+    }
+    if (challenge.resources) {
+        for (const resource of challenge.resources) {
+            if (!URI_REGEX.test(resource)) {
+                throw `Inputted resource in resources (${resource}) is not a valid URI`;
             }
         }
-    }
-    catch (error) {
-        return `Error: ${error}`;
     }
 }
 async function getChallengeNonce() {
