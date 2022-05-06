@@ -150,7 +150,7 @@ export class AlgoDriver implements IChainDriver {
         const txnString = new TextDecoder().decode(txnBytes);
 
         const bytes = [];
-        let idx = txnString.indexOf('note') + 7;
+        let idx = txnString.indexOf('note') + 8;
         while (txnBytes[idx] !== 163) {
             bytes.push(txnBytes[idx]);
             idx++;
