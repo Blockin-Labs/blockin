@@ -5,7 +5,7 @@ export interface EIP4361Challenge {
     uri: string;                    // Valid URI
     version: string;                // Set at 1; Used for EIP-4361 version, but there is only one version
     chainId: string;                // Set to 1 since we will be using mainnet
-    nonce: number;                  // Recent block hash
+    nonce: string;                  // Recent block hash
     issuedAt: string;               // ISO 8601 Date Specification (new Date().toISOString() in JavaScript)
     expirationDate?: string;        // Same as issuedAt
     notBefore?: string;             // Same as issuedAt
@@ -18,6 +18,7 @@ export type ChallengeParams = {
     statement: string,
     address: string,
     uri: string,
+    nonce: string,
     version?: string,
     chainId?: string,
     issuedAt?: string,

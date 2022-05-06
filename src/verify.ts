@@ -38,6 +38,7 @@ export async function createChallenge(challengeParams: ChallengeParams) {
         statement,
         address,
         uri,
+        nonce,
         version = "1",
         chainId = "1",
         issuedAt = new Date().toISOString(),
@@ -54,7 +55,7 @@ export async function createChallenge(challengeParams: ChallengeParams) {
             uri,
             version,
             chainId,
-            nonce: await getChallengeNonce(),
+            nonce,
             issuedAt,
             expirationDate,
             notBefore,
@@ -111,11 +112,11 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     return `Successfully granted access via Blockin`;
 }
 
-async function verifyChallengeNonce(nonce: number): Promise<boolean> {
-    let blockTimestamp = await chainDriver.getBlockTimestamp(nonce)
-    var currentTimestamp = Math.round((new Date()).getTime() / 1000);
-    return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
-}
+// async function verifyChallengeNonce(nonce: number): Promise<boolean> {
+//     let blockTimestamp = await chainDriver.getBlockTimestamp(nonce)
+//     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
+//     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
+// }
 
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
 async function grantPermissions(assetIds: string[]) {
@@ -143,8 +144,8 @@ function validateChallenge(challenge: EIP4361Challenge) {
         throw `Inputted URI (${challenge.uri}) is not a valid URI`;
     }
 
-    if (!verifyChallengeNonce(challenge.nonce)) {
-        throw `Illegal nonce (${challenge.nonce}) specified`;
+    if (!challenge.nonce) {
+        throw `No nonce (${challenge.nonce}) specified`;
     }
 
     if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
@@ -168,10 +169,10 @@ function validateChallenge(challenge: EIP4361Challenge) {
     }
 }
 
-async function getChallengeNonce(): Promise<number> {
-    let status = await chainDriver.getStatus()
-    return Number(status['last-round']);
-}
+// async function getChallengeNonce(): Promise<number> {
+//     let status = await chainDriver.getStatus()
+//     return Number(status['last-round']);
+// }
 
 function constructMessageString(challenge: EIP4361Challenge): string {
     let message = "";
@@ -232,7 +233,7 @@ export function createMessageFromString(challenge: string): EIP4361Challenge {
     const uri = messageArray[5].split(' ')[1];
     const version = messageArray[6].split(':')[1].trim();
     const chainId = messageArray[7].split(':')[1].trim();
-    const nonce = Number(messageArray[8].split(':')[1].trim());
+    const nonce = messageArray[8].split(':')[1].trim();
     const issuedAt = messageArray[9].split(':').slice(1).join(':').trim();
 
     let expirationDate;

@@ -25,7 +25,7 @@ export async function getAssetDetails(txnId) {
  * @returns
  */
 export async function createChallenge(challengeParams) {
-    const { domain, statement, address, uri, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
+    const { domain, statement, address, uri, nonce, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
     try {
         const challenge = {
             domain,
@@ -34,7 +34,7 @@ export async function createChallenge(challengeParams) {
             uri,
             version,
             chainId,
-            nonce: await getChallengeNonce(),
+            nonce,
             issuedAt,
             expirationDate,
             notBefore,
@@ -82,11 +82,11 @@ export async function verifyChallenge(originalChallenge, signedChallenge) {
     }
     return `Successfully granted access via Blockin`;
 }
-async function verifyChallengeNonce(nonce) {
-    let blockTimestamp = await chainDriver.getBlockTimestamp(nonce);
-    var currentTimestamp = Math.round((new Date()).getTime() / 1000);
-    return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
-}
+// async function verifyChallengeNonce(nonce: number): Promise<boolean> {
+//     let blockTimestamp = await chainDriver.getBlockTimestamp(nonce)
+//     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
+//     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
+// }
 /** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
 async function grantPermissions(assetIds) {
     for (const assetIdStr of assetIds) {
@@ -109,8 +109,8 @@ function validateChallenge(challenge) {
     if (!URI_REGEX.test(challenge.uri)) {
         throw `Inputted URI (${challenge.uri}) is not a valid URI`;
     }
-    if (!verifyChallengeNonce(challenge.nonce)) {
-        throw `Illegal nonce (${challenge.nonce}) specified`;
+    if (!challenge.nonce) {
+        throw `No nonce (${challenge.nonce}) specified`;
     }
     if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
         throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
@@ -129,10 +129,10 @@ function validateChallenge(challenge) {
         }
     }
 }
-async function getChallengeNonce() {
-    let status = await chainDriver.getStatus();
-    return Number(status['last-round']);
-}
+// async function getChallengeNonce(): Promise<number> {
+//     let status = await chainDriver.getStatus()
+//     return Number(status['last-round']);
+// }
 function constructMessageString(challenge) {
     let message = "";
     message += `${challenge.domain} wants you to sign in with your Algorand account:\n`;
@@ -186,7 +186,7 @@ export function createMessageFromString(challenge) {
     const uri = messageArray[5].split(' ')[1];
     const version = messageArray[6].split(':')[1].trim();
     const chainId = messageArray[7].split(':')[1].trim();
-    const nonce = Number(messageArray[8].split(':')[1].trim());
+    const nonce = messageArray[8].split(':')[1].trim();
     const issuedAt = messageArray[9].split(':').slice(1).join(':').trim();
     let expirationDate;
     let notBefore;
