@@ -1,6 +1,7 @@
 import algosdk, { decodeAddress, Transaction } from 'algosdk';
 import {
     IChainDriver,
+    IGetChallengeStringFromBytesToSign,
     MakeAssetParams,
     MakeOptInAssetParams,
     MakePaymentParams,
@@ -143,6 +144,21 @@ export class AlgoDriver implements IChainDriver {
         const sentTxn = await this.client.sendRawTransaction(signedTxnResult).do();
         await algosdk.waitForConfirmation(this.client, txnId, 4);
         return sentTxn
+    }
+
+    async getChallengeStringFromBytesToSign(txnBytes: Uint8Array) {
+        const txnString = new TextDecoder().decode(txnBytes);
+
+        const bytes = [];
+        let idx = txnString.indexOf('note') + 7;
+        while (txnBytes[idx] !== 163) {
+            bytes.push(txnBytes[idx]);
+            idx++;
+        }
+
+        const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
+
+        return challengeString;
     }
 
     async lookupTransactionById(txnId: string) {

@@ -16,6 +16,7 @@ interface IIsValidAddress { (address: string): boolean }
 interface IGetPublicKey { (address: string): Uint8Array }
 interface IGetAssetDetails { (txnId: string): Promise<any> }
 interface ILookupTransactionById { (txnId: string): Promise<any> }
+interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 
 export interface IChainDriver {
     server: string,
@@ -24,6 +25,7 @@ export interface IChainDriver {
     token: any,
     client: any,
     indexer: any,
+    getChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
     makeAssetTxn: IMakeAssetTxn,
     makeAssetOptInTxn: IMakeAssetOptInTxn,
     makeAssetTransferTxn: IMakeAssetTransferTxn,

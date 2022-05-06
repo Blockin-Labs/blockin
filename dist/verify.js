@@ -167,16 +167,7 @@ function constructMessageString(challenge) {
  * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
  */
 async function getChallengeString(txnBytes) {
-    const txnString = new TextDecoder().decode(txnBytes);
-    const bytes = [];
-    let idx = txnString.indexOf('note') + 7;
-    while (txnBytes[idx] !== 163) {
-        bytes.push(txnBytes[idx]);
-        idx++;
-    }
-    const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
-    console.log(challengeString);
-    return challengeString;
+    return chainDriver.getChallengeStringFromBytesToSign(txnBytes);
 }
 export function createMessageFromString(challenge) {
     const messageArray = challenge.split("\n");

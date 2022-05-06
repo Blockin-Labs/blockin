@@ -79,6 +79,17 @@ export class AlgoDriver {
         await algosdk.waitForConfirmation(this.client, txnId, 4);
         return sentTxn;
     }
+    async getChallengeStringFromBytesToSign(txnBytes) {
+        const txnString = new TextDecoder().decode(txnBytes);
+        const bytes = [];
+        let idx = txnString.indexOf('note') + 7;
+        while (txnBytes[idx] !== 163) {
+            bytes.push(txnBytes[idx]);
+            idx++;
+        }
+        const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
+        return challengeString;
+    }
     async lookupTransactionById(txnId) {
         const txnDetails = await this.indexer.lookupTransactionByID(txnId).do();
         return txnDetails;
