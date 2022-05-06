@@ -62,7 +62,7 @@ export async function verifyChallenge(originalChallenge, signedChallenge) {
 
         If originalChallenge is already the challenge string, just return the inputted parameter.
     */
-    const generatedEIP4361ChallengeStr = await getChallengeString(originalChallenge);
+    const generatedEIP4361ChallengeStr = await getChallengeStringFromBytes(originalChallenge);
     const challenge = createMessageFromString(generatedEIP4361ChallengeStr);
     validateChallenge(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
@@ -166,7 +166,7 @@ function constructMessageString(challenge) {
  * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
  * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
  */
-async function getChallengeString(txnBytes) {
+export async function getChallengeStringFromBytes(txnBytes) {
     return chainDriver.getChallengeStringFromBytesToSign(txnBytes);
 }
 export function createMessageFromString(challenge) {

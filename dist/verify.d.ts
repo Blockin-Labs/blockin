@@ -22,5 +22,12 @@ export declare function createChallenge(challengeParams: ChallengeParams): Promi
  * @returns
  */
 export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array): Promise<string>;
+/**
+ * This function usually is not needed. If it is not needed, just return the input as is.
+ *
+ * For Algorand and WalletConnect, you can't just explicitly call signBytes() so we had to include it as
+ * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
+ */
+export declare function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string>;
 export declare function createMessageFromString(challenge: string): EIP4361Challenge;
 export declare function getAllAssets(address: string): Promise<any>;

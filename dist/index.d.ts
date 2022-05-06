@@ -4,4 +4,4 @@ export type { EIP4361Challenge, ChallengeParams } from './@types/verify';
 export { setChainDriver, sha256 } from './blockin';
 export { AlgoDriver } from './ChainDrivers/AlgoDriver';
 export { createAssetTxn, createAssetOptInTxn, createAssetTransferTxn, sendTxn } from './auth';
-export { createChallenge, verifyChallenge, getAssetDetails, getAllAssets, lookupTransactionById, createMessageFromString } from './verify';
+export { createChallenge, verifyChallenge, getAssetDetails, getAllAssets, lookupTransactionById, createMessageFromString, getChallengeStringFromBytes } from './verify';

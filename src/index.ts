@@ -41,5 +41,6 @@ export {
     getAssetDetails,
     getAllAssets,
     lookupTransactionById,
-    createMessageFromString
+    createMessageFromString,
+    getChallengeStringFromBytes
 } from './verify'
