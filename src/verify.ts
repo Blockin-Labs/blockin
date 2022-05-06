@@ -224,7 +224,7 @@ async function getChallengeString(txnBytes: Uint8Array): Promise<string> {
     return challengeString;
 }
 
-function createMessageFromString(challenge: string): EIP4361Challenge {
+export function createMessageFromString(challenge: string): EIP4361Challenge {
     const messageArray = challenge.split("\n");
     const domain = messageArray[0].split(' ')[0];
     const address = messageArray[1];

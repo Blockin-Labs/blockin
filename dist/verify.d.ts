@@ -1,5 +1,5 @@
 import { IChainDriver } from './@types/ChainDriver';
-import { ChallengeParams } from './@types/verify';
+import { ChallengeParams, EIP4361Challenge } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
 export declare function lookupTransactionById(txnID: string): Promise<any>;
 export declare function getAssetDetails(txnId: string): Promise<any>;
@@ -22,4 +22,5 @@ export declare function createChallenge(challengeParams: ChallengeParams): Promi
  * @returns
  */
 export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array): Promise<string>;
+export declare function createMessageFromString(challenge: string): EIP4361Challenge;
 export declare function getAllAssets(address: string): Promise<any>;

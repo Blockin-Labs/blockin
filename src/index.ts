@@ -40,5 +40,6 @@ export {
     verifyChallenge,
     getAssetDetails,
     getAllAssets,
-    lookupTransactionById
+    lookupTransactionById,
+    createMessageFromString
 } from './verify'
