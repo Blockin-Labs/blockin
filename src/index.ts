@@ -20,8 +20,7 @@ export type {
 } from './@types/verify'
 
 export {
-    setChainDriver,
-    sha256
+    setChainDriver
 } from './blockin'
 
 export {
