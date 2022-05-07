@@ -1,0 +1,226 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+/* a:hover {
+  text-decoration: underline;
+} */
+
+/* a:active {
+  text-decoration: underline;
+} */
+
+.asset-link {
+    color:rgb(0, 99, 220);
+}
+
+
+button {
+  background-color: rgb(176, 215, 252);
+  color: black;
+  padding: 12px 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+    cursor:not-allowed;
+}
+
+input {
+  display: block;
+  background-color: rgb(236, 236, 236);
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 30px auto;
+  text-align: center;
+}
+
+header {
+  background-color: rgb(65, 144, 255);
+  padding: 10px 30px 20px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.connect-screen {
+  text-align: center;
+  padding: 100px 0px;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  top: 0px;
+  left: 0px;
+  transition: opacity 500ms;
+  z-index: 50;
+  height: 100vh;
+  width: 100vw;
+}
+
+.connect-screen div {
+  background-color: white;
+  opacity: 100%;
+  width: 600px;
+  max-width: 90vw;
+  margin: 50px auto 0px;
+  padding: 30px;
+  border-radius: 25px;
+}
+
+.connect-screen h1 {
+  margin-bottom: 55px;
+}
+
+.hidden {
+  display: none;
+}
+
+main {
+  text-align: center;
+  padding: 100px 0px 0px;
+  max-width: 30rem;
+  margin-inline: auto;
+}
+
+.home h2 {
+  font-size: larger;
+}
+
+.home h3 {
+  font-size: large;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid black;
+}
+
+.home ul {
+  padding: 0px;
+  list-style: upper-roman;
+  margin: 0px;
+}
+
+.home li {
+  margin: 20px 0px 0px;
+  text-decoration: underline;
+  color: rgb(0, 99, 220)
+}
+
+.assetidinput {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.banner {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  font-weight: bold;
+  font-size: 50px;
+  color: black;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0); /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: rgb(247, 247, 247);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.bottomBanner {
+  width: 100%;
+}
+
+.bannerStatus {
+  float: left;
+  display: flex;
+  align-items: center;
+  cursor: default;
+}
+
+.bannerStatus div {
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+
+.connectStatus {
+    float: right;
+    display: flex;
+    align-items: center;
+    cursor: default;
+  }
+  
+  .connectStatus div {
+    display: flex;
+    align-items: center;
+    margin-right: 30px;
+  }
+
+.sideIcon {
+  fill: white;
+  margin-right: 13px;
+}
+
+.blockinIcon {
+  fill: white;
+}
+
+
+.logout, .login {
+  background: none;
+  color: white;
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-size:medium;
+  font-weight: 500;
+  float: right;
+}
+
+.closeButton {
+  background: none;
+  fill: black;
+  padding: 3px 0px 0px 0px;
+  margin: 0px 0px 20px 0px;
+  border: none;
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.connectButton {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.connectButton svg {
+  fill: black
+}
