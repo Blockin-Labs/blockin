@@ -15,8 +15,8 @@ export async function lookupTransactionById(txnID: string) {
     return await chainDriver.lookupTransactionById(txnID);
 }
 
-export async function getAssetDetails(txnId: string) {
-    return await chainDriver.getAssetDetails(txnId)
+export async function getAssetDetails(assetId: string) {
+    return await chainDriver.getAssetDetails(assetId)
 }
 
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
@@ -267,19 +267,16 @@ export function createMessageFromString(challenge: string): EIP4361Challenge {
 }
 
 /** The functions in this section are left up to the resource server's implementation. */
-async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
-    if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
-        throw 'Invalid signature';
-    }
+export async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
+    await chainDriver.verifySignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
 }
 
 export async function getAllAssets(address: string) {
-    return (await chainDriver.getAssets(address))
+    return (await chainDriver.getAllAssetsForAddress(address))
 }
 
 async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
-
-    let assets = (await chainDriver.getAssets(address));
+    let assets = (await chainDriver.getAllAssetsForAddress(address));
     for (const assetIdStr of assetIds) {
         if (!assetIdStr.startsWith('Asset ID:')) {
             continue;

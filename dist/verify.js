@@ -1,4 +1,3 @@
-import nacl from "tweetnacl";
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/;
 var chainDriver;
@@ -8,8 +7,8 @@ export function initializeVerify(driver) {
 export async function lookupTransactionById(txnID) {
     return await chainDriver.lookupTransactionById(txnID);
 }
-export async function getAssetDetails(txnId) {
-    return await chainDriver.getAssetDetails(txnId);
+export async function getAssetDetails(assetId) {
+    return await chainDriver.getAssetDetails(assetId);
 }
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
@@ -221,16 +220,14 @@ export function createMessageFromString(challenge) {
     return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce };
 }
 /** The functions in this section are left up to the resource server's implementation. */
-async function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
-    if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, chainDriver.getPublicKey(originalAddress))) {
-        throw 'Invalid signature';
-    }
+export async function verifyChallengeSignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
+    await chainDriver.verifySignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
 }
 export async function getAllAssets(address) {
-    return (await chainDriver.getAssets(address));
+    return (await chainDriver.getAllAssetsForAddress(address));
 }
 async function verifyOwnershipOfAssets(address, assetIds) {
-    let assets = (await chainDriver.getAssets(address));
+    let assets = (await chainDriver.getAllAssetsForAddress(address));
     for (const assetIdStr of assetIds) {
         if (!assetIdStr.startsWith('Asset ID:')) {
             continue;

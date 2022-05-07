@@ -1,7 +1,11 @@
 import algosdk, { decodeAddress, Transaction } from 'algosdk';
+import nacl from 'tweetnacl';
 import {
     IChainDriver,
+    IGetAssets,
     IGetChallengeStringFromBytesToSign,
+    IGetPublicKey,
+    IVerifySignature,
     MakeAssetParams,
     MakeOptInAssetParams,
     MakePaymentParams,
@@ -171,7 +175,7 @@ export class AlgoDriver implements IChainDriver {
         return accountInfo.params;
     }
 
-    async getAssets(address: string): Promise<any> {
+    async getAllAssetsForAddress(address: string): Promise<any> {
         const accountInfo = await this.client.accountInformation(address).do();
         return accountInfo.assets
     }
@@ -193,10 +197,14 @@ export class AlgoDriver implements IChainDriver {
         return algosdk.isValidAddress(address)
     }
 
-    getPublicKey(address: string): Uint8Array {
-        // const utfPublicKey = decodeAddress(address).publicKey
-        // return new TextDecoder('utf-8').decode(utfPublicKey)
-        return decodeAddress(address).publicKey
+    getPublicKeyFromAddress(address: string): Uint8Array {
+        return decodeAddress(address).publicKey;
+    }
+
+    async verifySignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void> {
+        if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, this.getPublicKeyFromAddress(originalAddress))) {
+            throw 'Invalid signature';
+        }
     }
 
     private createUniversalTxn(algoTxn: Transaction, message: string): UniversalTxn {

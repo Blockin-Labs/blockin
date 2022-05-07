@@ -1,4 +1,5 @@
 import algosdk, { decodeAddress } from 'algosdk';
+import nacl from 'tweetnacl';
 export class AlgoDriver {
     constructor(API_KEY) {
         this.server = "https://testnet-algorand.api.purestake.io/ps2";
@@ -98,7 +99,7 @@ export class AlgoDriver {
         let accountInfo = (await this.client.getAssetByID(Number(assetId)).do());
         return accountInfo.params;
     }
-    async getAssets(address) {
+    async getAllAssetsForAddress(address) {
         const accountInfo = await this.client.accountInformation(address).do();
         return accountInfo.assets;
     }
@@ -115,10 +116,13 @@ export class AlgoDriver {
     isValidAddress(address) {
         return algosdk.isValidAddress(address);
     }
-    getPublicKey(address) {
-        // const utfPublicKey = decodeAddress(address).publicKey
-        // return new TextDecoder('utf-8').decode(utfPublicKey)
+    getPublicKeyFromAddress(address) {
         return decodeAddress(address).publicKey;
+    }
+    async verifySignature(originalChallengeToUint8Array, signedChallenge, originalAddress) {
+        if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, this.getPublicKeyFromAddress(originalAddress))) {
+            throw 'Invalid signature';
+        }
     }
     createUniversalTxn(algoTxn, message) {
         return {

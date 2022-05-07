@@ -2,7 +2,7 @@ import { IChainDriver } from './@types/ChainDriver';
 import { ChallengeParams, EIP4361Challenge } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
 export declare function lookupTransactionById(txnID: string): Promise<any>;
-export declare function getAssetDetails(txnId: string): Promise<any>;
+export declare function getAssetDetails(assetId: string): Promise<any>;
 /**
  * Creates a challenge to be signed by Wallet Provider to prove identity
  * @param domain
@@ -30,4 +30,6 @@ export declare function verifyChallenge(originalChallenge: Uint8Array, signedCha
  */
 export declare function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string>;
 export declare function createMessageFromString(challenge: string): EIP4361Challenge;
+/** The functions in this section are left up to the resource server's implementation. */
+export declare function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;
 export declare function getAllAssets(address: string): Promise<any>;

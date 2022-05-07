@@ -16,11 +16,12 @@ export declare class AlgoDriver implements IChainDriver {
     getChallengeStringFromBytesToSign(txnBytes: Uint8Array): Promise<string>;
     lookupTransactionById(txnId: string): Promise<Record<string, any>>;
     getAssetDetails(assetId: string | Number): Promise<any>;
-    getAssets(address: string): Promise<any>;
+    getAllAssetsForAddress(address: string): Promise<any>;
     getStatus(): Promise<Record<string, any>>;
     getBlockTimestamp(nonce: number): Promise<string>;
     getTransactionParams(): Promise<Record<string, any>>;
     isValidAddress(address: string): boolean;
-    getPublicKey(address: string): Uint8Array;
+    getPublicKeyFromAddress(address: string): Uint8Array;
+    verifySignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;
     private createUniversalTxn;
 }
