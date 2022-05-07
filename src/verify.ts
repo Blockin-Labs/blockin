@@ -32,6 +32,10 @@ export async function getAssetDetails(assetId: string) {
  * @returns 
  */
 export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions) {
+    if (options?.useBlockTimestampsForNonce) {
+        challengeParams.nonce = await chainDriver.getLastBlockIndex()
+    }
+
     const {
         domain,
         statement,
@@ -46,9 +50,7 @@ export async function createChallenge(challengeParams: ChallengeParams, options?
         resources = undefined
     } = challengeParams;
 
-    if (options?.useBlockTimestampsForNonce) {
-        challengeParams.nonce = await chainDriver.getLastBlockIndex()
-    }
+
 
     try {
         const challenge: EIP4361Challenge = {

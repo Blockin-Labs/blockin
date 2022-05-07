@@ -24,10 +24,10 @@ export async function getAssetDetails(assetId) {
  * @returns
  */
 export async function createChallenge(challengeParams, options) {
-    const { domain, statement, address, uri, nonce, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
     if (options === null || options === void 0 ? void 0 : options.useBlockTimestampsForNonce) {
         challengeParams.nonce = await chainDriver.getLastBlockIndex();
     }
+    const { domain, statement, address, uri, nonce, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
     try {
         const challenge = {
             domain,
