@@ -52,7 +52,7 @@ export async function createChallenge(challengeParams) {
  * @param signedChallenge
  * @returns
  */
-export async function verifyChallenge(originalChallenge, signedChallenge) {
+export async function verifyChallenge(originalChallenge, signedChallenge, assetAmounts) {
     /*
         Make sure getChallengeString() is consistent with your implementation.
 
@@ -76,7 +76,7 @@ export async function verifyChallenge(originalChallenge, signedChallenge) {
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
     console.log("Success: Signature matches address specified within the challenge.");
     if (challenge.resources) {
-        await verifyOwnershipOfAssets(challenge.address, challenge.resources);
+        await verifyOwnershipOfAssets(challenge.address, challenge.resources, assetAmounts);
     }
     return `Successfully granted access via Blockin`;
 }
@@ -206,19 +206,17 @@ export async function verifyChallengeSignature(originalChallengeToUint8Array, si
 export async function getAllAssetsForAddress(address) {
     return (await chainDriver.getAllAssetsForAddress(address));
 }
-export async function verifyOwnershipOfAssets(address, assetIds) {
-    let assets = (await chainDriver.getAllAssetsForAddress(address));
-    for (const assetIdStr of assetIds) {
-        if (!assetIdStr.startsWith('Asset ID:')) {
-            continue;
-        }
-        const assetId = assetIdStr.substring(10);
-        const requestedAsset = assets.find((elem) => elem['asset-id'].toString() === assetId);
-        if (!requestedAsset) {
-            throw `Address ${address} does not own requested asset : ${assetId}`;
-        }
-        else {
-            console.log(`Success: Found asset in user's wallet: ${assetId}.`);
+export async function verifyOwnershipOfAssets(address, resources, assetAmounts) {
+    if (assetAmounts) {
+        assetAmounts = assetAmounts.filter(elem => !Number.isNaN(elem));
+    }
+    let assetIds = [];
+    if (resources) {
+        const filteredAssetIds = resources.filter(elem => elem.startsWith('Asset ID: '));
+        for (const assetStr of filteredAssetIds) {
+            const assetId = assetStr.substring(10);
+            assetIds.push(assetId);
         }
     }
+    await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetAmounts);
 }

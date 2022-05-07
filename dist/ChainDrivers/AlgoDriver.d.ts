@@ -23,5 +23,6 @@ export declare class AlgoDriver implements IChainDriver {
     isValidAddress(address: string): boolean;
     getPublicKeyFromAddress(address: string): Uint8Array;
     verifySignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;
+    verifyOwnershipOfAssets(address: string, assetIds: string[], assetAmounts?: number[]): Promise<void>;
     private createUniversalTxn;
 }

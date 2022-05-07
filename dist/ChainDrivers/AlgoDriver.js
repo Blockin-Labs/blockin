@@ -124,6 +124,24 @@ export class AlgoDriver {
             throw 'Invalid signature';
         }
     }
+    async verifyOwnershipOfAssets(address, assetIds, assetAmounts) {
+        if (assetIds.length == 0)
+            return;
+        let assets = (await this.getAllAssetsForAddress(address));
+        for (let i = 0; i < assetIds.length; i++) {
+            const assetId = assetIds[i];
+            const minimumAmount = assetAmounts && assetAmounts[i] ? assetAmounts[i] : 1;
+            const requestedAsset = assets.find((elem) => elem['asset-id'].toString() === assetId);
+            if (!requestedAsset) {
+                throw `Address ${address} does not own requested asset : ${assetId}`;
+            }
+            console.log(`Success: Found asset in user's wallet: ${assetId}.`);
+            console.log('ASSET DETAILS', requestedAsset);
+            if (requestedAsset['amount'] < minimumAmount) {
+                throw `Address ${address} only owns ${requestedAsset['amount']} and does not meet minimum balance requirement (${minimumAmount}) for asset : ${assetId}`;
+            }
+        }
+    }
     createUniversalTxn(algoTxn, message) {
         return {
             txn: algosdk.encodeUnsignedTransaction(algoTxn),

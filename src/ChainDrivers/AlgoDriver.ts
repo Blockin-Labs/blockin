@@ -5,6 +5,7 @@ import {
     IGetAssets,
     IGetChallengeStringFromBytesToSign,
     IGetPublicKey,
+    IVerifyOwnershipOfAssets,
     IVerifySignature,
     MakeAssetParams,
     MakeOptInAssetParams,
@@ -204,6 +205,28 @@ export class AlgoDriver implements IChainDriver {
     async verifySignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void> {
         if (!nacl.sign.detached.verify(originalChallengeToUint8Array, signedChallenge, this.getPublicKeyFromAddress(originalAddress))) {
             throw 'Invalid signature';
+        }
+    }
+
+    async verifyOwnershipOfAssets(address: string, assetIds: string[], assetAmounts?: number[]) {
+        if (assetIds.length == 0) return;
+
+        let assets = (await this.getAllAssetsForAddress(address));
+
+        for (let i = 0; i < assetIds.length; i++) {
+            const assetId = assetIds[i];
+            const minimumAmount = assetAmounts && assetAmounts[i] ? assetAmounts[i] : 1;
+
+            const requestedAsset = assets.find((elem: any) => elem['asset-id'].toString() === assetId);
+            if (!requestedAsset) {
+                throw `Address ${address} does not own requested asset : ${assetId}`;
+            }
+            console.log(`Success: Found asset in user's wallet: ${assetId}.`);
+            console.log('ASSET DETAILS', requestedAsset);
+
+            if (requestedAsset['amount'] < minimumAmount) {
+                throw `Address ${address} only owns ${requestedAsset['amount']} and does not meet minimum balance requirement (${minimumAmount}) for asset : ${assetId}`;
+            }
         }
     }
 

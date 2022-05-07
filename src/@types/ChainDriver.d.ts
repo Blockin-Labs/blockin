@@ -18,6 +18,7 @@ interface IGetAssetDetails { (txnId: string): Promise<any> }
 interface ILookupTransactionById { (txnId: string): Promise<any> }
 interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
+interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], assetAmounts?: number[]): Promise<void> }
 
 export interface IChainDriver {
     server: string,
@@ -38,7 +39,8 @@ export interface IChainDriver {
     getPublicKeyFromAddress: IGetPublicKey,
     getAssetDetails: IGetAssetDetails,
     lookupTransactionById: ILookupTransactionById,
-    verifySignature: IVerifySignature
+    verifySignature: IVerifySignature,
+    verifyOwnershipOfAssets: IVerifyOwnershipOfAssets,
 }
 
 export type MakeAssetParams = {
