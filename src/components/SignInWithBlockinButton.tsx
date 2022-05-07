@@ -2,7 +2,9 @@
 
 
 import { AlgoDriver, createChallenge, setChainDriver } from '../index';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ChallengeParams } from '../@types/verify';
+import { ChallengeResponse, PresetAsset, PresetUri, SupportedChain } from '../@types/SignInWithBlockinButton';
 
 const CloseIcon = () => {
     return (
@@ -21,74 +23,50 @@ const buttonStyle = {
     cursor: 'pointer',
 }
 
-type PresetAsset = {
-    assetId: string;
-    name: string;
-    description?: string;
-    // image?: string;
-}
-
-type PresetUri = {
-    uri: string;
-    name: string;
-    description?: string
-    // image?: string;
-}
-
-type ButtonChallengeParams = {
-    domain: string,
-    statement: string,
-    address: string,
-    uri: string,
-    version?: string,
-    chainId?: string,
-    issuedAt?: string,
-    expirationDate?: string,
-    notBefore?: string
-}
-
-type ChallengeResponse = {
-    success: boolean,
-    message: string
-}
-
-const getChainImg = (chain: string) => {
-    switch (chain) {
-        case 'Algorand':
-            return 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png';
-        case 'Ethereum':
-            return 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png';
-        default:
-            return 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png'
+const supportedChainMap: any = {
+    'Ethereum': {
+        driver: new AlgoDriver(),
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png'
+    },
+    'Algorand': {
+        driver: new AlgoDriver(),
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
     }
+}
+
+
+const getChain = (chainName: string, currentChainInfo?: SupportedChain) => {
+    if (currentChainInfo) return currentChainInfo;
+    else return supportedChainMap[chainName];
 }
 
 export const SignInWithBlockinButton = ({
     challengeParams,
-    chain,
+    hideResources = false,
     displayedAssets = [],
     displayedUris = [],
     signAndVerifyChallenge,
     generateNonce,
-    hideResources = false,
-    // supportedChains,
-    // generateNonce = undefined,
+    currentChain,
+    currentChainInfo,
+    useBlockTimestampsForNonce = false,
     // canAddCustomAssets,
     // canAddCustomUris,
     // canSetExpirationDate,
     // canSetNotBeforeDate,
 }: {
-    challengeParams: ButtonChallengeParams,
-    chain: string,
+    challengeParams: ChallengeParams,
+    hideResources?: boolean,
+    currentChain: string,
     displayedAssets: PresetAsset[],
     displayedUris: PresetUri[],
     signAndVerifyChallenge: (challenge: string) => Promise<ChallengeResponse>
-    generateNonce: () => Promise<string>,
-    hideResources?: boolean,
-    // supportedChains: string[],
+    generateNonce?: () => Promise<string>,
+    useBlockTimestampsForNonce?: boolean,
+    currentChainInfo?: SupportedChain,
+
     // disableAssetSelection: boolean,
     // disableUriSelection: boolean,
-    // generateNonce: undefined | () => Promise<string>,
     // canAddCustomAssets: boolean,
     // canAddCustomUris: boolean,
     // canSetExpirationDate: boolean,
@@ -97,7 +75,11 @@ export const SignInWithBlockinButton = ({
     const [modalIsVisible, setModalIsVisible] = useState(false);
     const [selectedResources, setSelectedResources] = useState<string[]>([]);
     const [displayMessage, setDisplayMessage] = useState('');
+    const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
 
+    useEffect(() => {
+        setChain(getChain(currentChain, currentChainInfo));
+    }, [currentChain]);
 
     return <>
         <button style={buttonStyle} onClick={() => setModalIsVisible(!modalIsVisible)}>
@@ -143,9 +125,9 @@ export const SignInWithBlockinButton = ({
                         cursor: 'pointer'
                     }}><CloseIcon /></button>
                     <h1>Sign In with Blockin!</h1>
-                    <img src={getChainImg(chain)} height='100px' width='auto' />
+                    <img src={chain.logo} height='100px' width='auto' />
 
-                    <h3>{challengeParams.domain} wants you to sign in with your {chain} account: {challengeParams.address}</h3>
+                    <h3><>{challengeParams.domain} wants you to sign in with your {chain} account: {challengeParams.address}</></h3>
                     <h3>{challengeParams.statement}</h3>
                     <h3>URI: {challengeParams.uri}</h3>
                     <h3>You will be authorized starting {challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`} {challengeParams.expirationDate && `until ${challengeParams.expirationDate}`}</h3>
@@ -157,7 +139,7 @@ export const SignInWithBlockinButton = ({
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div style={{ display: 'flex' }}>
                                         <div style={{ textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 }}>
-                                            <img src={getChainImg(chain)} height='50px' width='auto' />
+                                            <img src={chain.logo} height='50px' width='auto' />
                                         </div>
                                         <div style={{ textAlign: 'left' }}>
                                             <b>{elem.name}</b>
@@ -242,16 +224,19 @@ export const SignInWithBlockinButton = ({
 
                     <hr />
                     <button style={buttonStyle} onClick={async () => {
-                        setChainDriver(new AlgoDriver());
+                        setChainDriver(chain.driver);
+                        const nonce = generateNonce ? await generateNonce() : '';
+
                         const challenge = {
                             ...challengeParams,
                             resources: selectedResources,
-                            nonce: await generateNonce(),
+                            nonce,
                         };
 
-                        const challengeString = await createChallenge(challenge);
+                        const challengeString = await createChallenge(challenge, { useBlockTimestampsForNonce });
 
                         const { success, message } = await signAndVerifyChallenge(challengeString);
+
                         if (!success) {
                             setDisplayMessage(message);
                         } else {

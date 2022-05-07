@@ -1,5 +1,5 @@
 import { AlgoDriver, createChallenge, setChainDriver } from '../index';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const CloseIcon = () => {
     return (<svg width={25} height={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
             <path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/>
@@ -13,19 +13,23 @@ const buttonStyle = {
     borderRadius: '10px',
     cursor: 'pointer',
 };
-const getChainImg = (chain) => {
-    switch (chain) {
-        case 'Algorand':
-            return 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png';
-        case 'Ethereum':
-            return 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png';
-        default:
-            return 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png';
+const supportedChainMap = {
+    'Ethereum': {
+        driver: new AlgoDriver(),
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png'
+    },
+    'Algorand': {
+        driver: new AlgoDriver(),
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
     }
 };
-export const SignInWithBlockinButton = ({ challengeParams, chain, displayedAssets = [], displayedUris = [], signAndVerifyChallenge, generateNonce, hideResources = false,
-// supportedChains,
-// generateNonce = undefined,
+const getChain = (chainName, currentChainInfo) => {
+    if (currentChainInfo)
+        return currentChainInfo;
+    else
+        return supportedChainMap[chainName];
+};
+export const SignInWithBlockinButton = ({ challengeParams, hideResources = false, displayedAssets = [], displayedUris = [], signAndVerifyChallenge, generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce = false,
 // canAddCustomAssets,
 // canAddCustomUris,
 // canSetExpirationDate,
@@ -34,6 +38,10 @@ export const SignInWithBlockinButton = ({ challengeParams, chain, displayedAsset
     const [modalIsVisible, setModalIsVisible] = useState(false);
     const [selectedResources, setSelectedResources] = useState([]);
     const [displayMessage, setDisplayMessage] = useState('');
+    const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
+    useEffect(() => {
+        setChain(getChain(currentChain, currentChainInfo));
+    }, [currentChain]);
     return <>
         <button style={buttonStyle} onClick={() => setModalIsVisible(!modalIsVisible)}>
             Sign In with Blockin
@@ -78,9 +86,9 @@ export const SignInWithBlockinButton = ({ challengeParams, chain, displayedAsset
                 cursor: 'pointer'
             }}><CloseIcon /></button>
                     <h1>Sign In with Blockin!</h1>
-                    <img src={getChainImg(chain)} height='100px' width='auto'/>
+                    <img src={chain.logo} height='100px' width='auto'/>
 
-                    <h3>{challengeParams.domain} wants you to sign in with your {chain} account: {challengeParams.address}</h3>
+                    <h3><>{challengeParams.domain} wants you to sign in with your {chain} account: {challengeParams.address}</></h3>
                     <h3>{challengeParams.statement}</h3>
                     <h3>URI: {challengeParams.uri}</h3>
                     <h3>You will be authorized starting {challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`} {challengeParams.expirationDate && `until ${challengeParams.expirationDate}`}</h3>
@@ -92,7 +100,7 @@ export const SignInWithBlockinButton = ({ challengeParams, chain, displayedAsset
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div style={{ display: 'flex' }}>
                                         <div style={{ textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 }}>
-                                            <img src={getChainImg(chain)} height='50px' width='auto'/>
+                                            <img src={chain.logo} height='50px' width='auto'/>
                                         </div>
                                         <div style={{ textAlign: 'left' }}>
                                             <b>{elem.name}</b>
@@ -167,9 +175,10 @@ export const SignInWithBlockinButton = ({ challengeParams, chain, displayedAsset
 
                     <hr />
                     <button style={buttonStyle} onClick={async () => {
-                setChainDriver(new AlgoDriver());
-                const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce: await generateNonce() });
-                const challengeString = await createChallenge(challenge);
+                setChainDriver(chain.driver);
+                const nonce = generateNonce ? await generateNonce() : '';
+                const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce });
+                const challengeString = await createChallenge(challenge, { useBlockTimestampsForNonce });
                 const { success, message } = await signAndVerifyChallenge(challengeString);
                 if (!success) {
                     setDisplayMessage(message);

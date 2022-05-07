@@ -1,36 +1,14 @@
 /// <reference types="react" />
-declare type PresetAsset = {
-    assetId: string;
-    name: string;
-    description?: string;
-};
-declare type PresetUri = {
-    uri: string;
-    name: string;
-    description?: string;
-};
-declare type ButtonChallengeParams = {
-    domain: string;
-    statement: string;
-    address: string;
-    uri: string;
-    version?: string;
-    chainId?: string;
-    issuedAt?: string;
-    expirationDate?: string;
-    notBefore?: string;
-};
-declare type ChallengeResponse = {
-    success: boolean;
-    message: string;
-};
-export declare const SignInWithBlockinButton: ({ challengeParams, chain, displayedAssets, displayedUris, signAndVerifyChallenge, generateNonce, hideResources, }: {
-    challengeParams: ButtonChallengeParams;
-    chain: string;
+import { ChallengeParams } from '../@types/verify';
+import { ChallengeResponse, PresetAsset, PresetUri, SupportedChain } from '../@types/SignInWithBlockinButton';
+export declare const SignInWithBlockinButton: ({ challengeParams, hideResources, displayedAssets, displayedUris, signAndVerifyChallenge, generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce, }: {
+    challengeParams: ChallengeParams;
+    hideResources?: boolean | undefined;
+    currentChain: string;
     displayedAssets: PresetAsset[];
     displayedUris: PresetUri[];
     signAndVerifyChallenge: (challenge: string) => Promise<ChallengeResponse>;
-    generateNonce: () => Promise<string>;
-    hideResources?: boolean | undefined;
+    generateNonce?: (() => Promise<string>) | undefined;
+    useBlockTimestampsForNonce?: boolean | undefined;
+    currentChainInfo?: SupportedChain | undefined;
 }) => JSX.Element;
-export {};
