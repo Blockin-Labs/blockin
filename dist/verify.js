@@ -52,7 +52,7 @@ export async function createChallenge(challengeParams) {
  * @param signedChallenge
  * @returns
  */
-export async function verifyChallenge(originalChallenge, signedChallenge, assetAmounts) {
+export async function verifyChallenge(originalChallenge, signedChallenge, assetMinimumBalancesMap, defaultMinimum) {
     /*
         Make sure getChallengeString() is consistent with your implementation.
 
@@ -76,7 +76,7 @@ export async function verifyChallenge(originalChallenge, signedChallenge, assetA
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
     console.log("Success: Signature matches address specified within the challenge.");
     if (challenge.resources) {
-        await verifyOwnershipOfAssets(challenge.address, challenge.resources, assetAmounts);
+        await verifyOwnershipOfAssets(challenge.address, challenge.resources, assetMinimumBalancesMap, defaultMinimum);
     }
     return `Successfully granted access via Blockin`;
 }
@@ -206,10 +206,7 @@ export async function verifyChallengeSignature(originalChallengeToUint8Array, si
 export async function getAllAssetsForAddress(address) {
     return (await chainDriver.getAllAssetsForAddress(address));
 }
-export async function verifyOwnershipOfAssets(address, resources, assetAmounts) {
-    if (assetAmounts) {
-        assetAmounts = assetAmounts.filter(elem => !Number.isNaN(elem));
-    }
+export async function verifyOwnershipOfAssets(address, resources, assetMinimumBalancesMap, defaultMinimum) {
     let assetIds = [];
     if (resources) {
         const filteredAssetIds = resources.filter(elem => elem.startsWith('Asset ID: '));
@@ -218,5 +215,5 @@ export async function verifyOwnershipOfAssets(address, resources, assetAmounts) 
             assetIds.push(assetId);
         }
     }
-    await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetAmounts);
+    await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum);
 }

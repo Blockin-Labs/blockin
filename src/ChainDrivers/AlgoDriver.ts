@@ -208,14 +208,15 @@ export class AlgoDriver implements IChainDriver {
         }
     }
 
-    async verifyOwnershipOfAssets(address: string, assetIds: string[], assetAmounts?: number[]) {
+    async verifyOwnershipOfAssets(address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
         if (assetIds.length == 0) return;
 
         let assets = (await this.getAllAssetsForAddress(address));
 
         for (let i = 0; i < assetIds.length; i++) {
             const assetId = assetIds[i];
-            const minimumAmount = assetAmounts && assetAmounts[i] ? assetAmounts[i] : 1;
+            const defaultBalance = defaultMinimum ? defaultMinimum : 1;
+            const minimumAmount = assetMinimumBalancesMap && assetMinimumBalancesMap[i] ? assetMinimumBalancesMap[i] : defaultBalance;
 
             const requestedAsset = assets.find((elem: any) => elem['asset-id'].toString() === assetId);
             if (!requestedAsset) {
@@ -225,7 +226,7 @@ export class AlgoDriver implements IChainDriver {
             console.log('ASSET DETAILS', requestedAsset);
 
             if (requestedAsset['amount'] < minimumAmount) {
-                throw `Address ${address} only owns ${requestedAsset['amount']} and does not meet minimum balance requirement (${minimumAmount}) for asset : ${assetId}`;
+                throw `Address ${address} only owns ${requestedAsset['amount']} and does not meet minimum balance requirement of ${minimumAmount} for asset : ${assetId}`;
             }
         }
     }
