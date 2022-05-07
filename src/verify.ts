@@ -1,5 +1,5 @@
 import { IChainDriver } from './@types/ChainDriver'
-import { ChallengeParams, EIP4361Challenge } from './@types/verify'
+import { ChallengeParams, CreateChallengeOptions, EIP4361Challenge, VerifyChallengeOptions } from './@types/verify'
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
@@ -31,7 +31,7 @@ export async function getAssetDetails(assetId: string) {
  * @param resources 
  * @returns 
  */
-export async function createChallenge(challengeParams: ChallengeParams) {
+export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions) {
     const {
         domain,
         statement,
@@ -45,6 +45,10 @@ export async function createChallenge(challengeParams: ChallengeParams) {
         notBefore = undefined,
         resources = undefined
     } = challengeParams;
+
+    if (options?.useBlockTimestampsForNonce) {
+        challengeParams.nonce = await chainDriver.getLastBlockIndex()
+    }
 
     try {
         const challenge: EIP4361Challenge = {
@@ -75,7 +79,7 @@ export async function createChallenge(challengeParams: ChallengeParams) {
  * @param signedChallenge 
  * @returns 
  */
-export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, assetMinimumBalancesMap?: any, defaultMinimum?: number) {
+export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, options?: VerifyChallengeOptions) {
     /*
         Make sure getChallengeString() is consistent with your implementation.
 
@@ -103,8 +107,18 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
     console.log("Success: Signature matches address specified within the challenge.");
 
+    if (options?.verifyNonceWithBlockTimestamps) {
+        let blockTimestamp = await chainDriver.getTimestampForBlock(challenge.nonce);
+        const currentTimestamp = Math.round((new Date()).getTime() / 1000);
+        const timeLimit = options?.verificationTimeLimit ? options?.verificationTimeLimit : 60;
+
+        if (blockTimestamp <= currentTimestamp - timeLimit) {
+            throw `Error: This challenge uses recent block timestamps for the nonce. The challenge must be verified within ${timeLimit} seconds of creating the challenge`
+        }
+    }
+
     if (challenge.resources) {
-        await verifyOwnershipOfAssets(challenge.address, challenge.resources, assetMinimumBalancesMap, defaultMinimum);
+        await verifyOwnershipOfAssets(challenge.address, challenge.resources, options?.assetMinimumBalancesMap, options?.defaultMinimum);
     }
 
     return `Successfully granted access via Blockin`;

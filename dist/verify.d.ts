@@ -1,5 +1,5 @@
 import { IChainDriver } from './@types/ChainDriver';
-import { ChallengeParams, EIP4361Challenge } from './@types/verify';
+import { ChallengeParams, CreateChallengeOptions, EIP4361Challenge, VerifyChallengeOptions } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
 export declare function lookupTransactionById(txnID: string): Promise<any>;
 export declare function getAssetDetails(assetId: string): Promise<any>;
@@ -14,14 +14,14 @@ export declare function getAssetDetails(assetId: string): Promise<any>;
  * @param resources
  * @returns
  */
-export declare function createChallenge(challengeParams: ChallengeParams): Promise<string>;
+export declare function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions): Promise<string>;
 /**
  * Verifies that the challenge was signed by the account belonging to the asset
  * @param originalChallenge
  * @param signedChallenge
  * @returns
  */
-export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<string>;
+export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, options?: VerifyChallengeOptions): Promise<string>;
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
 export declare function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge): void;

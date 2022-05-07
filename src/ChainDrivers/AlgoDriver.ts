@@ -181,12 +181,14 @@ export class AlgoDriver implements IChainDriver {
         return accountInfo.assets
     }
 
-    async getStatus(): Promise<Record<string, any>> {
-        return await this.client.status().do();
+    async getLastBlockIndex(): Promise<string> {
+        let status = await this.client.status().do();
+        return status['last-round'];
     }
 
-    async getBlockTimestamp(nonce: number): Promise<string> {
-        const blockData = await this.client.block(nonce).do()
+    async getTimestampForBlock(blockIndexStr: string): Promise<string> {
+        const blockIndex = Number(blockIndexStr);
+        const blockData = await this.client.block(blockIndex).do();
         return blockData.block.ts
     }
 

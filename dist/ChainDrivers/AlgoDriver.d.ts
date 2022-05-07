@@ -17,8 +17,8 @@ export declare class AlgoDriver implements IChainDriver {
     lookupTransactionById(txnId: string): Promise<Record<string, any>>;
     getAssetDetails(assetId: string | Number): Promise<any>;
     getAllAssetsForAddress(address: string): Promise<any>;
-    getStatus(): Promise<Record<string, any>>;
-    getBlockTimestamp(nonce: number): Promise<string>;
+    getLastBlockIndex(): Promise<string>;
+    getTimestampForBlock(blockIndexStr: string): Promise<string>;
     getTransactionParams(): Promise<Record<string, any>>;
     isValidAddress(address: string): boolean;
     getPublicKeyFromAddress(address: string): Uint8Array;

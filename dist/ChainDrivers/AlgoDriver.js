@@ -103,11 +103,13 @@ export class AlgoDriver {
         const accountInfo = await this.client.accountInformation(address).do();
         return accountInfo.assets;
     }
-    async getStatus() {
-        return await this.client.status().do();
+    async getLastBlockIndex() {
+        let status = await this.client.status().do();
+        return status['last-round'];
     }
-    async getBlockTimestamp(nonce) {
-        const blockData = await this.client.block(nonce).do();
+    async getTimestampForBlock(blockIndexStr) {
+        const blockIndex = Number(blockIndexStr);
+        const blockData = await this.client.block(blockIndex).do();
         return blockData.block.ts;
     }
     async getTransactionParams() {

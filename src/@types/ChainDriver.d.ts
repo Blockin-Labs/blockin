@@ -10,8 +10,8 @@ interface IMakeAssetOptInTxn { (assetParams: MakeOptInAssetParams): Promise<Univ
 interface IMakeAssetTransferTxn { (assetParams: MakeTransferAssetParams): Promise<UniversalTxn> }
 interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
 interface IGetAssets { (address: string): Promise<any> }
-interface IGetStatus { (): Promise<Record<string, any>> }
-interface IGetBlock { (nonce: number): Promise<any> }
+interface IGetLastBlockIndex { (): Promise<any> }
+interface IGetTimestampForBlock { (blockIndex: string): Promise<any> }
 interface IIsValidAddress { (address: string): boolean }
 interface IGetPublicKey { (address: string): Uint8Array }
 interface IGetAssetDetails { (txnId: string): Promise<any> }
@@ -32,9 +32,9 @@ export interface IChainDriver {
     makeAssetOptInTxn: IMakeAssetOptInTxn,
     makeAssetTransferTxn: IMakeAssetTransferTxn,
     sendTxn: ISendTx,
-    getStatus: IGetStatus,
+    getLastBlockIndex: IGetLastBlockIndex,
     getAllAssetsForAddress: IGetAssets,
-    getBlockTimestamp: IGetBlock,
+    getTimestampForBlock: IGetTimestampForBlock,
     isValidAddress: IIsValidAddress,
     getPublicKeyFromAddress: IGetPublicKey,
     getAssetDetails: IGetAssetDetails,
@@ -42,6 +42,7 @@ export interface IChainDriver {
     verifySignature: IVerifySignature,
     verifyOwnershipOfAssets: IVerifyOwnershipOfAssets,
 }
+
 
 export type MakeAssetParams = {
     from: string,

@@ -26,3 +26,14 @@ export type ChallengeParams = {
     notBefore?: string,
     resources?: any
 }
+
+export type CreateChallengeOptions = {
+    useBlockTimestampsForNonce?: boolean;
+}
+
+export type VerifyChallengeOptions = {
+    assetMinimumBalancesMap?: any;
+    defaultMinimum?: number;
+    verifyNonceWithBlockTimestamps?: boolean;
+    verificationTimeLimit?: number;
+}

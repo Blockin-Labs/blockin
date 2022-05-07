@@ -23,8 +23,11 @@ export async function getAssetDetails(assetId) {
  * @param resources
  * @returns
  */
-export async function createChallenge(challengeParams) {
+export async function createChallenge(challengeParams, options) {
     const { domain, statement, address, uri, nonce, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
+    if (options === null || options === void 0 ? void 0 : options.useBlockTimestampsForNonce) {
+        challengeParams.nonce = await chainDriver.getLastBlockIndex();
+    }
     try {
         const challenge = {
             domain,
@@ -52,7 +55,7 @@ export async function createChallenge(challengeParams) {
  * @param signedChallenge
  * @returns
  */
-export async function verifyChallenge(originalChallenge, signedChallenge, assetMinimumBalancesMap, defaultMinimum) {
+export async function verifyChallenge(originalChallenge, signedChallenge, options) {
     /*
         Make sure getChallengeString() is consistent with your implementation.
 
@@ -75,8 +78,16 @@ export async function verifyChallenge(originalChallenge, signedChallenge, assetM
     const originalAddress = challenge.address;
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress);
     console.log("Success: Signature matches address specified within the challenge.");
+    if (options === null || options === void 0 ? void 0 : options.verifyNonceWithBlockTimestamps) {
+        let blockTimestamp = await chainDriver.getTimestampForBlock(challenge.nonce);
+        const currentTimestamp = Math.round((new Date()).getTime() / 1000);
+        const timeLimit = (options === null || options === void 0 ? void 0 : options.verificationTimeLimit) ? options === null || options === void 0 ? void 0 : options.verificationTimeLimit : 60;
+        if (blockTimestamp <= currentTimestamp - timeLimit) {
+            throw `Error: This challenge uses recent block timestamps for the nonce. The challenge must be verified within ${timeLimit} seconds of creating the challenge`;
+        }
+    }
     if (challenge.resources) {
-        await verifyOwnershipOfAssets(challenge.address, challenge.resources, assetMinimumBalancesMap, defaultMinimum);
+        await verifyOwnershipOfAssets(challenge.address, challenge.resources, options === null || options === void 0 ? void 0 : options.assetMinimumBalancesMap, options === null || options === void 0 ? void 0 : options.defaultMinimum);
     }
     return `Successfully granted access via Blockin`;
 }
