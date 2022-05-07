@@ -21,5 +21,6 @@ type ChallengeResponse = {
 
 type SupportedChain = {
     driver: IChainDriver;
+    name: string;
     logo: string;
 }
