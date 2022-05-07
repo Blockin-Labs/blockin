@@ -82,21 +82,15 @@ export async function createChallenge(challengeParams: ChallengeParams, options?
  * @returns 
  */
 export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, options?: VerifyChallengeOptions) {
-    /*
-        Make sure getChallengeString() is consistent with your implementation.
-
-        If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
-        this is where to implement it.
-
-        If originalChallenge is already the challenge string, just return the inputted parameter.
-    */
+    const verificationData: any = {};
     const generatedEIP4361ChallengeStr: string = await getChallengeStringFromBytes(originalChallenge);
-
     const challenge: EIP4361Challenge = constructChallengeObjectFromString(generatedEIP4361ChallengeStr);
+
     validateChallengeObjectIsWellFormed(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
     const currDate = new Date();
+    verificationData.verificationTime = currDate;
     if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
         throw `Error: Challenge expired: ${challenge.expirationDate}`
     }
@@ -111,6 +105,7 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
 
     if (options?.verifyNonceWithBlockTimestamps) {
         let blockTimestamp = await chainDriver.getTimestampForBlock(challenge.nonce);
+        verificationData.nonceTimestamp = blockTimestamp;
         const currentTimestamp = Math.round((new Date()).getTime() / 1000);
         const timeLimit = options?.verificationTimeLimit ? options?.verificationTimeLimit : 60;
 
@@ -119,11 +114,22 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
         }
     }
 
-    if (challenge.resources) {
-        await verifyOwnershipOfAssets(challenge.address, challenge.resources, options?.assetMinimumBalancesMap, options?.defaultMinimum);
+    if (options?.expectedDomain && challenge.domain !== options?.expectedDomain) {
+        throw `Error: Domain !== ${options?.expectedDomain}`;
     }
 
-    return `Successfully granted access via Blockin`;
+    if (options?.expectedUri && challenge.uri !== options?.expectedUri) {
+        throw `Error: Uri !== ${options?.expectedUri}`;
+    }
+
+    if (challenge.resources) {
+        const assetLookupData = await verifyOwnershipOfAssets(challenge.address, challenge.resources, options?.assetMinimumBalancesMap, options?.defaultMinimum);
+        verificationData.assetLookupData = assetLookupData
+    }
+
+    return {
+        message: `Successfully granted access via Blockin`, success: true, verificationData
+    }
 }
 
 /** The functions in this section are standard and should not be edited, except for possibly the function
@@ -277,5 +283,7 @@ export async function verifyOwnershipOfAssets(address: string, resources: string
         }
     }
 
-    await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum);
+    const assetLookupData = await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum);
+
+    return assetLookupData;
 }

@@ -56,19 +56,13 @@ export async function createChallenge(challengeParams, options) {
  * @returns
  */
 export async function verifyChallenge(originalChallenge, signedChallenge, options) {
-    /*
-        Make sure getChallengeString() is consistent with your implementation.
-
-        If originalChallenge is a stringified JSON and you need to parse the challenge string out of it,
-        this is where to implement it.
-
-        If originalChallenge is already the challenge string, just return the inputted parameter.
-    */
+    const verificationData = {};
     const generatedEIP4361ChallengeStr = await getChallengeStringFromBytes(originalChallenge);
     const challenge = constructChallengeObjectFromString(generatedEIP4361ChallengeStr);
     validateChallengeObjectIsWellFormed(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
     const currDate = new Date();
+    verificationData.verificationTime = currDate;
     if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
         throw `Error: Challenge expired: ${challenge.expirationDate}`;
     }
@@ -80,16 +74,26 @@ export async function verifyChallenge(originalChallenge, signedChallenge, option
     console.log("Success: Signature matches address specified within the challenge.");
     if (options === null || options === void 0 ? void 0 : options.verifyNonceWithBlockTimestamps) {
         let blockTimestamp = await chainDriver.getTimestampForBlock(challenge.nonce);
+        verificationData.nonceTimestamp = blockTimestamp;
         const currentTimestamp = Math.round((new Date()).getTime() / 1000);
         const timeLimit = (options === null || options === void 0 ? void 0 : options.verificationTimeLimit) ? options === null || options === void 0 ? void 0 : options.verificationTimeLimit : 60;
         if (blockTimestamp <= currentTimestamp - timeLimit) {
             throw `Error: This challenge uses recent block timestamps for the nonce. The challenge must be verified within ${timeLimit} seconds of creating the challenge`;
         }
     }
-    if (challenge.resources) {
-        await verifyOwnershipOfAssets(challenge.address, challenge.resources, options === null || options === void 0 ? void 0 : options.assetMinimumBalancesMap, options === null || options === void 0 ? void 0 : options.defaultMinimum);
+    if ((options === null || options === void 0 ? void 0 : options.expectedDomain) && challenge.domain !== (options === null || options === void 0 ? void 0 : options.expectedDomain)) {
+        throw `Error: Domain !== ${options === null || options === void 0 ? void 0 : options.expectedDomain}`;
     }
-    return `Successfully granted access via Blockin`;
+    if ((options === null || options === void 0 ? void 0 : options.expectedUri) && challenge.uri !== (options === null || options === void 0 ? void 0 : options.expectedUri)) {
+        throw `Error: Uri !== ${options === null || options === void 0 ? void 0 : options.expectedUri}`;
+    }
+    if (challenge.resources) {
+        const assetLookupData = await verifyOwnershipOfAssets(challenge.address, challenge.resources, options === null || options === void 0 ? void 0 : options.assetMinimumBalancesMap, options === null || options === void 0 ? void 0 : options.defaultMinimum);
+        verificationData.assetLookupData = assetLookupData;
+    }
+    return {
+        message: `Successfully granted access via Blockin`, success: true, verificationData
+    };
 }
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
@@ -226,5 +230,6 @@ export async function verifyOwnershipOfAssets(address, resources, assetMinimumBa
             assetIds.push(assetId);
         }
     }
-    await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum);
+    const assetLookupData = await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum);
+    return assetLookupData;
 }

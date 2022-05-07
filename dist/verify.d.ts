@@ -21,7 +21,11 @@ export declare function createChallenge(challengeParams: ChallengeParams, option
  * @param signedChallenge
  * @returns
  */
-export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, options?: VerifyChallengeOptions): Promise<string>;
+export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, options?: VerifyChallengeOptions): Promise<{
+    message: string;
+    success: boolean;
+    verificationData: any;
+}>;
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
 export declare function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge): void;
@@ -37,4 +41,4 @@ export declare function constructChallengeObjectFromString(challenge: string): E
 /** The functions in this section are left up to the resource server's implementation. */
 export declare function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;
 export declare function getAllAssetsForAddress(address: string): Promise<any>;
-export declare function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<void>;
+export declare function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any>;

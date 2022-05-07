@@ -18,7 +18,7 @@ interface IGetAssetDetails { (txnId: string): Promise<any> }
 interface ILookupTransactionById { (txnId: string): Promise<any> }
 interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
-interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<void> }
+interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any> }
 
 export interface IChainDriver {
     server: string,

@@ -36,4 +36,6 @@ export type VerifyChallengeOptions = {
     defaultMinimum?: number;
     verifyNonceWithBlockTimestamps?: boolean;
     verificationTimeLimit?: number;
+    expectedDomain?: string;
+    expectedUri?: string;
 }

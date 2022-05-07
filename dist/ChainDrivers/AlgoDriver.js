@@ -130,6 +130,10 @@ export class AlgoDriver {
         if (assetIds.length == 0)
             return;
         let assets = (await this.getAllAssetsForAddress(address));
+        const assetLookupData = {
+            assetsForAddress: assets,
+            address,
+        };
         for (let i = 0; i < assetIds.length; i++) {
             const assetId = assetIds[i];
             const defaultBalance = defaultMinimum ? defaultMinimum : 1;
@@ -144,6 +148,7 @@ export class AlgoDriver {
                 throw `Address ${address} only owns ${requestedAsset['amount']} and does not meet minimum balance requirement of ${minimumAmount} for asset : ${assetId}`;
             }
         }
+        return assetLookupData;
     }
     createUniversalTxn(algoTxn, message) {
         return {
