@@ -61,9 +61,6 @@ const getSelectedResources = (assets: PresetAsset[], uris: PresetUri[]) => {
 
 export const SignInWithBlockinButton = ({
     challengeParams,
-
-
-    hideResources = false,
     displayedAssets = [],
     displayedUris = [],
     signAndVerifyChallenge,
@@ -71,15 +68,13 @@ export const SignInWithBlockinButton = ({
     currentChain,
     currentChainInfo,
     useBlockTimestampsForNonce = false,
-    // canAddCustomAssets,
-    // canAddCustomUris,
+    canAddCustomAssets = false,
+    canAddCustomUris = false,
+    customAddResourcesMessage,
     // canSetExpirationDate,
     // canSetNotBeforeDate,
 }: {
     challengeParams: ChallengeParams,
-
-
-    hideResources?: boolean,
     currentChain: string,
     displayedAssets: PresetAsset[],
     displayedUris: PresetUri[],
@@ -87,9 +82,9 @@ export const SignInWithBlockinButton = ({
     generateNonce?: () => Promise<string>,
     useBlockTimestampsForNonce?: boolean,
     currentChainInfo?: SupportedChain,
-
-    // canAddCustomAssets: boolean,
-    // canAddCustomUris: boolean,
+    canAddCustomAssets?: boolean,
+    canAddCustomUris?: boolean,
+    customAddResourcesMessage?: string
     // canSetExpirationDate: boolean,
     // canSetNotBeforeDate: boolean,
 }) => {
@@ -102,6 +97,8 @@ export const SignInWithBlockinButton = ({
     useEffect(() => {
         setChain(getChain(currentChain, currentChainInfo));
     }, [currentChain]);
+
+    const resourcesAreHidden = displayedAssets.length == 0 && displayedUris.length == 0 && !canAddCustomAssets && !canAddCustomUris;
 
     return <>
         <button style={buttonStyle} onClick={() => setModalIsVisible(!modalIsVisible)}>
@@ -153,97 +150,115 @@ export const SignInWithBlockinButton = ({
                     <h3>{challengeParams.statement}</h3>
                     <h3>URI: {challengeParams.uri}</h3>
                     <h3>You will be authorized starting {challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`} {challengeParams.expirationDate && `until ${challengeParams.expirationDate}`}</h3>
-                    {!hideResources && <>
-                        {<h3>Select below the resources you would like to receive access to:</h3>}
-                        {displayedAssets.map(elem => {
-                            return <>
-                                <hr />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div style={{ display: 'flex' }}>
-                                        <div style={{ textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 }}>
-                                            <img src={chain.logo} height='50px' width='auto' />
+                    {!resourcesAreHidden && <>
+                        {displayedAssets.length !== 0 || displayedUris.length !== 0 && <>
+                            {<h3>Select from the resources you would like to receive access to:</h3>}
+                            {displayedAssets.map(elem => {
+                                return <>
+                                    <hr />
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex' }}>
+                                            <div style={{ textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 }}>
+                                                <img src={chain.logo} height='50px' width='auto' />
+                                            </div>
+                                            <div style={{ textAlign: 'left' }}>
+                                                <b>{elem.name}</b>
+                                                <br />
+                                                Asset ID:{' '}
+                                                <a
+                                                    style={{
+                                                        color: 'rgb(0, 99, 220)'
+                                                    }}
+                                                    href={`https://testnet.algoexplorer.io/asset/${elem.assetId}`}
+                                                    target="_blank"
+                                                    rel="noreferrer">
+                                                    {elem.assetId}
+                                                </a> - {elem.description}
+                                            </div>
                                         </div>
-                                        <div style={{ textAlign: 'left' }}>
-                                            <b>{elem.name}</b>
-                                            <br />
-                                            Asset ID:{' '}
-                                            <a
-                                                style={{
-                                                    color: 'rgb(0, 99, 220)'
+
+                                        <div style={{ textAlign: 'right' }}>
+                                            {selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
+                                                <button style={buttonStyle} onClick={() => {
+                                                    const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
+                                                    setSelectedResources(newArr);
                                                 }}
-                                                href={`https://testnet.algoexplorer.io/asset/${elem.assetId}`}
-                                                target="_blank"
-                                                rel="noreferrer">
-                                                {elem.assetId}
-                                            </a> - {elem.description}
+                                                    disabled={elem.frozen}>
+                                                    Deselect
+                                                </button> :
+                                                <button style={buttonStyle} disabled={elem.frozen} onClick={() => {
+                                                    const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
+                                                    setSelectedResources(newArr);
+                                                }}>
+                                                    Select
+                                                </button>
+                                            }
                                         </div>
                                     </div>
+                                </>
+                            })}
 
-                                    <div style={{ textAlign: 'right' }}>
-                                        {selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
-                                            <button style={buttonStyle} onClick={() => {
-                                                const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
-                                                setSelectedResources(newArr);
-                                            }}
-                                                disabled={elem.frozen}>
-                                                Deselect
-                                            </button> :
-                                            <button style={buttonStyle} disabled={elem.frozen} onClick={() => {
-                                                const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
-                                                setSelectedResources(newArr);
-                                            }}>
-                                                Select
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                            </>
-                        })}
 
-                        {displayedUris.map(elem => {
-                            return <>
-                                <hr />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            {displayedUris.map(elem => {
+                                return <>
+                                    <hr />
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
-                                    <div style={{ display: 'flex' }}>
-                                        <div style={{ textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 }}>
-                                            <img src='https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png' height='auto' width='50px' />
+                                        <div style={{ display: 'flex' }}>
+                                            <div style={{ textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 }}>
+                                                <img src='https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png' height='auto' width='50px' />
+                                            </div>
+                                            <div style={{ textAlign: 'left' }}>
+                                                <b>{elem.name}</b>
+                                                <br />
+                                                URI: {' '}
+                                                <a
+                                                    style={{
+                                                        color: 'rgb(0, 99, 220)'
+                                                    }}
+                                                    href={`${elem.uri}`}
+                                                    target="_blank"
+                                                    rel="noreferrer">
+                                                    {elem.uri}
+                                                </a> - {elem.description}
+                                            </div>
                                         </div>
-                                        <div style={{ textAlign: 'left' }}>
-                                            <b>{elem.name}</b>
-                                            <br />
-                                            URI: {' '}
-                                            <a
-                                                style={{
-                                                    color: 'rgb(0, 99, 220)'
-                                                }}
-                                                href={`${elem.uri}`}
-                                                target="_blank"
-                                                rel="noreferrer">
-                                                {elem.uri}
-                                            </a> - {elem.description}
+                                        <div style={{ textAlign: 'right' }}>
+                                            {selectedResources.includes(elem.uri) ?
+                                                <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
+                                                    const newArr = selectedResources.filter(resource => resource !== elem.uri)
+                                                    setSelectedResources(newArr);
+                                                }}>
+                                                    Deselect
+                                                </button> :
+                                                <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
+                                                    const newArr = [...selectedResources, elem.uri]
+                                                    setSelectedResources(newArr);
+                                                }}>
+                                                    Select
+                                                </button>
+                                            }
                                         </div>
                                     </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                        {selectedResources.includes(elem.uri) ?
-                                            <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
-                                                const newArr = selectedResources.filter(resource => resource !== elem.uri)
-                                                setSelectedResources(newArr);
-                                            }}>
-                                                Deselect
-                                            </button> :
-                                            <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
-                                                const newArr = [...selectedResources, elem.uri]
-                                                setSelectedResources(newArr);
-                                            }}>
-                                                Select
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                            </>
-                        })}
+                                </>
+                            })}
+                        </>}
                     </>}
+                    {canAddCustomAssets || canAddCustomUris &&
+                        <>
+                            {<h3>You may also add custom resources below: </h3>}
+                            {<h3>{customAddResourcesMessage}</h3>}
+
+                            {canAddCustomAssets && <>
+                                Todo: Add Custom Assets Here
+                            </>}
+
+                            {canAddCustomUris && <>
+                                Todo: Add Custom URIs Here
+                            </>}
+                        </>
+                    }
+
 
                     <hr />
                     <button style={buttonStyle} onClick={async () => {
