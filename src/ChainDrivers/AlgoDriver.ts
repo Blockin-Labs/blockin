@@ -216,7 +216,7 @@ export class AlgoDriver implements IChainDriver {
         for (let i = 0; i < assetIds.length; i++) {
             const assetId = assetIds[i];
             const defaultBalance = defaultMinimum ? defaultMinimum : 1;
-            const minimumAmount = assetMinimumBalancesMap && assetMinimumBalancesMap[i] ? assetMinimumBalancesMap[i] : defaultBalance;
+            const minimumAmount = assetMinimumBalancesMap && assetMinimumBalancesMap[assetId] ? assetMinimumBalancesMap[assetId] : defaultBalance;
 
             const requestedAsset = assets.find((elem: any) => elem['asset-id'].toString() === assetId);
             if (!requestedAsset) {
