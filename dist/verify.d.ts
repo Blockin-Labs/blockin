@@ -22,6 +22,10 @@ export declare function createChallenge(challengeParams: ChallengeParams): Promi
  * @returns
  */
 export declare function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array): Promise<string>;
+/** The functions in this section are standard and should not be edited, except for possibly the function
+ *  calls of the functions from above if edited. */
+export declare function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge): void;
+export declare function constructChallengeStringFromChallengeObject(challenge: EIP4361Challenge): string;
 /**
  * This function usually is not needed. If it is not needed, just return the input as is.
  *
@@ -29,7 +33,8 @@ export declare function verifyChallenge(originalChallenge: Uint8Array, signedCha
  * a note within a txn object. This function extracts the challenge note from the txn object stringified JSON
  */
 export declare function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string>;
-export declare function createMessageFromString(challenge: string): EIP4361Challenge;
+export declare function constructChallengeObjectFromString(challenge: string): EIP4361Challenge;
 /** The functions in this section are left up to the resource server's implementation. */
 export declare function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;
-export declare function getAllAssets(address: string): Promise<any>;
+export declare function getAllAssetsForAddress(address: string): Promise<any>;
+export declare function verifyOwnershipOfAssets(address: string, assetIds: string[]): Promise<void>;

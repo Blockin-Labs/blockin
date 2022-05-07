@@ -39,10 +39,14 @@ export {
     createChallenge,
     verifyChallenge,
     getAssetDetails,
-    getAllAssets,
+    getAllAssetsForAddress,
     lookupTransactionById,
-    createMessageFromString,
-    getChallengeStringFromBytes
+    constructChallengeObjectFromString,
+    constructChallengeStringFromChallengeObject,
+    getChallengeStringFromBytes,
+    verifyChallengeSignature,
+    validateChallengeObjectIsWellFormed,
+    verifyOwnershipOfAssets
 } from './verify'
 
 export {

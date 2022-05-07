@@ -1,4 +1,3 @@
-import nacl from "tweetnacl";
 import { IChainDriver } from './@types/ChainDriver'
 import { ChallengeParams, EIP4361Challenge } from './@types/verify'
 
@@ -62,9 +61,9 @@ export async function createChallenge(challengeParams: ChallengeParams) {
             resources
         }
 
-        validateChallenge(challenge); // will throw error if invalid
+        validateChallengeObjectIsWellFormed(challenge); // will throw error if invalid
 
-        return constructMessageString(challenge);
+        return constructChallengeStringFromChallengeObject(challenge);
     } catch (error: unknown) {
         return `Error: ${error}`;
     }
@@ -87,8 +86,8 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     */
     const generatedEIP4361ChallengeStr: string = await getChallengeStringFromBytes(originalChallenge);
 
-    const challenge: EIP4361Challenge = createMessageFromString(generatedEIP4361ChallengeStr);
-    validateChallenge(challenge);
+    const challenge: EIP4361Challenge = constructChallengeObjectFromString(generatedEIP4361ChallengeStr);
+    validateChallengeObjectIsWellFormed(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
 
     const currDate = new Date();
@@ -106,32 +105,14 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
 
     if (challenge.resources) {
         await verifyOwnershipOfAssets(challenge.address, challenge.resources);
-        grantPermissions(challenge.resources);
     }
 
     return `Successfully granted access via Blockin`;
 }
 
-// async function verifyChallengeNonce(nonce: number): Promise<boolean> {
-//     let blockTimestamp = await chainDriver.getBlockTimestamp(nonce)
-//     var currentTimestamp = Math.round((new Date()).getTime() / 1000);
-//     return blockTimestamp > currentTimestamp - 60; //within last 1 minutes or 60 seconds
-// }
-
-/** Called after a user is fully verified. Handles permissions or performs actions based on the accepted asset IDs  */
-async function grantPermissions(assetIds: string[]) {
-    for (const assetIdStr of assetIds) {
-        if (!assetIdStr.startsWith('Asset ID:')) {
-            continue;
-        }
-        const assetId = assetIdStr.substring(10);
-        console.log("User has been granted privileges of " + assetId);
-    }
-}
-
 /** The functions in this section are standard and should not be edited, except for possibly the function
  *  calls of the functions from above if edited. */
-function validateChallenge(challenge: EIP4361Challenge) {
+export function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge) {
     if (!URI_REGEX.test(challenge.domain)) {
         throw `Inputted domain (${challenge.domain}) is not a valid URI`;
     }
@@ -169,12 +150,7 @@ function validateChallenge(challenge: EIP4361Challenge) {
     }
 }
 
-// async function getChallengeNonce(): Promise<number> {
-//     let status = await chainDriver.getStatus()
-//     return Number(status['last-round']);
-// }
-
-function constructMessageString(challenge: EIP4361Challenge): string {
+export function constructChallengeStringFromChallengeObject(challenge: EIP4361Challenge): string {
     let message = "";
     message += `${challenge.domain} wants you to sign in with your Algorand account:\n`
     message += `${challenge.address}\n\n`;
@@ -213,7 +189,7 @@ export async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise
     return chainDriver.getChallengeStringFromBytesToSign(txnBytes);
 }
 
-export function createMessageFromString(challenge: string): EIP4361Challenge {
+export function constructChallengeObjectFromString(challenge: string): EIP4361Challenge {
     const messageArray = challenge.split("\n");
     const domain = messageArray[0].split(' ')[0];
     const address = messageArray[1];
@@ -271,11 +247,11 @@ export async function verifyChallengeSignature(originalChallengeToUint8Array: Ui
     await chainDriver.verifySignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
 }
 
-export async function getAllAssets(address: string) {
+export async function getAllAssetsForAddress(address: string) {
     return (await chainDriver.getAllAssetsForAddress(address))
 }
 
-async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
+export async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
     let assets = (await chainDriver.getAllAssetsForAddress(address));
     for (const assetIdStr of assetIds) {
         if (!assetIdStr.startsWith('Asset ID:')) {
@@ -291,4 +267,3 @@ async function verifyOwnershipOfAssets(address: string, assetIds: string[]) {
         }
     }
 }
-
