@@ -31,6 +31,20 @@ const getChain = (chainName, currentChainInfo) => {
     else
         return supportedChainMap[chainName];
 };
+const getSelectedResources = (assets, uris) => {
+    const selectedResources = [];
+    for (const asset of assets) {
+        if (asset.defaultSelected) {
+            selectedResources.push(`Asset ID: ${asset.assetId}`);
+        }
+    }
+    for (const uri of uris) {
+        if (uri.defaultSelected) {
+            selectedResources.push(`${uri.uri}`);
+        }
+    }
+    return selectedResources;
+};
 export const SignInWithBlockinButton = ({ challengeParams, hideResources = false, displayedAssets = [], displayedUris = [], signAndVerifyChallenge, generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce = false,
 // canAddCustomAssets,
 // canAddCustomUris,
@@ -38,7 +52,7 @@ export const SignInWithBlockinButton = ({ challengeParams, hideResources = false
 // canSetNotBeforeDate,
  }) => {
     const [modalIsVisible, setModalIsVisible] = useState(false);
-    const [selectedResources, setSelectedResources] = useState([]);
+    const [selectedResources, setSelectedResources] = useState(getSelectedResources(displayedAssets, displayedUris));
     const [displayMessage, setDisplayMessage] = useState('');
     const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
     useEffect(() => {
@@ -121,10 +135,10 @@ export const SignInWithBlockinButton = ({ challengeParams, hideResources = false
                             <button style={buttonStyle} onClick={() => {
                                     const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`);
                                     setSelectedResources(newArr);
-                                }}>
+                                }} disabled={elem.frozen}>
                                                 Deselect
                                             </button> :
-                            <button style={buttonStyle} onClick={() => {
+                            <button style={buttonStyle} disabled={elem.frozen} onClick={() => {
                                     const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`];
                                     setSelectedResources(newArr);
                                 }}>
@@ -157,13 +171,13 @@ export const SignInWithBlockinButton = ({ challengeParams, hideResources = false
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         {selectedResources.includes(elem.uri) ?
-                            <button style={buttonStyle} onClick={() => {
+                            <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
                                     const newArr = selectedResources.filter(resource => resource !== elem.uri);
                                     setSelectedResources(newArr);
                                 }}>
                                                 Deselect
                                             </button> :
-                            <button style={buttonStyle} onClick={() => {
+                            <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
                                     const newArr = [...selectedResources, elem.uri];
                                     setSelectedResources(newArr);
                                 }}>

@@ -5,6 +5,8 @@ type PresetAsset = {
     name: string;
     description?: string;
     // image?: string;
+    frozen: boolean;
+    defaultSelected: boolean;
 }
 
 type PresetUri = {
@@ -12,6 +14,8 @@ type PresetUri = {
     name: string;
     description?: string
     // image?: string;
+    frozen: boolean;
+    defaultSelected: boolean;
 }
 
 type ChallengeResponse = {

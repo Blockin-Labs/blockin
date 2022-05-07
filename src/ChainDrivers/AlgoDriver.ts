@@ -211,7 +211,7 @@ export class AlgoDriver implements IChainDriver {
     }
 
     async verifyOwnershipOfAssets(address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
-        if (assetIds.length == 0) return;
+        if (!assetIds || assetIds.length == 0) return;
 
         let assets = (await this.getAllAssetsForAddress(address));
 

@@ -127,7 +127,7 @@ export class AlgoDriver {
         }
     }
     async verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum) {
-        if (assetIds.length == 0)
+        if (!assetIds || assetIds.length == 0)
             return;
         let assets = (await this.getAllAssetsForAddress(address));
         const assetLookupData = {

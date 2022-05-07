@@ -42,8 +42,27 @@ const getChain = (chainName: string, currentChainInfo?: SupportedChain) => {
     else return supportedChainMap[chainName];
 }
 
+const getSelectedResources = (assets: PresetAsset[], uris: PresetUri[]) => {
+    const selectedResources = [];
+    for (const asset of assets) {
+        if (asset.defaultSelected) {
+            selectedResources.push(`Asset ID: ${asset.assetId}`)
+        }
+    }
+
+    for (const uri of uris) {
+        if (uri.defaultSelected) {
+            selectedResources.push(`${uri.uri}`)
+        }
+    }
+
+    return selectedResources;
+}
+
 export const SignInWithBlockinButton = ({
     challengeParams,
+
+
     hideResources = false,
     displayedAssets = [],
     displayedUris = [],
@@ -58,6 +77,8 @@ export const SignInWithBlockinButton = ({
     // canSetNotBeforeDate,
 }: {
     challengeParams: ChallengeParams,
+
+
     hideResources?: boolean,
     currentChain: string,
     displayedAssets: PresetAsset[],
@@ -67,15 +88,14 @@ export const SignInWithBlockinButton = ({
     useBlockTimestampsForNonce?: boolean,
     currentChainInfo?: SupportedChain,
 
-    // disableAssetSelection: boolean,
-    // disableUriSelection: boolean,
     // canAddCustomAssets: boolean,
     // canAddCustomUris: boolean,
     // canSetExpirationDate: boolean,
     // canSetNotBeforeDate: boolean,
 }) => {
+
     const [modalIsVisible, setModalIsVisible] = useState(false);
-    const [selectedResources, setSelectedResources] = useState<string[]>([]);
+    const [selectedResources, setSelectedResources] = useState<string[]>(getSelectedResources(displayedAssets, displayedUris));
     const [displayMessage, setDisplayMessage] = useState('');
     const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
 
@@ -164,10 +184,11 @@ export const SignInWithBlockinButton = ({
                                             <button style={buttonStyle} onClick={() => {
                                                 const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
                                                 setSelectedResources(newArr);
-                                            }}>
+                                            }}
+                                                disabled={elem.frozen}>
                                                 Deselect
                                             </button> :
-                                            <button style={buttonStyle} onClick={() => {
+                                            <button style={buttonStyle} disabled={elem.frozen} onClick={() => {
                                                 const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
                                                 setSelectedResources(newArr);
                                             }}>
@@ -205,13 +226,13 @@ export const SignInWithBlockinButton = ({
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         {selectedResources.includes(elem.uri) ?
-                                            <button style={buttonStyle} onClick={() => {
+                                            <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
                                                 const newArr = selectedResources.filter(resource => resource !== elem.uri)
                                                 setSelectedResources(newArr);
                                             }}>
                                                 Deselect
                                             </button> :
-                                            <button style={buttonStyle} onClick={() => {
+                                            <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
                                                 const newArr = [...selectedResources, elem.uri]
                                                 setSelectedResources(newArr);
                                             }}>
