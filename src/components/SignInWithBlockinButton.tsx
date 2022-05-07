@@ -3,7 +3,6 @@
 
 import { AlgoDriver, createChallenge, setChainDriver } from '../index';
 import { useState } from 'react';
-import '../../styles.css';
 
 const CloseIcon = () => {
     return (
