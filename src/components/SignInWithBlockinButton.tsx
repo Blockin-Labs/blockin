@@ -298,6 +298,7 @@ export const SignInWithBlockinButton = ({
                         </>
                     }
 
+                    <h3>List of Selected Resources</h3>
                     {selectedResources.map(resource => {
                         return <li>{resource}<button onClick={() => {
                             const newArr = selectedResources.filter(elem => resource !== elem)
