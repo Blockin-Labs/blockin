@@ -151,7 +151,7 @@ export const SignInWithBlockinButton = ({
                     <h3>URI: {challengeParams.uri}</h3>
                     <h3>You will be authorized starting {challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`} {challengeParams.expirationDate && `until ${challengeParams.expirationDate}`}</h3>
                     {!resourcesAreHidden && <>
-                        {displayedAssets.length !== 0 || displayedUris.length !== 0 && <>
+                        {(displayedAssets.length !== 0 || displayedUris.length !== 0) && <>
                             {<h3>Select from the resources you would like to receive access to:</h3>}
                             {displayedAssets.map(elem => {
                                 return <>
@@ -244,7 +244,7 @@ export const SignInWithBlockinButton = ({
                             })}
                         </>}
                     </>}
-                    {canAddCustomAssets || canAddCustomUris &&
+                    {(canAddCustomAssets || canAddCustomUris) &&
                         <>
                             {<h3>You may also add custom resources below: </h3>}
                             {<h3>{customAddResourcesMessage}</h3>}
