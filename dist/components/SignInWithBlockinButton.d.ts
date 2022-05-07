@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import './styles.css';
+import '../../styles.css';
 declare type PresetAsset = {
     assetId: string;
     name: string;
