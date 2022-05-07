@@ -44,3 +44,7 @@ export {
     createMessageFromString,
     getChallengeStringFromBytes
 } from './verify'
+
+export {
+    SignInWithBlockinButton
+} from './components/SignInWithBlockinButton';
