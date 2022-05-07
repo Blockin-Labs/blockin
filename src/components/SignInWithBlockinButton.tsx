@@ -94,6 +94,17 @@ export const SignInWithBlockinButton = ({
     const [displayMessage, setDisplayMessage] = useState('');
     const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
 
+    const [assetId, setAssetId] = useState('');
+    const [uri, setUri] = useState('');
+
+    const addCustomResource = async (resource: string, isAssetID?: boolean) => {
+        if (!resource) return;
+        const resourceToAdd = isAssetID ? `Asset ID: ${resource}` : resource
+        const newArr = [...selectedResources, resourceToAdd]
+        setSelectedResources(newArr);
+    }
+
+
     useEffect(() => {
         setChain(getChain(currentChain, currentChainInfo));
     }, [currentChain]);
@@ -250,14 +261,50 @@ export const SignInWithBlockinButton = ({
                             {<h3>{customAddResourcesMessage}</h3>}
 
                             {canAddCustomAssets && <>
-                                Todo: Add Custom Assets Here
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <input value={assetId} type="text" placeholder='Add Asset ID #' onChange={e => setAssetId(e.target.value)} />
+                                    <button
+                                        onClick={async () => {
+                                            await addCustomResource(assetId);
+                                            setAssetId('');
+                                        }}
+                                    >
+                                        Add Asset ID
+                                    </button>
+                                </div>
                             </>}
 
                             {canAddCustomUris && <>
-                                Todo: Add Custom URIs Here
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <input value={uri} type="text" placeholder='Add URI' onChange={e => setUri(e.target.value)} />
+                                    <button
+                                        onClick={async () => {
+                                            await addCustomResource(uri);
+                                            setUri('');
+                                        }}
+                                    >
+                                        Add URI
+                                    </button>
+                                </div>
                             </>}
                         </>
                     }
+
+                    {selectedResources.map(resource => {
+                        return <li>{resource}<button onClick={() => {
+                            const newArr = selectedResources.filter(elem => resource !== elem)
+                            setSelectedResources(newArr);
+                        }}>Remove</button></li>
+                    })}
+
 
 
                     <hr />
