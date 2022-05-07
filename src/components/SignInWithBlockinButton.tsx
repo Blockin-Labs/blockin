@@ -12,6 +12,15 @@ const CloseIcon = () => {
     )
 }
 
+const buttonStyle = {
+    backgroundColor: 'rgb(176, 215, 252)',
+    color: 'black',
+    padding: '12px 15px',
+    fontWeight: 600,
+    borderRadius: '10px',
+    cursor: 'pointer',
+}
+
 type PresetAsset = {
     assetId: string;
     name: string;
@@ -91,7 +100,7 @@ export const SignInWithBlockinButton = ({
 
 
     return <>
-        <button onClick={() => setModalIsVisible(!modalIsVisible)}>
+        <button style={buttonStyle} onClick={() => setModalIsVisible(!modalIsVisible)}>
             Sign In with Blockin
         </button>
 
@@ -121,7 +130,18 @@ export const SignInWithBlockinButton = ({
                     overflowY: 'auto',
                     scrollbarWidth: 'none'
                 }}>
-                    <button onClick={() => { setModalIsVisible(!modalIsVisible) }} className="closeButton"><CloseIcon /></button>
+                    <button onClick={() => { setModalIsVisible(!modalIsVisible) }} style={{
+                        background: 'none',
+                        fill: 'black',
+                        padding: '3px 0px 0px 0px',
+                        margin: '0px 0px 20px 0px',
+                        border: 'none',
+                        float: 'right',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                        cursor: 'pointer'
+                    }}><CloseIcon /></button>
                     <h1>Sign In with Blockin!</h1>
                     <img src={getChainImg(chain)} height='100px' width='auto' />
 
@@ -157,13 +177,13 @@ export const SignInWithBlockinButton = ({
 
                                     <div style={{ textAlign: 'right' }}>
                                         {selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
-                                            <button onClick={() => {
+                                            <button style={buttonStyle} onClick={() => {
                                                 const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
                                                 setSelectedResources(newArr);
                                             }}>
                                                 Deselect
                                             </button> :
-                                            <button onClick={() => {
+                                            <button style={buttonStyle} onClick={() => {
                                                 const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
                                                 setSelectedResources(newArr);
                                             }}>
@@ -201,13 +221,13 @@ export const SignInWithBlockinButton = ({
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
                                         {selectedResources.includes(elem.uri) ?
-                                            <button onClick={() => {
+                                            <button style={buttonStyle} onClick={() => {
                                                 const newArr = selectedResources.filter(resource => resource !== elem.uri)
                                                 setSelectedResources(newArr);
                                             }}>
                                                 Deselect
                                             </button> :
-                                            <button onClick={() => {
+                                            <button style={buttonStyle} onClick={() => {
                                                 const newArr = [...selectedResources, elem.uri]
                                                 setSelectedResources(newArr);
                                             }}>
@@ -221,7 +241,7 @@ export const SignInWithBlockinButton = ({
                     </>}
 
                     <hr />
-                    <button onClick={async () => {
+                    <button style={buttonStyle} onClick={async () => {
                         setChainDriver(new AlgoDriver());
                         const challenge = {
                             ...challengeParams,
