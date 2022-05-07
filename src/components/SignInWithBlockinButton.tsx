@@ -4,7 +4,7 @@
 import { AlgoDriver, createChallenge, setChainDriver } from '../index';
 import { useEffect, useState } from 'react';
 import { ChallengeParams } from '../@types/verify';
-import { ChallengeResponse, PresetAsset, PresetUri, SupportedChain } from '../@types/SignInWithBlockinButton';
+import { ChallengeResponse, PresetAsset, PresetUri, SupportedChain, VerifyChallengeRequest } from '../@types/SignInWithBlockinButton';
 
 const CloseIcon = () => {
     return (
@@ -63,7 +63,9 @@ export const SignInWithBlockinButton = ({
     challengeParams,
     displayedAssets = [],
     displayedUris = [],
-    signAndVerifyChallenge,
+    signChallenge,
+    verifyChallenge,
+    // signAndVerifyChallenge,
     generateNonce,
     currentChain,
     currentChainInfo,
@@ -78,7 +80,8 @@ export const SignInWithBlockinButton = ({
     currentChain: string,
     displayedAssets: PresetAsset[],
     displayedUris: PresetUri[],
-    signAndVerifyChallenge: (challenge: string) => Promise<ChallengeResponse>
+    signChallenge: (challenge: string) => Promise<VerifyChallengeRequest>,
+    verifyChallenge: (verifyRequest: VerifyChallengeRequest) => Promise<ChallengeResponse>,
     generateNonce?: () => Promise<string>,
     useBlockTimestampsForNonce?: boolean,
     currentChainInfo?: SupportedChain,
@@ -321,7 +324,8 @@ export const SignInWithBlockinButton = ({
 
                         const challengeString = await createChallenge(challenge, { useBlockTimestampsForNonce });
 
-                        const { success, message } = await signAndVerifyChallenge(challengeString);
+                        const signChallengeResponse: VerifyChallengeRequest = await signChallenge(challengeString);
+                        const { success, message } = await verifyChallenge(signChallengeResponse);
 
                         if (!success) {
                             setDisplayMessage(message);

@@ -45,7 +45,9 @@ const getSelectedResources = (assets, uris) => {
     }
     return selectedResources;
 };
-export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displayedUris = [], signAndVerifyChallenge, generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce = false, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage,
+export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displayedUris = [], signChallenge, verifyChallenge, 
+// signAndVerifyChallenge,
+generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce = false, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage,
 // canSetExpirationDate,
 // canSetNotBeforeDate,
  }) => {
@@ -253,7 +255,8 @@ export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [],
                 const nonce = generateNonce ? await generateNonce() : '';
                 const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce });
                 const challengeString = await createChallenge(challenge, { useBlockTimestampsForNonce });
-                const { success, message } = await signAndVerifyChallenge(challengeString);
+                const signChallengeResponse = await signChallenge(challengeString);
+                const { success, message } = await verifyChallenge(signChallengeResponse);
                 if (!success) {
                     setDisplayMessage(message);
                 }

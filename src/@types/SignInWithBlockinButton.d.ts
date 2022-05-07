@@ -1,5 +1,17 @@
 import { IChainDriver } from "./ChainDriver";
 
+interface VerifyChallengeRequest {
+    originalBytes?: Uint8Array;
+    signatureBytes?: Uint8Array;
+    message?: string;
+}
+
+interface VerifyChallengeResponse {
+    success: boolean;
+    message: string;
+    challenge: ChallengeParams
+}
+
 type PresetAsset = {
     assetId: string;
     name: string;
