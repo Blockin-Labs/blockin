@@ -252,7 +252,7 @@ generateNonce, currentChain, currentChainInfo, canAddCustomAssets = false, canAd
                     <hr />
                     <button style={buttonStyle} onClick={async () => {
                 setChainDriver(chain.driver);
-                const nonce = await generateNonce();
+                const nonce = challengeParams.nonce ? challengeParams.nonce : await generateNonce();
                 const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce });
                 const challengeString = await createChallenge(challenge);
                 const signChallengeResponse = await signChallenge(challengeString);

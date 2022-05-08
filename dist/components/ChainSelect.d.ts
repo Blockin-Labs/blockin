@@ -1,2 +1,6 @@
 /// <reference types="react" />
-export declare const ChainSelect: ({}: {}) => JSX.Element;
+import { ChainProps } from "../@types/SignInWithBlockinButton";
+export declare const ChainSelect: ({ chains, setChainProps }: {
+    chains: ChainProps[];
+    setChainProps: (chainProps: ChainProps) => void;
+}) => JSX.Element;

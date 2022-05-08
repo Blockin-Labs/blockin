@@ -19,6 +19,16 @@ export type {
     ChallengeParams
 } from './@types/verify'
 
+export type {
+    VerifyChallengeRequest,
+    VerifyChallengeResponse,
+    ChainProps,
+    PresetAsset,
+    PresetUri,
+    ChallengeResponse,
+    SupportedChain
+} from './@types/SignInWithBlockinButton'
+
 export {
     setChainDriver
 } from './blockin'

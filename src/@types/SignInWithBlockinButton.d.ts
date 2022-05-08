@@ -1,12 +1,20 @@
 import { IChainDriver } from "./ChainDriver";
 
-interface VerifyChallengeRequest {
+type ChainProps = {
+    displayedAssets?: PresetAsset[];
+    displayedUris?: PresetUri[];
+    name: string;
+    signChallenge?: (challenge: string) => Promise<VerifyChallengeRequest>;
+    currentChainInfo?: any | undefined;
+}
+
+type VerifyChallengeRequest = {
     originalBytes?: Uint8Array;
     signatureBytes?: Uint8Array;
     message?: string;
 }
 
-interface VerifyChallengeResponse {
+type VerifyChallengeResponse = {
     success: boolean;
     message: string;
     challenge: ChallengeParams
