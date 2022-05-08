@@ -11,38 +11,6 @@ export function initializeVerify(driver: IChainDriver) {
 }
 
 /**
- * Looks up transaction data by ID using the specified chain driver
- * @param txnID - Transaction ID broadcasted to the network
- * @returns Metadata about the transaction
- */
-export async function lookupTransactionById(txnID: string) {
-    return await chainDriver.lookupTransactionById(txnID);
-}
-
-/**
- * Gets information about a specific asset using sepecified chain driver
- * @param assetId - Unique asset identifier
- * @returns Metadata about the asset
- */
-export async function getAssetDetails(assetId: string) {
-    return await chainDriver.getAssetDetails(assetId)
-}
-
-/**
- * Generates a nonce using the most recent block index. Can be called directly
- * or by specifiying the useBlockTimestampsForNonce flag in the createChallenge
- * options. verifyChallenge also offers two flags: (verifyNonceWithBlockTimestamps?: boolean;
- * and verificationTimeLimit?: number;) that ensure timestamp of the block was recent when
- * verifying. 
- * @returns Last block index / timestamp / hash to be used as the nonce
- */
-export async function generateNonceWithLastBlockTimestamp() {
-    const nonce = await chainDriver.getLastBlockIndex()
-    return nonce;
-}
-
-
-/**
  * Creates a challenge that is well-formed according to EIP-4361 - Sign in With Ethereum. Some
  * slight modifications to EIP-4361 for our library include 1) any blockchain's native address, signature,
  * and verification schemes are supported and 2) in resources, one may prefix an asset with 'Asset ID: '
@@ -154,6 +122,37 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     return {
         message: `Successfully granted access via Blockin`, success: true, verificationData
     }
+}
+
+/**
+ * Looks up transaction data by ID using the specified chain driver
+ * @param txnID - Transaction ID broadcasted to the network
+ * @returns Metadata about the transaction
+ */
+export async function lookupTransactionById(txnID: string) {
+    return await chainDriver.lookupTransactionById(txnID);
+}
+
+/**
+ * Gets information about a specific asset using sepecified chain driver
+ * @param assetId - Unique asset identifier
+ * @returns Metadata about the asset
+ */
+export async function getAssetDetails(assetId: string) {
+    return await chainDriver.getAssetDetails(assetId)
+}
+
+/**
+ * Generates a nonce using the most recent block index. Can be called directly
+ * or by specifiying the useBlockTimestampsForNonce flag in the createChallenge
+ * options. verifyChallenge also offers two flags: (verifyNonceWithBlockTimestamps?: boolean;
+ * and verificationTimeLimit?: number;) that ensure timestamp of the block was recent when
+ * verifying. 
+ * @returns Last block index / timestamp / hash to be used as the nonce
+ */
+export async function generateNonceWithLastBlockTimestamp() {
+    const nonce = await chainDriver.getLastBlockIndex()
+    return nonce;
 }
 
 /**

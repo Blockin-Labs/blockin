@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-export const ChainSelect = ({ chains, setChainProps }) => {
+/**
+ * chains - Array of chain props inputted to SignInWithBlockinButton. See ChainProps type. Default selected chain will be chains[0].
+ * updateChain - Update function that is called when the user selects a new chain. This function should handle all the functionality
+ * such as updating all backend and dApp functionality for the new chain, updating props to SignInWithBlockinButton, or updating
+ * anything else that needs to for a chain update.
+ */
+export const ChainSelect = ({ chains, updateChain }) => {
     const [chain, setChain] = useState();
     const [menuIsVisible, setMenuIsVisible] = useState(false);
     useEffect(() => {
@@ -9,7 +15,7 @@ export const ChainSelect = ({ chains, setChainProps }) => {
     }, []);
     const handleChainChange = (chain) => {
         setChain(chain.name);
-        setChainProps(chain);
+        updateChain(chain);
     };
     return <>
         <b>Current Chain: {chain}</b> <button onClick={() => setMenuIsVisible(!menuIsVisible)}>{menuIsVisible ? 'Hide' : 'Show'}</button>

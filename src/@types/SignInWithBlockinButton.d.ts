@@ -62,10 +62,9 @@ type ChallengeResponse = {
 }
 
 /**
- * Defines schema for a supported chain within SignInWithBlockinButton
+ * Defines metadata about a supported chain within SignInWithBlockinButton. Used for UI purposes
  */
 type SupportedChain = {
-    driver: IChainDriver;
     name: string;
     logo: string;
 }
