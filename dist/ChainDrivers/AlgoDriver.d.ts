@@ -1,6 +1,5 @@
 import algosdk from 'algosdk';
-<<<<<<< HEAD
-import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
+import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakeContractOptInParams, MakeContractNoOpParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
 /**
  * Algorand implementation of the IChainDriver interface. This implementation is based off the algoSdk
  * npm library. Another backbone of this implementation is the PureStake API.
@@ -14,9 +13,6 @@ import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakePaymentParams,
  * Note that the Blockin library also has many convenient, chain-generic functions that implement
  * this logic for creating / verifying challenges. You will have to setChainDriver(new AlgoDriver(.....)) first.
  */
-=======
-import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakeContractOptInParams, MakeContractNoOpParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
->>>>>>> 7821f13 (support for contract opt-in and no-op)
 export declare class AlgoDriver implements IChainDriver {
     server: string;
     indexerServer: string;
@@ -32,11 +28,8 @@ export declare class AlgoDriver implements IChainDriver {
     makeAssetOptInTxn(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>;
     makeAssetTransferTxn(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>;
     sendTxn(signedTxnResult: any, txnId: string): Promise<any>;
-<<<<<<< HEAD
     getChallengeStringFromBytesToSign(txnBytes: Uint8Array): Promise<string>;
-=======
     lookupApplicationLocalState(address: string): Promise<Record<string, any>>;
->>>>>>> 7821f13 (support for contract opt-in and no-op)
     lookupTransactionById(txnId: string): Promise<Record<string, any>>;
     getAssetDetails(assetId: string | Number): Promise<any>;
     getAllAssetsForAddress(address: string): Promise<any>;

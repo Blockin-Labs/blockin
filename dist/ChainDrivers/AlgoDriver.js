@@ -114,7 +114,6 @@ export class AlgoDriver {
         await algosdk.waitForConfirmation(this.client, txnId, 4);
         return sentTxn;
     }
-<<<<<<< HEAD
     async getChallengeStringFromBytesToSign(txnBytes) {
         const txnString = new TextDecoder().decode(txnBytes);
         const bytes = [];
@@ -125,10 +124,9 @@ export class AlgoDriver {
         }
         const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
         return challengeString;
-=======
+    }
     async lookupApplicationLocalState(address) {
         return this.indexer.lookupAccountAppLocalStates(address).do();
->>>>>>> 7821f13 (support for contract opt-in and no-op)
     }
     async lookupTransactionById(txnId) {
         const txnDetails = await this.indexer.lookupTransactionByID(txnId).do();
