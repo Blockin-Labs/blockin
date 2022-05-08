@@ -60,5 +60,9 @@ export {
 } from './verify'
 
 export {
-    SignInWithBlockinButton
+    SignInWithBlockinButton,
 } from './components/SignInWithBlockinButton';
+
+export {
+    ChainSelect,
+} from './components/ChainSelect';

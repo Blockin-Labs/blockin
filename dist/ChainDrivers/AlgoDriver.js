@@ -1,12 +1,16 @@
 import algosdk, { decodeAddress } from 'algosdk';
 import nacl from 'tweetnacl';
 export class AlgoDriver {
-    constructor(API_KEY) {
+    constructor(chain, API_KEY) {
         this.server = "https://testnet-algorand.api.purestake.io/ps2";
         this.indexerServer = "https://testnet-algorand.api.purestake.io/idx2";
         this.port = "";
         this.token = {};
         this.token = { "x-api-key": API_KEY ? API_KEY : '' };
+        if (chain == 'Mainnet') {
+            this.server = "https://mainnet-algorand.api.purestake.io/ps2";
+            this.indexerServer = "https://mainnet-algorand.api.purestake.io/idx2";
+        }
         this.client = new algosdk.Algodv2(this.token, this.server, this.port);
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }

@@ -2,11 +2,6 @@ import algosdk, { decodeAddress, Transaction } from 'algosdk';
 import nacl from 'tweetnacl';
 import {
     IChainDriver,
-    IGetAssets,
-    IGetChallengeStringFromBytesToSign,
-    IGetPublicKey,
-    IVerifyOwnershipOfAssets,
-    IVerifySignature,
     MakeAssetParams,
     MakeOptInAssetParams,
     MakePaymentParams,
@@ -22,8 +17,12 @@ export class AlgoDriver implements IChainDriver {
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
 
-    constructor(API_KEY?: string) {
+    constructor(chain: 'Mainnet' | 'Testnet', API_KEY?: string) {
         this.token = { "x-api-key": API_KEY ? API_KEY : '' }
+        if (chain == 'Mainnet') {
+            this.server = "https://mainnet-algorand.api.purestake.io/ps2";
+            this.indexerServer = "https://mainnet-algorand.api.purestake.io/idx2";
+        }
         this.client = new algosdk.Algodv2(this.token, this.server, this.port);
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }

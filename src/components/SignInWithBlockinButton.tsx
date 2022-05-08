@@ -25,17 +25,21 @@ const buttonStyle = {
 
 const supportedChainMap: any = {
     'Ethereum': {
-        driver: new AlgoDriver(),
+        driver: new AlgoDriver('Testnet'),
         name: 'Ethereum',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png'
     },
-    'Algorand': {
-        driver: new AlgoDriver(),
+    'Algorand Mainnet': {
+        driver: new AlgoDriver('Mainnet'),
         name: 'Algorand',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
-    }
+    },
+    'Algorand Testnet': {
+        driver: new AlgoDriver('Testnet'),
+        name: 'Algorand (Testnet)',
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
+    },
 }
-
 
 const getChain = (chainName: string, currentChainInfo?: SupportedChain) => {
     if (currentChainInfo) return currentChainInfo;
