@@ -20,6 +20,18 @@ interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Prom
 interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
 interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any> }
 
+/**
+ * This interface attempts to define all the chain-specific functionality needed for this library.
+ * Any blockchain that wants to use Blockin will implement this interface with its own custom logic.
+ * 
+ * All chain-specific functions depend on a valid chain driver being set. We export some already 
+ * implemented ChainDriver classes from this library for your convenience. You may also choose to implement
+ * your own. 
+ * 
+ * For example in Blockin's sample demo site, we call setDriver(new AlgoDriver('Mainnet', API_KEY)), and
+ * once this is called, all other functions will use the implemented functions for Algorand defined
+ * in AlgoDriver
+ */
 export interface IChainDriver {
     server: string,
     indexerServer: string,
@@ -42,7 +54,6 @@ export interface IChainDriver {
     verifySignature: IVerifySignature,
     verifyOwnershipOfAssets: IVerifyOwnershipOfAssets,
 }
-
 
 export type MakeAssetParams = {
     from: string,
@@ -82,6 +93,13 @@ export type MakePaymentParams = {
     extras: any
 }
 
+/**
+ * Interface for EIP-4361 Challenge - Sign in With Ethereum
+ * 
+ * For more information and documentation, view the EIP proposal.
+ * 
+ * Note that we support prefixing resources with 'Asset ID: ' as well.
+ */
 export type ChallengeParams = {
     domain: string,
     statement: string,

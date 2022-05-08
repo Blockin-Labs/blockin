@@ -1,25 +1,33 @@
-
+/**
+ * Universal type for any chain's create asset transaction parameters. 
+ */
 export type CreateAssetParams = {
     from: string,
-    to?: string, 
-    assetName?: string, 
-    assetURL?: string, 
+    to?: string,
+    assetName?: string,
+    assetURL?: string,
     note?: string,
     amount?: number,
-    unitName?: string, 
+    unitName?: string,
     decimals?: number,
-    total?: number, 
-    assetMetadata?: string | Uint8Array, 
+    total?: number,
+    assetMetadata?: string | Uint8Array,
     extras?: any
 }
 
+/**
+ * Universal type for any chain's opt-in to asset transaction parameters. 
+ */
 export type CreateOptInAssetParams = {
-    to: string, 
+    to: string,
     from?: string,
     assetIndex: number,
     extras?: any
 }
 
+/**
+ * Universal type for any chain's transfer asset transaction parameters. 
+ */
 export type CreateTransferAssetParams = {
     to: string,
     from: string,
@@ -29,10 +37,10 @@ export type CreateTransferAssetParams = {
     extras?: any
 }
 
-export type CreatePaymentParams = {
-    to: string, 
-    from?: string,
-    amount?: number | bigint,
-    note?: string,
-    extras?: any
-}
+// export type CreatePaymentParams = {
+//     to: string,
+//     from?: string,
+//     amount?: number | bigint,
+//     note?: string,
+//     extras?: any
+// }

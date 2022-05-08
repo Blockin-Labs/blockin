@@ -1,5 +1,18 @@
 import algosdk from 'algosdk';
 import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
+/**
+ * Algorand implementation of the IChainDriver interface. This implementation is based off the algoSdk
+ * npm library. Another backbone of this implementation is the PureStake API.
+ *
+ * If you would like to use an alternative API, you must set this.client and this.indexer to valid
+ * algosdk.Algodv2 and algosdk.Indexer respectively. The constructor takes two arguments: first,
+ * you specify 'Mainnet' or 'Testnet', and second, you input your Purestake API key.
+ *
+ * For documentation regarding what each function does, see the IChainDriver interface.
+ *
+ * Note that the Blockin library also has many convenient, chain-generic functions that implement
+ * this logic for creating / verifying challenges. You will have to setChainDriver(new AlgoDriver(.....)) first.
+ */
 export declare class AlgoDriver implements IChainDriver {
     server: string;
     indexerServer: string;

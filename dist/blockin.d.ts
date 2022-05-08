@@ -6,7 +6,7 @@ import { IChainDriver } from "./@types/ChainDriver";
  * classes from this library for your convenience. You may also choose to implement
  * your own.
  *
- * For example in Blockin's sample demo site, we call setDriver(new AlgoDriver(API_KEY)), and
+ * For example in Blockin's sample demo site, we call setDriver(new AlgoDriver('Mainnet', API_KEY)), and
  * once this is called, all other functions will use the implemented functions for Algorand defined
  * in AlgoDriver
  * @param driver - Instantiated ChainDriver object. See IChainDriver for the interface details

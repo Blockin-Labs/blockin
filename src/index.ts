@@ -9,7 +9,7 @@ export type {
 
 export type {
     CreateAssetParams,
-    CreatePaymentParams,
+    // CreatePaymentParams,
     CreateOptInAssetParams,
     CreateTransferAssetParams,
 } from './@types/auth'
