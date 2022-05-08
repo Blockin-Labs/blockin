@@ -45,7 +45,8 @@ export {
     getChallengeStringFromBytes,
     verifyChallengeSignature,
     validateChallengeObjectIsWellFormed,
-    verifyOwnershipOfAssets
+    verifyOwnershipOfAssets,
+    generateNonceWithLastBlockTimestamp
 } from './verify'
 
 export {

@@ -47,7 +47,7 @@ const getSelectedResources = (assets, uris) => {
 };
 export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displayedUris = [], signChallenge, verifyChallenge, 
 // signAndVerifyChallenge,
-generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce = false, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage,
+generateNonce, currentChain, currentChainInfo, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage,
 // canSetExpirationDate,
 // canSetNotBeforeDate,
  }) => {
@@ -252,9 +252,9 @@ generateNonce, currentChain, currentChainInfo, useBlockTimestampsForNonce = fals
                     <hr />
                     <button style={buttonStyle} onClick={async () => {
                 setChainDriver(chain.driver);
-                const nonce = generateNonce ? await generateNonce() : '';
+                const nonce = await generateNonce();
                 const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce });
-                const challengeString = await createChallenge(challenge, { useBlockTimestampsForNonce });
+                const challengeString = await createChallenge(challenge);
                 const signChallengeResponse = await signChallenge(challengeString);
                 const { success, message } = await verifyChallenge(signChallengeResponse);
                 if (!success) {

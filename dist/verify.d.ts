@@ -3,6 +3,7 @@ import { ChallengeParams, CreateChallengeOptions, EIP4361Challenge, VerifyChalle
 export declare function initializeVerify(driver: IChainDriver): void;
 export declare function lookupTransactionById(txnID: string): Promise<any>;
 export declare function getAssetDetails(assetId: string): Promise<any>;
+export declare function generateNonceWithLastBlockTimestamp(): Promise<any>;
 /**
  * Creates a challenge to be signed by Wallet Provider to prove identity
  * @param domain

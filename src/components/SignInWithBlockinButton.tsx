@@ -69,7 +69,7 @@ export const SignInWithBlockinButton = ({
     generateNonce,
     currentChain,
     currentChainInfo,
-    useBlockTimestampsForNonce = false,
+
     canAddCustomAssets = false,
     canAddCustomUris = false,
     customAddResourcesMessage,
@@ -82,8 +82,8 @@ export const SignInWithBlockinButton = ({
     displayedUris: PresetUri[],
     signChallenge: (challenge: string) => Promise<VerifyChallengeRequest>,
     verifyChallenge: (verifyRequest: VerifyChallengeRequest) => Promise<ChallengeResponse>,
-    generateNonce?: () => Promise<string>,
-    useBlockTimestampsForNonce?: boolean,
+    generateNonce: () => Promise<string>,
+
     currentChainInfo?: SupportedChain,
     canAddCustomAssets?: boolean,
     canAddCustomUris?: boolean,
@@ -314,7 +314,7 @@ export const SignInWithBlockinButton = ({
                     <hr />
                     <button style={buttonStyle} onClick={async () => {
                         setChainDriver(chain.driver);
-                        const nonce = generateNonce ? await generateNonce() : '';
+                        const nonce = await generateNonce();
 
                         const challenge = {
                             ...challengeParams,
@@ -322,7 +322,7 @@ export const SignInWithBlockinButton = ({
                             nonce,
                         };
 
-                        const challengeString = await createChallenge(challenge, { useBlockTimestampsForNonce });
+                        const challengeString = await createChallenge(challenge);
 
                         const signChallengeResponse: VerifyChallengeRequest = await signChallenge(challengeString);
                         const { success, message } = await verifyChallenge(signChallengeResponse);

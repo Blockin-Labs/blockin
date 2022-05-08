@@ -18,6 +18,12 @@ export async function getAssetDetails(assetId: string) {
     return await chainDriver.getAssetDetails(assetId)
 }
 
+export async function generateNonceWithLastBlockTimestamp() {
+    const nonce = await chainDriver.getLastBlockIndex()
+    return nonce;
+}
+
+
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-4361.md
 // This is EIP-4361 - Sign in With Ethereum
 /**
@@ -33,7 +39,7 @@ export async function getAssetDetails(assetId: string) {
  */
 export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions) {
     if (options?.useBlockTimestampsForNonce) {
-        challengeParams.nonce = await chainDriver.getLastBlockIndex()
+        challengeParams.nonce = await generateNonceWithLastBlockTimestamp();
     }
 
     const {
