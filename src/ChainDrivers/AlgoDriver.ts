@@ -4,9 +4,11 @@ import {
     IChainDriver,
     MakeAssetParams,
     MakeOptInAssetParams,
+    MakeContractOptInParams,
+    MakeContractNoOpParams,
     MakePaymentParams,
     MakeTransferAssetParams,
-    UniversalTxn
+    UniversalTxn,
 } from '../@types/ChainDriver'
 
 /**
@@ -104,6 +106,39 @@ export class AlgoDriver implements IChainDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`)
     }
 
+    async makeContractOptInTxn(appParams: MakeContractOptInParams) {
+        const {
+            from,
+            appIndex,
+            extras = {
+                amount: 0,
+                note: undefined,
+                closeRemainderTo: undefined,
+                revocationTarget: undefined
+            }
+        } = appParams
+
+        const suggestedParams = await this.getSuggestedParams()
+
+        const algoTxn = algosdk.makeApplicationOptInTxn(from, suggestedParams, appIndex)
+        return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to contract ${appIndex} from ${from}`)
+    }
+
+    async makeContractNoOpTxn(appParams: MakeContractNoOpParams) {
+        const {
+            from,
+            appIndex,
+            appArgs,
+            accounts,
+            foreignAssets,
+        } = appParams
+
+        const suggestedParams = await this.getSuggestedParams()
+
+        const algoTxn = algosdk.makeApplicationNoOpTxn(from, suggestedParams, appIndex, appArgs, accounts, undefined, foreignAssets)
+        return this.createUniversalTxn(algoTxn, `Sign this txn to call contract ${appIndex} from ${from}`)
+    }
+
     async makeAssetOptInTxn(assetParams: MakeOptInAssetParams) {
         const {
             to,
@@ -177,6 +212,10 @@ export class AlgoDriver implements IChainDriver {
 
         return challengeString;
     }
+    
+    async lookupApplicationLocalState(address: string) {
+        return this.indexer.lookupAccountAppLocalStates(address).do();
+    }
 
     async lookupTransactionById(txnId: string) {
         const txnDetails = await this.indexer.lookupTransactionByID(txnId).do();
@@ -205,6 +244,10 @@ export class AlgoDriver implements IChainDriver {
     }
 
     async getTransactionParams(): Promise<Record<string, any>> {
+        return await this.client.getTransactionParams().do();
+    }
+
+    async getSuggestedParams(): Promise<algosdk.SuggestedParams> {
         return await this.client.getTransactionParams().do();
     }
 

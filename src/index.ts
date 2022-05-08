@@ -2,6 +2,8 @@ export type {
     IChainDriver,
     MakeAssetParams,
     MakeOptInAssetParams,
+    MakeContractNoOpParams,
+    MakeContractOptInParams,
     MakePaymentParams,
     MakeTransferAssetParams,
     UniversalTxn
@@ -11,6 +13,8 @@ export type {
     CreateAssetParams,
     // CreatePaymentParams,
     CreateOptInAssetParams,
+    CreateContractOptInParams,
+    CreateContractNoOpParams,
     CreateTransferAssetParams,
 } from './@types/auth'
 
@@ -41,6 +45,9 @@ export {
     createAssetTxn,
     createAssetOptInTxn,
     createAssetTransferTxn,
+    createContractOptInTxn,
+    createContractNoOpTxn,
+    lookupApplicationLocalState,
     sendTxn
 } from './auth'
 

@@ -27,26 +27,26 @@ class GlobalState:
 def approval_program():
 
     create_asa = Seq([
-        Assert(Txn.application_args.length() == Int(7)),
+        Assert(Txn.application_args.length() == Int(5)),
         # Create an asset
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields({
             TxnField.type_enum: TxnType.AssetConfig,
-            TxnField.config_asset_total: Btoi(Txn.application_args[1]),
+            TxnField.config_asset_total: Btoi(Txn.application_args[0]),
             TxnField.config_asset_decimals: Int(0),
-            TxnField.config_asset_unit_name: Txn.application_args[2],
-            TxnField.config_asset_name: Txn.application_args[3],
-            TxnField.config_asset_url: Txn.application_args[4],
-            TxnField.config_asset_metadata_hash: Txn.application_args[5],
-            TxnField.config_asset_manager: Txn.application_args[6],
-            TxnField.config_asset_reserve: Txn.application_args[6],
-            TxnField.config_asset_freeze: Txn.application_args[6],
-            TxnField.config_asset_clawback: Txn.application_args[6]
+            TxnField.config_asset_unit_name: Txn.application_args[1],
+            TxnField.config_asset_name: Txn.application_args[2],
+            TxnField.config_asset_url: Txn.application_args[3],
+            TxnField.config_asset_metadata_hash: Txn.application_args[4],
+            TxnField.config_asset_manager: Global.creator_address(),
+            TxnField.config_asset_reserve: Global.creator_address(),
+            TxnField.config_asset_freeze: Global.creator_address(),
+            TxnField.config_asset_clawback: Global.creator_address()
         }),
         InnerTxnBuilder.Submit(),
         App.localPut(
             Txn.accounts[1], LocalState.Variables.ASSET, InnerTxn.created_asset_id()),
-        Return(Int(1))
+        Return(InnerTxn.created_asset_id())
     ])
 
     user_asa_info = App.localGetEx(

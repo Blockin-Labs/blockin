@@ -7,6 +7,9 @@ export type UniversalTxn = {
 
 interface IMakeAssetTxn { (assetParams: MakeAssetParams): Promise<UniversalTxn> }
 interface IMakeAssetOptInTxn { (assetParams: MakeOptInAssetParams): Promise<UniversalTxn> }
+interface IMakeContractOptInTxn { (appParams: MakeContractOptInParams): Promise<UniversalTxn>}
+interface IMakeContractNoOpTxn { (appParams: MakeContractNoOpParams): Promise<UniversalTxn>}
+interface ILookupApplicationLocalState { (address: string): Promise<any> }
 interface IMakeAssetTransferTxn { (assetParams: MakeTransferAssetParams): Promise<UniversalTxn> }
 interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
 interface IGetAssets { (address: string): Promise<any> }
@@ -42,6 +45,9 @@ export interface IChainDriver {
     getChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
     makeAssetTxn: IMakeAssetTxn,
     makeAssetOptInTxn: IMakeAssetOptInTxn,
+    makeContractOptInTxn: IMakeContractOptInTxn,
+    makeContractNoOpTxn: IMakeContractNoOpTxn,
+    lookupApplicationLocalState: ILookupApplicationLocalState,
     makeAssetTransferTxn: IMakeAssetTransferTxn,
     sendTxn: ISendTx,
     getLastBlockIndex: IGetLastBlockIndex,
@@ -74,6 +80,20 @@ export type MakeOptInAssetParams = {
     from: string,
     assetIndex: number,
     extras: any
+}
+
+export type MakeContractOptInParams = {
+    from: string,
+    appIndex: number,
+    extras: any
+}
+
+export type MakeContractNoOpParams = {
+    from: string,
+    appIndex: number,
+    appArgs: Uint8Array[] | undefined,
+    accounts: string[] | undefined,
+    foreignAssets: number[] | undefined
 }
 
 export type MakeTransferAssetParams = {
