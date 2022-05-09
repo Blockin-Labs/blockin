@@ -68,8 +68,5 @@ export {
 
 export {
     SignInWithBlockinButton,
-} from './components/SignInWithBlockinButton';
-
-export {
-    ChainSelect,
-} from './components/ChainSelect';
+    ChainSelect
+} from './components';
