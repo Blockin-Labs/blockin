@@ -65,3 +65,8 @@ export {
     verifyOwnershipOfAssets,
     generateNonceWithLastBlockTimestamp
 } from './verify'
+
+export {
+    SignInWithBlockinButton,
+    ChainSelect
+} from './components';
