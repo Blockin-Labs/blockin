@@ -48,7 +48,7 @@ const getSelectedResources = (assets, uris) => {
     return selectedResources;
 };
 /**
- * challengeParams - EIP-4361 params that will make up the challenge. See ChallengeParams type.
+ * challengeParams -
  * displayedAssets - Assets to be displayed as resource options to sign-in with. See PresetAsset type.
  * displayedUris - Uris to be displayed as resource options to sign-inn with. See PresetUri type.
  * signChallenge - Blockin doesn't handle any signing functionality. When user clicks sign-in, it will call this

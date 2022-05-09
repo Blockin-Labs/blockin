@@ -2,7 +2,7 @@
 import { ChallengeParams } from '../@types/verify';
 import { ChallengeResponse, PresetAsset, PresetUri, SupportedChain, VerifyChallengeRequest } from '../@types/SignInWithBlockinButton';
 /**
- * challengeParams - EIP-4361 params that will make up the challenge. See ChallengeParams type.
+ * challengeParams -
  * displayedAssets - Assets to be displayed as resource options to sign-in with. See PresetAsset type.
  * displayedUris - Uris to be displayed as resource options to sign-inn with. See PresetUri type.
  * signChallenge - Blockin doesn't handle any signing functionality. When user clicks sign-in, it will call this
@@ -32,6 +32,9 @@ import { ChallengeResponse, PresetAsset, PresetUri, SupportedChain, VerifyChalle
  * 'if asset with metadata hash === X is added, then privilege X will be granted'
  */
 export declare const SignInWithBlockinButton: ({ challengeParams, displayedAssets, displayedUris, signChallenge, verifyChallenge, generateNonce, currentChain, currentChainInfo, canAddCustomAssets, canAddCustomUris, customAddResourcesMessage, }: {
+    /**
+     * EIP-4361 params that will make up the challenge. See ChallengeParams type.
+     */
     challengeParams: ChallengeParams;
     currentChain: string;
     displayedAssets: PresetAsset[];
