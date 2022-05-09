@@ -36,12 +36,6 @@ interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], asset
  * in AlgoDriver
  */
 export interface IChainDriver {
-    server: string,
-    indexerServer: string,
-    port: string,
-    token: any,
-    client: any,
-    indexer: any,
     getChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
     makeAssetTxn: IMakeAssetTxn,
     makeAssetOptInTxn: IMakeAssetOptInTxn,
