@@ -1,5 +1,5 @@
 import algosdk from 'algosdk';
-import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
+import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakeContractOptInParams, MakeContractNoOpParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
 /**
  * Algorand implementation of the IChainDriver interface. This implementation is based off the algoSdk
  * npm library. Another backbone of this implementation is the PureStake API.
@@ -23,16 +23,20 @@ export declare class AlgoDriver implements IChainDriver {
     constructor(chain: 'Mainnet' | 'Testnet', API_KEY?: string);
     makeAssetTxn(assetParams: MakeAssetParams): Promise<UniversalTxn>;
     makePaymentTxn(assetParams: MakePaymentParams): Promise<UniversalTxn>;
+    makeContractOptInTxn(appParams: MakeContractOptInParams): Promise<UniversalTxn>;
+    makeContractNoOpTxn(appParams: MakeContractNoOpParams): Promise<UniversalTxn>;
     makeAssetOptInTxn(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>;
     makeAssetTransferTxn(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>;
     sendTxn(signedTxnResult: any, txnId: string): Promise<any>;
     getChallengeStringFromBytesToSign(txnBytes: Uint8Array): Promise<string>;
+    lookupApplicationLocalState(address: string): Promise<Record<string, any>>;
     lookupTransactionById(txnId: string): Promise<Record<string, any>>;
     getAssetDetails(assetId: string | Number): Promise<any>;
     getAllAssetsForAddress(address: string): Promise<any>;
     getLastBlockIndex(): Promise<string>;
     getTimestampForBlock(blockIndexStr: string): Promise<string>;
     getTransactionParams(): Promise<Record<string, any>>;
+    getSuggestedParams(): Promise<algosdk.SuggestedParams>;
     isValidAddress(address: string): boolean;
     getPublicKeyFromAddress(address: string): Uint8Array;
     verifySignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;

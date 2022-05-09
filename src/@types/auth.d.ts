@@ -25,6 +25,20 @@ export type CreateOptInAssetParams = {
     extras?: any
 }
 
+export type CreateContractOptInParams = {
+    from: string,
+    appIndex: number,
+    extras?: any
+}
+
+export type CreateContractNoOpParams = {
+    from: string,
+    appIndex: number,
+    appArgs: Uint8Array[] | undefined,
+    accounts: string[] | undefined,
+    foreignAssets: number[] | undefined
+}
+
 /**
  * Universal type for any chain's transfer asset transaction parameters. 
  */
@@ -37,10 +51,10 @@ export type CreateTransferAssetParams = {
     extras?: any
 }
 
-// export type CreatePaymentParams = {
-//     to: string,
-//     from?: string,
-//     amount?: number | bigint,
-//     note?: string,
-//     extras?: any
-// }
+export type CreatePaymentParams = {
+    to: string,
+    from?: string,
+    amount?: number | bigint,
+    note?: string,
+    extras?: any
+}

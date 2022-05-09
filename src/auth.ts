@@ -1,6 +1,6 @@
 // This file handles creating, opting in to, and transfering an auth asset from resource to owner
 import { IChainDriver, UniversalTxn } from './@types/ChainDriver'
-import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams } from "./@types/auth";
+import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams, CreateContractOptInParams, CreateContractNoOpParams } from "./@types/auth";
 
 var chainDriver: IChainDriver
 
@@ -112,4 +112,40 @@ export async function createAssetTransferTxn(transferAssetParams: CreateTransfer
  */
 export async function sendTxn(signedTxnBytes: Uint8Array | Uint8Array[], txnId: string) {
     return await chainDriver.sendTxn(signedTxnBytes, txnId)
+}
+
+export async function createContractOptInTxn(contractOptInParams: CreateContractOptInParams) {
+    const {
+        from,
+        appIndex,
+        extras = undefined
+    } = contractOptInParams
+
+    return await chainDriver.makeContractOptInTxn({
+        from,
+        appIndex,
+        ...extras
+    })
+}
+
+export async function createContractNoOpTxn(contractNoOpParams: CreateContractNoOpParams) {
+    const {
+        from,
+        appIndex,
+        appArgs,
+        accounts,
+        foreignAssets
+    } = contractNoOpParams
+
+    return await chainDriver.makeContractNoOpTxn({
+        from,
+        appIndex,
+        appArgs,
+        accounts,
+        foreignAssets
+    })
+}
+
+export async function lookupApplicationLocalState(address: string) {
+    return await chainDriver.lookupApplicationLocalState(address);
 }

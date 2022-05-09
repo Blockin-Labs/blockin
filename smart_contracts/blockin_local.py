@@ -5,7 +5,7 @@ import os
 import pathlib
 from util import deploy, get_private_key_from_mnemonic
 
-#if Resource: application_args = (user_address, asset_total, asset_unit_name, asset_name, asset_url, asset_metadata_hash, asset_manager_address)
+#if Resource: application_args = (asset_total, asset_unit_name, asset_name, asset_url, asset_metadata_hash)
 # Resource must include the address of the apat field of their no_op txn
 #if User: application_args = ()
 # User must include the ASA ID in the apas field of their no_op txn
@@ -27,33 +27,33 @@ class GlobalState:
 def approval_program():
 
     create_asa = Seq([
-        Assert(Txn.application_args.length() == Int(7)),
+        Assert(Txn.application_args.length() == Int(5)),
         # Create an asset
         InnerTxnBuilder.Begin(),
         InnerTxnBuilder.SetFields({
             TxnField.type_enum: TxnType.AssetConfig,
-            TxnField.config_asset_total: Btoi(Txn.application_args[1]),
+            TxnField.config_asset_total: Btoi(Txn.application_args[0]),
             TxnField.config_asset_decimals: Int(0),
-            TxnField.config_asset_unit_name: Txn.application_args[2],
-            TxnField.config_asset_name: Txn.application_args[3],
-            TxnField.config_asset_url: Txn.application_args[4],
-            TxnField.config_asset_metadata_hash: Txn.application_args[5],
-            TxnField.config_asset_manager: Txn.application_args[6],
-            TxnField.config_asset_reserve: Txn.application_args[6],
-            TxnField.config_asset_freeze: Txn.application_args[6],
-            TxnField.config_asset_clawback: Txn.application_args[6]
+            TxnField.config_asset_unit_name: Txn.application_args[1],
+            TxnField.config_asset_name: Txn.application_args[2],
+            TxnField.config_asset_url: Txn.application_args[3],
+            TxnField.config_asset_metadata_hash: Txn.application_args[4],
+            TxnField.config_asset_manager: Global.current_application_address(),
+            TxnField.config_asset_reserve: Global.current_application_address(),
+            TxnField.config_asset_freeze: Global.current_application_address(),
+            TxnField.config_asset_clawback: Global.current_application_address()
         }),
         InnerTxnBuilder.Submit(),
         App.localPut(
             Txn.accounts[1], LocalState.Variables.ASSET, InnerTxn.created_asset_id()),
-        Return(Int(1))
+        Return(InnerTxn.created_asset_id())
     ])
 
     user_asa_info = App.localGetEx(
         Txn.sender(), App.id(), LocalState.Variables.ASSET)
 
     num_asa = AssetHolding.balance(
-        App.id(), Txn.assets[0])
+        Global.current_application_address(), Txn.assets[0])
 
     claim_asa = Seq([
         user_asa_info,
@@ -61,6 +61,7 @@ def approval_program():
             num_asa,
             InnerTxnBuilder.Begin(),
             InnerTxnBuilder.SetFields({
+                TxnField.asset_sender: Global.current_application_address(),
                 TxnField.type_enum: TxnType.AssetTransfer,
                 TxnField.asset_receiver: Txn.sender(),
                 TxnField.asset_amount: num_asa.value(),

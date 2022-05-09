@@ -59,6 +59,23 @@ export class AlgoDriver {
             amount, note: new Uint8Array(Buffer.from(note)), suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`);
     }
+    async makeContractOptInTxn(appParams) {
+        const { from, appIndex, extras = {
+            amount: 0,
+            note: undefined,
+            closeRemainderTo: undefined,
+            revocationTarget: undefined
+        } } = appParams;
+        const suggestedParams = await this.getSuggestedParams();
+        const algoTxn = algosdk.makeApplicationOptInTxn(from, suggestedParams, appIndex);
+        return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to contract ${appIndex} from ${from}`);
+    }
+    async makeContractNoOpTxn(appParams) {
+        const { from, appIndex, appArgs, accounts, foreignAssets, } = appParams;
+        const suggestedParams = await this.getSuggestedParams();
+        const algoTxn = algosdk.makeApplicationNoOpTxn(from, suggestedParams, appIndex, appArgs, accounts, undefined, foreignAssets);
+        return this.createUniversalTxn(algoTxn, `Sign this txn to call contract ${appIndex} from ${from}`);
+    }
     async makeAssetOptInTxn(assetParams) {
         const { to, from, assetIndex, extras = {
             amount: 0,
@@ -108,6 +125,9 @@ export class AlgoDriver {
         const challengeString = new TextDecoder().decode(new Uint8Array(bytes));
         return challengeString;
     }
+    async lookupApplicationLocalState(address) {
+        return this.indexer.lookupAccountAppLocalStates(address).do();
+    }
     async lookupTransactionById(txnId) {
         const txnDetails = await this.indexer.lookupTransactionByID(txnId).do();
         return txnDetails;
@@ -130,6 +150,9 @@ export class AlgoDriver {
         return blockData.block.ts;
     }
     async getTransactionParams() {
+        return await this.client.getTransactionParams().do();
+    }
+    async getSuggestedParams() {
         return await this.client.getTransactionParams().do();
     }
     isValidAddress(address) {

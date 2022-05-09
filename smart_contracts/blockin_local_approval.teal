@@ -59,12 +59,14 @@ load 0
 bnz main_l17
 err
 main_l17:
-global CurrentApplicationID
+global CurrentApplicationAddress
 txna Assets 0
 asset_holding_get AssetBalance
 store 2
 store 3
 itxn_begin
+global CurrentApplicationAddress
+itxn_field AssetSender
 int axfer
 itxn_field TypeEnum
 txn Sender
@@ -78,37 +80,37 @@ int 1
 return
 main_l18:
 txn NumAppArgs
-int 7
+int 5
 ==
 assert
 itxn_begin
 int acfg
 itxn_field TypeEnum
-txna ApplicationArgs 1
+txna ApplicationArgs 0
 btoi
 itxn_field ConfigAssetTotal
 int 0
 itxn_field ConfigAssetDecimals
-txna ApplicationArgs 2
+txna ApplicationArgs 1
 itxn_field ConfigAssetUnitName
-txna ApplicationArgs 3
+txna ApplicationArgs 2
 itxn_field ConfigAssetName
-txna ApplicationArgs 4
+txna ApplicationArgs 3
 itxn_field ConfigAssetURL
-txna ApplicationArgs 5
+txna ApplicationArgs 4
 itxn_field ConfigAssetMetadataHash
-txna ApplicationArgs 6
+global CurrentApplicationAddress
 itxn_field ConfigAssetManager
-txna ApplicationArgs 6
+global CurrentApplicationAddress
 itxn_field ConfigAssetReserve
-txna ApplicationArgs 6
+global CurrentApplicationAddress
 itxn_field ConfigAssetFreeze
-txna ApplicationArgs 6
+global CurrentApplicationAddress
 itxn_field ConfigAssetClawback
 itxn_submit
 txna Accounts 1
 byte "asset"
 itxn CreatedAssetID
 app_local_put
-int 1
+itxn CreatedAssetID
 return

@@ -70,3 +70,21 @@ export async function createAssetTransferTxn(transferAssetParams) {
 export async function sendTxn(signedTxnBytes, txnId) {
     return await chainDriver.sendTxn(signedTxnBytes, txnId);
 }
+export async function createContractOptInTxn(contractOptInParams) {
+    const { from, appIndex, extras = undefined } = contractOptInParams;
+    return await chainDriver.makeContractOptInTxn(Object.assign({ from,
+        appIndex }, extras));
+}
+export async function createContractNoOpTxn(contractNoOpParams) {
+    const { from, appIndex, appArgs, accounts, foreignAssets } = contractNoOpParams;
+    return await chainDriver.makeContractNoOpTxn({
+        from,
+        appIndex,
+        appArgs,
+        accounts,
+        foreignAssets
+    });
+}
+export async function lookupApplicationLocalState(address) {
+    return await chainDriver.lookupApplicationLocalState(address);
+}

@@ -1,5 +1,5 @@
 import { IChainDriver, UniversalTxn } from './@types/ChainDriver';
-import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams } from "./@types/auth";
+import { CreateAssetParams, CreateOptInAssetParams, CreateTransferAssetParams, CreateContractOptInParams, CreateContractNoOpParams } from "./@types/auth";
 export declare function initializeAuth(driver: IChainDriver): void;
 /**
  * This function attempts to create a universal function that will create an asset on-chain. This
@@ -45,3 +45,6 @@ export declare function createAssetTransferTxn(transferAssetParams: CreateTransf
  * driver implementation.
  */
 export declare function sendTxn(signedTxnBytes: Uint8Array | Uint8Array[], txnId: string): Promise<any>;
+export declare function createContractOptInTxn(contractOptInParams: CreateContractOptInParams): Promise<UniversalTxn>;
+export declare function createContractNoOpTxn(contractNoOpParams: CreateContractNoOpParams): Promise<UniversalTxn>;
+export declare function lookupApplicationLocalState(address: string): Promise<any>;
