@@ -21,9 +21,9 @@ export function initializeVerify(driver: IChainDriver) {
  * upon failure.
  */
 export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions) {
-    // if (options?.useBlockTimestampsForNonce) {
-    //     challengeParams.nonce = await generateNonceWithLastBlockTimestamp();
-    // }
+    if (options?.useBlockTimestampsForNonce) {
+        challengeParams.nonce = await generateNonceWithLastBlockTimestamp();
+    }
 
     const {
         domain,
