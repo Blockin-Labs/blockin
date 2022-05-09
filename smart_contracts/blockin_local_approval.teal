@@ -59,12 +59,14 @@ load 0
 bnz main_l17
 err
 main_l17:
-global CurrentApplicationID
+global CurrentApplicationAddress
 txna Assets 0
 asset_holding_get AssetBalance
 store 2
 store 3
 itxn_begin
+global CurrentApplicationAddress
+itxn_field AssetSender
 int axfer
 itxn_field TypeEnum
 txn Sender
@@ -97,13 +99,13 @@ txna ApplicationArgs 3
 itxn_field ConfigAssetURL
 txna ApplicationArgs 4
 itxn_field ConfigAssetMetadataHash
-global CreatorAddress
+global CurrentApplicationAddress
 itxn_field ConfigAssetManager
-global CreatorAddress
+global CurrentApplicationAddress
 itxn_field ConfigAssetReserve
-global CreatorAddress
+global CurrentApplicationAddress
 itxn_field ConfigAssetFreeze
-global CreatorAddress
+global CurrentApplicationAddress
 itxn_field ConfigAssetClawback
 itxn_submit
 txna Accounts 1
