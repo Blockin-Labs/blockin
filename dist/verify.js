@@ -15,9 +15,9 @@ export function initializeVerify(driver) {
  * upon failure.
  */
 export async function createChallenge(challengeParams, options) {
-    // if (options?.useBlockTimestampsForNonce) {
-    //     challengeParams.nonce = await generateNonceWithLastBlockTimestamp();
-    // }
+    if (options === null || options === void 0 ? void 0 : options.useBlockTimestampsForNonce) {
+        challengeParams.nonce = await generateNonceWithLastBlockTimestamp();
+    }
     const { domain, statement, address, uri, nonce, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
     try {
         const challenge = {
