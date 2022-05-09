@@ -84,6 +84,7 @@ export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [],
     const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
     const [assetId, setAssetId] = useState('');
     const [uri, setUri] = useState('');
+    //adds a resource to the challenge (selectedResources)
     const addCustomResource = async (resource, isAssetID) => {
         if (!resource)
             return;
@@ -266,7 +267,7 @@ export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [],
                             </>}
                         </>}
 
-                    <h3>List of Selected Resources</h3>
+                    {selectedResources && <h3>List of Selected Resources</h3>}
                     {selectedResources.map(resource => {
                 return <li>{resource}<button onClick={() => {
                         const newArr = selectedResources.filter(elem => resource !== elem);

@@ -127,13 +127,13 @@ export const SignInWithBlockinButton = ({
     const [assetId, setAssetId] = useState('');
     const [uri, setUri] = useState('');
 
+    //adds a resource to the challenge (selectedResources)
     const addCustomResource = async (resource: string, isAssetID?: boolean) => {
         if (!resource) return;
         const resourceToAdd = isAssetID ? `Asset ID: ${resource}` : resource
         const newArr = [...selectedResources, resourceToAdd]
         setSelectedResources(newArr);
     }
-
 
     useEffect(() => {
         setChain(getChain(currentChain, currentChainInfo));
@@ -328,7 +328,7 @@ export const SignInWithBlockinButton = ({
                         </>
                     }
 
-                    <h3>List of Selected Resources</h3>
+                    {selectedResources && <h3>List of Selected Resources</h3>}
                     {selectedResources.map(resource => {
                         return <li>{resource}<button onClick={() => {
                             const newArr = selectedResources.filter(elem => resource !== elem)
