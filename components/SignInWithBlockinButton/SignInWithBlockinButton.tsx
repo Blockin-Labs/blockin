@@ -1,8 +1,8 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { PresetAsset, PresetUri, SignInWithBlockinButtonProps, VerifyChallengeRequest } from '../../@types/SignInWithBlockinButton';
-import { getChain } from '../../ChainDrivers/SupportedChains';
-import { constructChallengeStringFromChallengeObject, createChallenge } from '../../verify';
+import { PresetAsset, PresetUri, SignInWithBlockinButtonProps, VerifyChallengeRequest } from '../../src/@types/SignInWithBlockinButton';
+import { getChain } from '../../src/ChainDrivers/SupportedChains';
+import { constructChallengeStringFromChallengeObject, createChallenge } from '../../src/verify';
 import './SignInWithBlockinButton.css'
 
 const buttonStyle = {

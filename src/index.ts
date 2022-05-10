@@ -65,5 +65,3 @@ export {
     verifyOwnershipOfAssets,
     generateNonceWithLastBlockTimestamp
 } from './verify'
-
-export * from './components';
