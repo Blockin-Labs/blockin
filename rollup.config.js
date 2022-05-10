@@ -31,7 +31,7 @@ export default {
             },
         }),
         peerDepsExternal(),
-        resolve(),
+        resolve({ browser: true }),
         commonjs(),
         json(),
         typescript({ useTsconfigDeclarationDir: true }),
