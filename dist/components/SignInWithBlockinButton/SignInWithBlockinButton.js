@@ -1,8 +1,9 @@
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
-import { createChallenge } from '../index';
 import { useEffect, useState } from 'react';
-import { CloseIcon } from './CloseIcon';
-import { getChain } from '../ChainDrivers/SupportedChains';
+import { CloseIcon } from '../CloseIcon';
+import { getChain } from '../../ChainDrivers/SupportedChains';
+import { createChallenge } from '../../verify';
+import './SignInWithBlockinButton.css';
 const buttonStyle = {
     backgroundColor: 'rgb(176, 215, 252)',
     color: 'black',
@@ -149,6 +150,7 @@ export const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [],
                                     const nonce = generateNonce ? await generateNonce() : challengeParams.nonce;
                                     const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce });
                                     const challengeString = await createChallenge(challenge);
+                                    // const challengeString = '';
                                     const signChallengeResponse = await signChallenge(challengeString);
                                     const { success, message } = await verifyChallenge(signChallengeResponse);
                                     if (!success) {

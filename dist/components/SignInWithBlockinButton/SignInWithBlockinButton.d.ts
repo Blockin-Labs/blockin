@@ -1,5 +1,6 @@
 /// <reference types="react" />
-import { SignInWithBlockinButtonProps } from '../@types/SignInWithBlockinButton';
+import { SignInWithBlockinButtonProps } from '../../@types/SignInWithBlockinButton';
+import './SignInWithBlockinButton.css';
 /**
  * SignInWithBlockinButton - React Button that handles functionality of creating a Blockin challenge for a user.
  * As props, you can pass in everything needed to generate, sign, and verify the challenge. See the documentation

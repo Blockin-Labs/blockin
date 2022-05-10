@@ -40,7 +40,6 @@ export async function createChallenge(challengeParams: ChallengeParams, options?
     } = challengeParams;
 
 
-
     try {
         const challenge: EIP4361Challenge = {
             domain,

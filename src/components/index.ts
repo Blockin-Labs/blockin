@@ -1,2 +1,2 @@
 export { ChainSelect } from './ChainSelect'
-export { SignInWithBlockinButton } from './SignInWithBlockinButton'
+export { SignInWithBlockinButton } from './SignInWithBlockinButton/SignInWithBlockinButton'

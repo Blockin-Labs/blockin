@@ -1,11 +1,12 @@
 
 
 
-import { createChallenge } from '../index';
 import { useEffect, useState } from 'react';
-import { PresetAsset, PresetUri, SignInWithBlockinButtonProps, VerifyChallengeRequest } from '../@types/SignInWithBlockinButton';
-import { CloseIcon } from './CloseIcon';
-import { getChain } from '../ChainDrivers/SupportedChains';
+import { PresetAsset, PresetUri, SignInWithBlockinButtonProps, VerifyChallengeRequest } from '../../@types/SignInWithBlockinButton';
+import { CloseIcon } from '../CloseIcon';
+import { getChain } from '../../ChainDrivers/SupportedChains';
+import { constructChallengeStringFromChallengeObject, createChallenge } from '../../verify';
+import './SignInWithBlockinButton.css'
 
 const buttonStyle = {
     backgroundColor: 'rgb(176, 215, 252)',
@@ -301,6 +302,7 @@ export const SignInWithBlockinButton = ({
                         };
 
                         const challengeString = await createChallenge(challenge);
+                        // const challengeString = '';
 
                         const signChallengeResponse: VerifyChallengeRequest = await signChallenge(challengeString);
                         const { success, message } = await verifyChallenge(signChallengeResponse);

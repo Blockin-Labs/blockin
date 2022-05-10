@@ -4,6 +4,8 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
 // import postcss from 'rollup-plugin-postcss';
 import json from '@rollup/plugin-json';
+import replace from 'rollup-plugin-replace';
+import css from 'rollup-plugin-import-css';
 
 const packageJson = require('./package.json');
 
@@ -22,11 +24,17 @@ export default {
         },
     ],
     plugins: [
+        replace({
+            include: 'node_modules/js-sha256/src/sha256.js',
+            values: {
+                'eval(': '[eval][0](',
+            },
+        }),
         peerDepsExternal(),
-        resolve({ browser: true }),
+        resolve(),
         commonjs(),
         json(),
         typescript({ useTsconfigDeclarationDir: true }),
-        // postcss(),
+        css(),
     ],
 };
