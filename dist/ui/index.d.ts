@@ -1,7 +1,2 @@
-/// <reference types="react" />
-interface ButtonProps {
-    label: string;
-}
-declare const Button: (props: ButtonProps) => JSX.Element;
-
-export { Button };
+import TestComponent from "./TestComponent";
+export { TestComponent };
