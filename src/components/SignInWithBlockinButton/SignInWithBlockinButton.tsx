@@ -1,9 +1,6 @@
-
-
-
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { PresetAsset, PresetUri, SignInWithBlockinButtonProps, VerifyChallengeRequest } from '../../@types/SignInWithBlockinButton';
-import { CloseIcon } from '../CloseIcon';
 import { getChain } from '../../ChainDrivers/SupportedChains';
 import { constructChallengeStringFromChallengeObject, createChallenge } from '../../verify';
 import './SignInWithBlockinButton.css'
@@ -136,7 +133,7 @@ export const SignInWithBlockinButton = ({
                         justifyContent: 'flex-end',
                         width: '100%',
                         cursor: 'pointer'
-                    }}><CloseIcon /></button>
+                    }}>Close</button>
                     <h1>Sign In with Blockin!</h1>
                     <img src={chain.logo} height='100px' width='auto' />
 

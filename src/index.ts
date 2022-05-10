@@ -66,7 +66,4 @@ export {
     generateNonceWithLastBlockTimestamp
 } from './verify'
 
-export {
-    SignInWithBlockinButton,
-    ChainSelect
-} from './components';
+export * from './components';

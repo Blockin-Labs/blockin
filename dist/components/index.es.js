@@ -4146,31 +4146,6 @@ function requireReactJsxRuntime_development () {
 } (jsxRuntime));
 
 /**
- * ChainSelect - Component to handle updating the chain for multi-chain dApps. This is to be used in conjunction
- * with the SignInWithBlockin button.
- */
-const ChainSelect = ({ chains, updateChain }) => {
-    const [chain, setChain] = react.exports.useState();
-    const [menuIsVisible, setMenuIsVisible] = react.exports.useState(false);
-    react.exports.useEffect(() => {
-        if (chains[0]) {
-            handleChainChange(chains[0]);
-        }
-    }, []);
-    const handleChainChange = (chain) => {
-        setChain(chain.name);
-        updateChain(chain);
-    };
-    return jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [jsxRuntime.exports.jsxs("b", { children: ["Current Chain: ", chain] }), " ", jsxRuntime.exports.jsx("button", Object.assign({ onClick: () => setMenuIsVisible(!menuIsVisible) }, { children: menuIsVisible ? 'Hide' : 'Show' })), jsxRuntime.exports.jsx("div", { children: menuIsVisible && jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, { children: chains.map(chain => {
-                        return jsxRuntime.exports.jsx("div", { children: jsxRuntime.exports.jsxs("button", Object.assign({ onClick: () => handleChainChange(chain) }, { children: ["Switch to Chain: ", chain.name] })) }, chain.name);
-                    }) }) })] });
-};
-
-const CloseIcon = () => {
-    return (jsxRuntime.exports.jsx("svg", Object.assign({ width: 25, height: 25, xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 320 512" }, { children: jsxRuntime.exports.jsx("path", { d: "M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z" }) })));
-};
-
-/**
  * Gets metadata about the current chain. First, if currentChainInfo is passed, we just return that.
  * Next, we check the supported chains map and see if the name passed in matches. If nothing else was
  * found, we return a default object.
@@ -4424,7 +4399,7 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
                                     justifyContent: 'flex-end',
                                     width: '100%',
                                     cursor: 'pointer'
-                                } }, { children: jsxRuntime.exports.jsx(CloseIcon, {}) })), jsxRuntime.exports.jsx("h1", { children: "Sign In with Blockin!" }), jsxRuntime.exports.jsx("img", { src: chain.logo, height: '100px', width: 'auto' }), jsxRuntime.exports.jsx("h3", { children: jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [challengeParams.domain, " wants you to sign in with your ", chain.name, " account: ", challengeParams.address] }) }), jsxRuntime.exports.jsx("h3", { children: challengeParams.statement }), jsxRuntime.exports.jsxs("h3", { children: ["URI: ", challengeParams.uri] }), jsxRuntime.exports.jsxs("h3", { children: ["You will be authorized starting ", challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`, " ", challengeParams.expirationDate && `until ${challengeParams.expirationDate}`] }), !resourcesAreHidden && jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, { children: (displayedAssets.length !== 0 || displayedUris.length !== 0) && jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [jsxRuntime.exports.jsx("h3", { children: "Select from the resources you would like to receive access to:" }), displayedAssets.map(elem => {
+                                } }, { children: "Close" })), jsxRuntime.exports.jsx("h1", { children: "Sign In with Blockin!" }), jsxRuntime.exports.jsx("img", { src: chain.logo, height: '100px', width: 'auto' }), jsxRuntime.exports.jsx("h3", { children: jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [challengeParams.domain, " wants you to sign in with your ", chain.name, " account: ", challengeParams.address] }) }), jsxRuntime.exports.jsx("h3", { children: challengeParams.statement }), jsxRuntime.exports.jsxs("h3", { children: ["URI: ", challengeParams.uri] }), jsxRuntime.exports.jsxs("h3", { children: ["You will be authorized starting ", challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`, " ", challengeParams.expirationDate && `until ${challengeParams.expirationDate}`] }), !resourcesAreHidden && jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, { children: (displayedAssets.length !== 0 || displayedUris.length !== 0) && jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [jsxRuntime.exports.jsx("h3", { children: "Select from the resources you would like to receive access to:" }), displayedAssets.map(elem => {
                                             return jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [jsxRuntime.exports.jsx("hr", {}), jsxRuntime.exports.jsxs("div", Object.assign({ style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, { children: [jsxRuntime.exports.jsxs("div", Object.assign({ style: { display: 'flex' } }, { children: [jsxRuntime.exports.jsx("div", Object.assign({ style: { textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 } }, { children: jsxRuntime.exports.jsx("img", { src: chain.logo, height: '50px', width: 'auto' }) })), jsxRuntime.exports.jsxs("div", Object.assign({ style: { textAlign: 'left' } }, { children: [jsxRuntime.exports.jsx("b", { children: elem.name }), jsxRuntime.exports.jsx("br", {}), "Asset ID:", ' ', jsxRuntime.exports.jsx("a", Object.assign({ style: {
                                                                                     color: 'rgb(0, 99, 220)'
                                                                                 }, href: `https://testnet.algoexplorer.io/asset/${elem.assetId}`, target: "_blank", rel: "noreferrer" }, { children: elem.assetId })), " - ", elem.description] }))] })), jsxRuntime.exports.jsx("div", Object.assign({ style: { textAlign: 'right' } }, { children: selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
@@ -4486,5 +4461,5 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
                                 } }, { children: "Sign In" })), displayMessage && jsxRuntime.exports.jsx("p", { children: displayMessage })] })) })) })] });
 };
 
-export { ChainSelect, SignInWithBlockinButton };
+export { SignInWithBlockinButton };
 //# sourceMappingURL=index.es.js.map
