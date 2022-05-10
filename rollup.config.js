@@ -39,6 +39,11 @@ export default {
                     dest: 'dist/ui/',
                     rename: 'typography.scss',
                 },
+                {
+                    src: 'src/components/globals.scss',
+                    dest: 'dist/ui/',
+                    rename: 'globals.scss',
+                },
             ],
         }),
     ],

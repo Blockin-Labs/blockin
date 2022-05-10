@@ -45,14 +45,14 @@ export type ChallengeParams = {
  * Options that can be specified when calling createChallenge()
  */
 export type CreateChallengeOptions = {
-    /**
-     * Gets the latest block timestamp and overrides the inputted nonce, if there is one.
-     * 
-     * Note that if you specify this, you can also verify the recency of the challenge using
-     * the verifyNonceWithBlockTimestamps and verificationTimeLimit in the verifyChallenge()
-     * options.
-     */
-    useBlockTimestampsForNonce?: boolean;
+    // /**
+    //  * Gets the latest block timestamp and overrides the inputted nonce, if there is one.
+    //  * 
+    //  * Note that if you specify this, you can also verify the recency of the challenge using
+    //  * the verifyNonceWithBlockTimestamps and verificationTimeLimit in the verifyChallenge()
+    //  * options.
+    //  */
+    // useBlockTimestampsForNonce?: boolean;
 }
 
 export type VerifyChallengeOptions = {

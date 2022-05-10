@@ -1,6 +1,7 @@
 // Generated with util/create-component.js
 @import "../variables.scss";
 @import "../typography.scss";
+@import "../globals.scss";
 
 .foo-bar {
   @include font-defaults;

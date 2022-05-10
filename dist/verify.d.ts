@@ -6,6 +6,8 @@ export declare function initializeVerify(driver: IChainDriver): void;
  * slight modifications to EIP-4361 for our library include 1) any blockchain's native address, signature,
  * and verification schemes are supported and 2) in resources, one may prefix an asset with 'Asset ID: '
  * to specify micro-authorizations or role-based access using an on-chain asset.
+ *
+ *
  * @param challengeParams - JSON object with the challenge details such as domain, uri, statement, address, etc.
  * @param options - JSON object speicfying any additional options when creating the challenge
  * @returns Well-formed challenge string to be signed by the user, if successsful. Error string is returned

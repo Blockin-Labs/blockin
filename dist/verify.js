@@ -9,15 +9,18 @@ export function initializeVerify(driver) {
  * slight modifications to EIP-4361 for our library include 1) any blockchain's native address, signature,
  * and verification schemes are supported and 2) in resources, one may prefix an asset with 'Asset ID: '
  * to specify micro-authorizations or role-based access using an on-chain asset.
+ *
+ *
  * @param challengeParams - JSON object with the challenge details such as domain, uri, statement, address, etc.
  * @param options - JSON object speicfying any additional options when creating the challenge
  * @returns Well-formed challenge string to be signed by the user, if successsful. Error string is returned
  * upon failure.
  */
 export async function createChallenge(challengeParams, options) {
-    if (options === null || options === void 0 ? void 0 : options.useBlockTimestampsForNonce) {
-        challengeParams.nonce = await generateNonceWithLastBlockTimestamp();
-    }
+    /**
+     *  This function should remain completely ChainDriver free. ChainDriver dependencies tend to mess up the
+     * React component generation in the browser.
+     */
     const { domain, statement, address, uri, nonce, version = "1", chainId = "1", issuedAt = new Date().toISOString(), expirationDate = undefined, notBefore = undefined, resources = undefined } = challengeParams;
     try {
         const challenge = {
@@ -126,8 +129,12 @@ export function validateChallengeObjectIsWellFormed(challenge) {
     if (!URI_REGEX.test(challenge.domain)) {
         throw `Inputted domain (${challenge.domain}) is not a valid URI`;
     }
-    if (!chainDriver.isValidAddress(challenge.address)) {
-        throw `Inputted address (${challenge.address}) is not a valid Algorand address`;
+    /**
+     * We only check for existence of an address here for Rollup React purposes (we don't use ChainDriver's isValidAddress).
+     * Will not be able to generate a valid signature with an invalid address, however.
+     */
+    if (!challenge.address) {
+        throw `No address specified or address is invalid`;
     }
     if (!URI_REGEX.test(challenge.uri)) {
         throw `Inputted URI (${challenge.uri}) is not a valid URI`;
