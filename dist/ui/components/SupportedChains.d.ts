@@ -9,4 +9,4 @@ import { SupportedChain } from "../@types/SignInWithBlockinButton";
  * just return this
  * @returns SupportedChain object containing metadata about the chain.
  */
-export declare const getChain: (chainName: string, currentChainInfo?: SupportedChain | undefined) => SupportedChain;
+export declare const getChain: (chainName: string, currentChainInfo?: SupportedChain) => SupportedChain;
