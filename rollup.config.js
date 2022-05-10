@@ -6,6 +6,7 @@ import typescript from 'rollup-plugin-typescript2';
 import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-replace';
 import css from 'rollup-plugin-import-css';
+import dts from 'rollup-plugin-dts';
 
 const packageJson = require('./package.json');
 
@@ -34,7 +35,7 @@ export default {
         resolve({ browser: true }),
         commonjs(),
         json(),
-        typescript({ useTsconfigDeclarationDir: true }),
+        typescript({ tsconfig: './tsconfig.json' }),
         css(),
     ],
 };
