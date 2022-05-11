@@ -27,7 +27,7 @@ export default {
     ],
     plugins: [
         peerDepsExternal(),
-        resolve(),
+        resolve({ browser: true }),
         commonjs(),
         typescript({ tsconfig: './tsconfig.rollup.json' }),
         postcss(),
