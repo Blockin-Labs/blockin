@@ -1,12 +1,4 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-var React = require('react');
-
-function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
-
-var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+import React, { useState, useEffect } from 'react';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -249,12 +241,12 @@ const getDefaultSelectedResources = (assets, uris) => {
  * for each prop for more information.
  */
 const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displayedUris = [], signChallenge, verifyChallenge, generateNonce, currentChain, currentChainInfo, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage = '', }) => {
-    const [modalIsVisible, setModalIsVisible] = React.useState(false);
-    const [selectedResources, setSelectedResources] = React.useState(getDefaultSelectedResources(displayedAssets, displayedUris));
-    const [displayMessage, setDisplayMessage] = React.useState('');
-    const [chain, setChain] = React.useState(getChain(currentChain, currentChainInfo));
-    const [assetId, setAssetId] = React.useState('');
-    const [uri, setUri] = React.useState('');
+    const [modalIsVisible, setModalIsVisible] = useState(false);
+    const [selectedResources, setSelectedResources] = useState(getDefaultSelectedResources(displayedAssets, displayedUris));
+    const [displayMessage, setDisplayMessage] = useState('');
+    const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
+    const [assetId, setAssetId] = useState('');
+    const [uri, setUri] = useState('');
     /**
      * This will be true when 1) there are no selectable resources passed in by provider and 2) user can not add custom
      * resources.
@@ -276,13 +268,13 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
     /**
      * Upon chain change, update chain metadata and props
      */
-    React.useEffect(() => {
+    useEffect(() => {
         setChain(getChain(currentChain, currentChainInfo));
     }, [currentChain]);
-    return React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement("button", { style: buttonStyle, onClick: () => setModalIsVisible(!modalIsVisible) }, "Sign In with Blockin"),
-        modalIsVisible && React__default["default"].createElement(React__default["default"].Fragment, null,
-            React__default["default"].createElement("section", { style: {
+    return React.createElement(React.Fragment, null,
+        React.createElement("button", { style: buttonStyle, onClick: () => setModalIsVisible(!modalIsVisible) }, "Sign In with Blockin"),
+        modalIsVisible && React.createElement(React.Fragment, null,
+            React.createElement("section", { style: {
                     textAlign: 'center',
                     padding: '100px 0px',
                     position: 'fixed',
@@ -294,7 +286,7 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
                     minHeight: '100vh',
                     minWidth: '100vw',
                 } },
-                React__default["default"].createElement("div", { style: {
+                React.createElement("div", { style: {
                         wordWrap: 'break-word',
                         backgroundColor: 'white',
                         opacity: '100%',
@@ -307,7 +299,7 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
                         overflowY: 'auto',
                         scrollbarWidth: 'none'
                     } },
-                    React__default["default"].createElement("button", { onClick: () => { setModalIsVisible(!modalIsVisible); }, style: {
+                    React.createElement("button", { onClick: () => { setModalIsVisible(!modalIsVisible); }, style: {
                             background: 'none',
                             fill: 'black',
                             padding: '3px 0px 0px 0px',
@@ -319,117 +311,117 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
                             width: '100%',
                             cursor: 'pointer'
                         } }, "Close"),
-                    React__default["default"].createElement("h1", null, "Sign In with Blockin!"),
-                    React__default["default"].createElement("img", { src: chain.logo, height: '100px', width: 'auto' }),
-                    React__default["default"].createElement("h3", null,
-                        React__default["default"].createElement(React__default["default"].Fragment, null,
+                    React.createElement("h1", null, "Sign In with Blockin!"),
+                    React.createElement("img", { src: chain.logo, height: '100px', width: 'auto' }),
+                    React.createElement("h3", null,
+                        React.createElement(React.Fragment, null,
                             challengeParams.domain,
                             " wants you to sign in with your ",
                             chain.name,
                             " account: ",
                             challengeParams.address)),
-                    React__default["default"].createElement("h3", null, challengeParams.statement),
-                    React__default["default"].createElement("h3", null,
+                    React.createElement("h3", null, challengeParams.statement),
+                    React.createElement("h3", null,
                         "URI: ",
                         challengeParams.uri),
-                    React__default["default"].createElement("h3", null,
+                    React.createElement("h3", null,
                         "You will be authorized starting ",
                         challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`,
                         " ",
                         challengeParams.expirationDate && `until ${challengeParams.expirationDate}`),
-                    !resourcesAreHidden && React__default["default"].createElement(React__default["default"].Fragment, null, (displayedAssets.length !== 0 || displayedUris.length !== 0) && React__default["default"].createElement(React__default["default"].Fragment, null,
-                        React__default["default"].createElement("h3", null, "Select from the resources you would like to receive access to:"),
+                    !resourcesAreHidden && React.createElement(React.Fragment, null, (displayedAssets.length !== 0 || displayedUris.length !== 0) && React.createElement(React.Fragment, null,
+                        React.createElement("h3", null, "Select from the resources you would like to receive access to:"),
                         displayedAssets.map(elem => {
-                            return React__default["default"].createElement(React__default["default"].Fragment, null,
-                                React__default["default"].createElement("hr", null),
-                                React__default["default"].createElement("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-                                    React__default["default"].createElement("div", { style: { display: 'flex' } },
-                                        React__default["default"].createElement("div", { style: { textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 } },
-                                            React__default["default"].createElement("img", { src: chain.logo, height: '50px', width: 'auto' })),
-                                        React__default["default"].createElement("div", { style: { textAlign: 'left' } },
-                                            React__default["default"].createElement("b", null, elem.name),
-                                            React__default["default"].createElement("br", null),
+                            return React.createElement(React.Fragment, null,
+                                React.createElement("hr", null),
+                                React.createElement("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+                                    React.createElement("div", { style: { display: 'flex' } },
+                                        React.createElement("div", { style: { textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 } },
+                                            React.createElement("img", { src: chain.logo, height: '50px', width: 'auto' })),
+                                        React.createElement("div", { style: { textAlign: 'left' } },
+                                            React.createElement("b", null, elem.name),
+                                            React.createElement("br", null),
                                             "Asset ID:",
                                             ' ',
-                                            React__default["default"].createElement("a", { style: {
+                                            React.createElement("a", { style: {
                                                     color: 'rgb(0, 99, 220)'
                                                 }, href: `https://testnet.algoexplorer.io/asset/${elem.assetId}`, target: "_blank", rel: "noreferrer" }, elem.assetId),
                                             " - ",
                                             elem.description)),
-                                    React__default["default"].createElement("div", { style: { textAlign: 'right' } }, selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
-                                        React__default["default"].createElement("button", { style: buttonStyle, onClick: () => {
+                                    React.createElement("div", { style: { textAlign: 'right' } }, selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
+                                        React.createElement("button", { style: buttonStyle, onClick: () => {
                                                 const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`);
                                                 setSelectedResources(newArr);
                                             }, disabled: elem.frozen }, "Deselect") :
-                                        React__default["default"].createElement("button", { style: buttonStyle, disabled: elem.frozen, onClick: () => {
+                                        React.createElement("button", { style: buttonStyle, disabled: elem.frozen, onClick: () => {
                                                 const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`];
                                                 setSelectedResources(newArr);
                                             } }, "Select"))));
                         }),
                         displayedUris.map(elem => {
-                            return React__default["default"].createElement(React__default["default"].Fragment, null,
-                                React__default["default"].createElement("hr", null),
-                                React__default["default"].createElement("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
-                                    React__default["default"].createElement("div", { style: { display: 'flex' } },
-                                        React__default["default"].createElement("div", { style: { textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 } },
-                                            React__default["default"].createElement("img", { src: 'https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png', height: 'auto', width: '50px' })),
-                                        React__default["default"].createElement("div", { style: { textAlign: 'left' } },
-                                            React__default["default"].createElement("b", null, elem.name),
-                                            React__default["default"].createElement("br", null),
+                            return React.createElement(React.Fragment, null,
+                                React.createElement("hr", null),
+                                React.createElement("div", { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+                                    React.createElement("div", { style: { display: 'flex' } },
+                                        React.createElement("div", { style: { textAlign: 'left', alignItems: 'center', height: '100%', marginRight: 10 } },
+                                            React.createElement("img", { src: 'https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png', height: 'auto', width: '50px' })),
+                                        React.createElement("div", { style: { textAlign: 'left' } },
+                                            React.createElement("b", null, elem.name),
+                                            React.createElement("br", null),
                                             "URI: ",
                                             ' ',
-                                            React__default["default"].createElement("a", { style: {
+                                            React.createElement("a", { style: {
                                                     color: 'rgb(0, 99, 220)'
                                                 }, href: `${elem.uri}`, target: "_blank", rel: "noreferrer" }, elem.uri),
                                             " - ",
                                             elem.description)),
-                                    React__default["default"].createElement("div", { style: { textAlign: 'right' } }, selectedResources.includes(elem.uri) ?
-                                        React__default["default"].createElement("button", { disabled: elem.frozen, style: buttonStyle, onClick: () => {
+                                    React.createElement("div", { style: { textAlign: 'right' } }, selectedResources.includes(elem.uri) ?
+                                        React.createElement("button", { disabled: elem.frozen, style: buttonStyle, onClick: () => {
                                                 const newArr = selectedResources.filter(resource => resource !== elem.uri);
                                                 setSelectedResources(newArr);
                                             } }, "Deselect") :
-                                        React__default["default"].createElement("button", { disabled: elem.frozen, style: buttonStyle, onClick: () => {
+                                        React.createElement("button", { disabled: elem.frozen, style: buttonStyle, onClick: () => {
                                                 const newArr = [...selectedResources, elem.uri];
                                                 setSelectedResources(newArr);
                                             } }, "Select"))));
                         }))),
                     (canAddCustomAssets || canAddCustomUris) &&
-                        React__default["default"].createElement(React__default["default"].Fragment, null,
-                            React__default["default"].createElement("h3", null, "You may also add custom resources below: "),
-                            React__default["default"].createElement("h3", null, customAddResourcesMessage),
-                            canAddCustomAssets && React__default["default"].createElement(React__default["default"].Fragment, null,
-                                React__default["default"].createElement("div", { style: {
+                        React.createElement(React.Fragment, null,
+                            React.createElement("h3", null, "You may also add custom resources below: "),
+                            React.createElement("h3", null, customAddResourcesMessage),
+                            canAddCustomAssets && React.createElement(React.Fragment, null,
+                                React.createElement("div", { style: {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'space-between'
                                     } },
-                                    React__default["default"].createElement("input", { value: assetId, type: "text", placeholder: 'Add Asset ID #', onChange: e => setAssetId(e.target.value) }),
-                                    React__default["default"].createElement("button", { onClick: () => __awaiter(void 0, void 0, void 0, function* () {
+                                    React.createElement("input", { value: assetId, type: "text", placeholder: 'Add Asset ID #', onChange: e => setAssetId(e.target.value) }),
+                                    React.createElement("button", { onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                                             yield addCustomResource(assetId);
                                             setAssetId('');
                                         }) }, "Add Asset ID"))),
-                            canAddCustomUris && React__default["default"].createElement(React__default["default"].Fragment, null,
-                                React__default["default"].createElement("div", { style: {
+                            canAddCustomUris && React.createElement(React.Fragment, null,
+                                React.createElement("div", { style: {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'space-between'
                                     } },
-                                    React__default["default"].createElement("input", { value: uri, type: "text", placeholder: 'Add URI', onChange: e => setUri(e.target.value) }),
-                                    React__default["default"].createElement("button", { onClick: () => __awaiter(void 0, void 0, void 0, function* () {
+                                    React.createElement("input", { value: uri, type: "text", placeholder: 'Add URI', onChange: e => setUri(e.target.value) }),
+                                    React.createElement("button", { onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                                             yield addCustomResource(uri);
                                             setUri('');
                                         }) }, "Add URI")))),
-                    selectedResources && React__default["default"].createElement("h3", null, "List of Selected Resources"),
+                    selectedResources && React.createElement("h3", null, "List of Selected Resources"),
                     selectedResources.map(resource => {
-                        return React__default["default"].createElement("li", null,
+                        return React.createElement("li", null,
                             resource,
-                            React__default["default"].createElement("button", { onClick: () => {
+                            React.createElement("button", { onClick: () => {
                                     const newArr = selectedResources.filter(elem => resource !== elem);
                                     setSelectedResources(newArr);
                                 } }, "Remove"));
                     }),
-                    React__default["default"].createElement("hr", null),
-                    React__default["default"].createElement("button", { style: buttonStyle, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
+                    React.createElement("hr", null),
+                    React.createElement("button", { style: buttonStyle, onClick: () => __awaiter(void 0, void 0, void 0, function* () {
                             const nonce = generateNonce ? yield generateNonce() : challengeParams.nonce;
                             const challenge = Object.assign(Object.assign({}, challengeParams), { resources: selectedResources, nonce });
                             const challengeString = yield createChallenge(challenge);
@@ -444,7 +436,7 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
                                 setModalIsVisible(false);
                             }
                         }) }, "Sign In"),
-                    displayMessage && React__default["default"].createElement("p", null, displayMessage)))));
+                    displayMessage && React.createElement("p", null, displayMessage)))));
 };
 
 var css_248z = ":root {\n  --background: #fff;\n  --font-color: #494949; }\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --background: #3c3c3c;\n    --font-color: #fafafa; } }\n\nhtml,\nbody {\n  padding: 0;\n  margin: 0;\n  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,\r Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; }\n\n* {\n  box-sizing: border-box; }\n\na {\n  color: inherit;\n  text-decoration: none; }\n\na:link {\n  text-decoration: none; }\n\na:visited {\n  text-decoration: none; }\n\n/* a:hover {\r\n  text-decoration: underline;\r\n} */\n/* a:active {\r\n  text-decoration: underline;\r\n} */\n.asset-link {\n  color: #0063dc; }\n\nbutton {\n  background-color: #b0d7fc;\n  color: black;\n  padding: 12px 15px;\n  font-weight: 600;\n  border-radius: 10px;\n  cursor: pointer; }\n\nbutton:disabled {\n  cursor: not-allowed; }\n\ninput {\n  display: block;\n  background-color: #ececec;\n  border-radius: 5px;\n  padding: 5px 10px;\n  margin: 30px auto;\n  text-align: center; }\n\nheader {\n  background-color: #4190ff;\n  padding: 10px 30px 20px;\n  color: white;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  flex-direction: column; }\n\n.connect-screen {\n  text-align: center;\n  padding: 100px 0px;\n  position: fixed;\n  background: rgba(0, 0, 0, 0.7);\n  top: 0px;\n  left: 0px;\n  transition: opacity 500ms;\n  z-index: 50;\n  height: 100vh;\n  width: 100vw; }\n\n.connect-screen div {\n  background-color: white;\n  opacity: 100%;\n  width: 600px;\n  max-width: 90vw;\n  margin: 50px auto 0px;\n  padding: 30px;\n  border-radius: 25px; }\n\n.connect-screen h1 {\n  margin-bottom: 55px; }\n\n.hidden {\n  display: none; }\n\nmain {\n  text-align: center;\n  padding: 100px 0px 0px;\n  max-width: 30rem;\n  margin-inline: auto; }\n\n.home h2 {\n  font-size: larger; }\n\n.home h3 {\n  font-size: large;\n  padding-bottom: 20px;\n  margin-bottom: 30px;\n  border-bottom: 1px solid black; }\n\n.home ul {\n  padding: 0px;\n  list-style: upper-roman;\n  margin: 0px; }\n\n.home li {\n  margin: 20px 0px 0px;\n  text-decoration: underline;\n  color: #0063dc; }\n\n.assetidinput {\n  display: flex;\n  align-items: center;\n  justify-content: space-between; }\n\n.banner {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  font-weight: bold;\n  font-size: 50px;\n  color: black;\n  -webkit-text-fill-color: rgba(255, 255, 255, 0);\n  /* Will override color (regardless of order) */\n  -webkit-text-stroke-width: 1.5px;\n  -webkit-text-stroke-color: #f7f7f7;\n  font-family: Arial, Helvetica, sans-serif; }\n\n.bottomBanner {\n  width: 100%; }\n\n.bannerStatus {\n  float: left;\n  display: flex;\n  align-items: center;\n  cursor: default; }\n\n.bannerStatus div {\n  display: flex;\n  align-items: center;\n  margin-right: 30px; }\n\n.connectStatus {\n  float: right;\n  display: flex;\n  align-items: center;\n  cursor: default; }\n\n.connectStatus div {\n  display: flex;\n  align-items: center;\n  margin-right: 30px; }\n\np {\n  margin: 0px; }\n\n.sideIcon {\n  fill: white;\n  margin-right: 13px; }\n\n.blockinIcon {\n  fill: white; }\n\n.logout, .login {\n  background: none;\n  color: white;\n  padding: 0px;\n  margin: 0px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border: none;\n  font-size: medium;\n  font-weight: 500;\n  float: right; }\n\n.closeButton {\n  background: none;\n  fill: black;\n  padding: 3px 0px 0px 0px;\n  margin: 0px 0px 20px 0px;\n  border: none;\n  float: right;\n  display: flex;\n  justify-content: flex-end;\n  width: 100%; }\n\n.connectButton {\n  display: flex;\n  margin: auto;\n  justify-content: center;\n  align-items: center; }\n\n.connectButton svg {\n  fill: black; }\n\n.foo-bar {\n  font-family: \"Avenir Next\", Helvetica, Arial, sans-serif;\n  color: #005f20; }\n";
@@ -456,9 +448,9 @@ styleInject(css_248z);
  * with the SignInWithBlockin button.
  */
 const ChainSelect = ({ chains, updateChain }) => {
-    const [chain, setChain] = React.useState();
-    const [menuIsVisible, setMenuIsVisible] = React.useState(false);
-    React.useEffect(() => {
+    const [chain, setChain] = useState();
+    const [menuIsVisible, setMenuIsVisible] = useState(false);
+    useEffect(() => {
         if (chains[0]) {
             handleChainChange(chains[0]);
         }
@@ -467,20 +459,19 @@ const ChainSelect = ({ chains, updateChain }) => {
         setChain(chain.name);
         updateChain(chain);
     };
-    return React__default["default"].createElement(React__default["default"].Fragment, null,
-        React__default["default"].createElement("b", null,
+    return React.createElement(React.Fragment, null,
+        React.createElement("b", null,
             "Current Chain: ",
             chain),
         " ",
-        React__default["default"].createElement("button", { onClick: () => setMenuIsVisible(!menuIsVisible) }, menuIsVisible ? 'Hide' : 'Show'),
-        React__default["default"].createElement("div", null, menuIsVisible && React__default["default"].createElement(React__default["default"].Fragment, null, chains.map(chain => {
-            return React__default["default"].createElement("div", { key: chain.name },
-                React__default["default"].createElement("button", { onClick: () => handleChainChange(chain) },
+        React.createElement("button", { onClick: () => setMenuIsVisible(!menuIsVisible) }, menuIsVisible ? 'Hide' : 'Show'),
+        React.createElement("div", null, menuIsVisible && React.createElement(React.Fragment, null, chains.map(chain => {
+            return React.createElement("div", { key: chain.name },
+                React.createElement("button", { onClick: () => handleChainChange(chain) },
                     "Switch to Chain: ",
                     chain.name));
         }))));
 };
 
-exports.ChainSelect = ChainSelect;
-exports.SignInWithBlockinButton = SignInWithBlockinButton;
+export { ChainSelect, SignInWithBlockinButton };
 //# sourceMappingURL=index.js.map
