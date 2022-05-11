@@ -99,5 +99,5 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": ["src", "tsconfig.rollup.json", "util"],
-  "exclude": ["src/components", "node_modules", "src/**/*.spec.ts", "src/**/*.stories.tsx", "src/**/*.test.tsx"]
+  "exclude": ["src/ui", "node_modules", "src/**/*.spec.ts", "src/**/*.stories.tsx", "src/**/*.test.tsx"]
 }

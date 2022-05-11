@@ -1,3 +1,8 @@
+/**
+ * As a build hack, we run mv ./dist/index* ./dist/*.scss ./dist/ui after building this rollup
+ * in order to have correct directory structure for the types in dist/ui.
+ */
+
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -7,15 +12,15 @@ import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: 'src/components/index.ts',
+    input: 'src/ui/index.ts',
     output: [
         {
-            file: 'dist/ui/index.js',
+            file: 'dist/index.js',
             format: 'cjs',
             sourcemap: true,
         },
         {
-            file: 'dist/ui/index.es.js',
+            file: 'dist/index.es.js',
             format: 'esm',
             sourcemap: true,
         },
@@ -27,21 +32,22 @@ export default {
         typescript({ tsconfig: './tsconfig.rollup.json' }),
         postcss(),
         json(),
+        //If anything else is added to here, also confirm the postrollup script in package.json handles it
         copy({
             targets: [
                 {
-                    src: 'src/components/variables.scss',
-                    dest: 'dist/ui/',
+                    src: 'src/ui/variables.scss',
+                    dest: 'dist/',
                     rename: 'variables.scss',
                 },
                 {
-                    src: 'src/components/typography.scss',
-                    dest: 'dist/ui/',
+                    src: 'src/ui/typography.scss',
+                    dest: 'dist/',
                     rename: 'typography.scss',
                 },
                 {
-                    src: 'src/components/globals.scss',
-                    dest: 'dist/ui/',
+                    src: 'src/ui/globals.scss',
+                    dest: 'dist/',
                     rename: 'globals.scss',
                 },
             ],

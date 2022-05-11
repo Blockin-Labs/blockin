@@ -1,7 +1,9 @@
 // Generated with util/create-component.js
-import React from "react";
+import React, { useState } from "react";
+import { SignInWithBlockinButton } from "..";
 import { ChainProps, VerifyChallengeRequest } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
 import ChainSelect from "./ChainSelect";
+import { ChainSelectProps } from "./ChainSelect.types";
 
 export default {
     title: "ChainSelect"
@@ -13,6 +15,10 @@ const handleSignChallengeFailure = async (challenge: string) => {
     }
 }
 
+const getVerifyChallengeSuccess = async () => {
+    return { success: true, message: 'Successfully granted access via Blockin.' };
+}
+
 const handleSignChallengeSuccess = async (challenge: string) => {
 
     return {
@@ -22,9 +28,8 @@ const handleSignChallengeSuccess = async (challenge: string) => {
     }
 }
 
-export const WithBar = () => <ChainSelect
-    updateChain={(newChainProps: ChainProps) => { }}
-    chains={[
+const chainOptions =
+    [
         {
             name: 'Ethereum',
             displayedAssets: [{
@@ -109,6 +114,52 @@ export const WithBar = () => <ChainSelect
                 return signChallengeResponse;
             }
         }
-    ]}
+    ]
+
+export const ChainSelectByItself = () => <ChainSelect
+    updateChain={(newChainProps: ChainProps) => { }}
+    chains={chainOptions}
 />;
+
+
+export const ChainSelectWithSignInButton = () => {
+    const [chainProps, setChainProps] = useState<ChainProps>({
+        name: 'Default',
+        displayedAssets: [],
+        displayedUris: [],
+    });
+
+
+    return <>
+        <ChainSelect
+            updateChain={(newChainProps: ChainProps) => { setChainProps(newChainProps) }}
+            chains={chainOptions}
+        />
+        <SignInWithBlockinButton
+            challengeParams={{
+                domain: 'https://blockin.com',
+                statement: 'Sign in to this website via Blockin. You will remain signed in until you terminate your browser session.',
+                address: '0x321426753456243856',
+                uri: 'https://blockin.com/login',
+                nonce: 'abs123xtz'
+            }}
+            currentChain={chainProps.name}
+            displayedAssets={chainProps.displayedAssets ? chainProps.displayedAssets : []}
+            displayedUris={chainProps.displayedUris ? chainProps.displayedUris : []}
+            signChallenge={async (challenge: string) => {
+                const signChallengeResponse: VerifyChallengeRequest = await handleSignChallengeSuccess(challenge);
+                return signChallengeResponse;
+            }}
+            verifyChallenge={async (signChallengeResponse: VerifyChallengeRequest) => {
+                if (!signChallengeResponse.signatureBytes || !signChallengeResponse.originalBytes) {
+                    return { success: false, message: `Error: Problem reading signature of challenge: ${signChallengeResponse.message}` }
+                }
+
+                const verificationResponse = await getVerifyChallengeSuccess();
+                return verificationResponse
+            }}
+        />
+
+    </>
+};
 
