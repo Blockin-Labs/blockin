@@ -2,8 +2,6 @@
   "name": "blockin",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -11,7 +9,7 @@
   "prepublish": "tsc",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rollup -c && npm run postrollup && tsc --build",
+    "build": "rm -rf dist && rollup -c && npm run postrollup && tsc --build",
     "postrollup": "mv ./dist/index* ./dist/*.scss ./dist/ui",
     "storybook": "start-storybook -p 6006",
     "storybook:export": "build-storybook",
