@@ -4,19 +4,9 @@ import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, VerifyChallengeRe
 import "./SignInWithBlockinButton.scss";
 import { createChallenge } from "../../verify";
 import { useEffect, useState } from 'react';
-// import { CloseIcon } from './CloseIcon';
 import { getChain } from '../SupportedChains'
 
-const buttonStyle = {
-    backgroundColor: 'rgb(176, 215, 252)',
-    color: 'black',
-    padding: '12px 15px',
-    fontWeight: 600,
-    borderRadius: '10px',
-    cursor: 'pointer',
-}
-
-/**
+/*
  * Gets the default selected resources from the passed-in props
  * @param assets Assets passed in as props
  * @param uris URIs passed in as props
@@ -94,48 +84,14 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
 
     return <>
-        <button style={buttonStyle} onClick={() => setModalIsVisible(!modalIsVisible)}>
+        <button onClick={() => setModalIsVisible(!modalIsVisible)}>
             Sign In with Blockin
         </button>
 
         {modalIsVisible && <>
-            <section style={{
-                textAlign: 'center',
-                padding: '100px 0px',
-                position: 'fixed',
-                background: 'rgba(0, 0, 0, 0.7)',
-                top: 0,
-                left: 0,
-                transition: 'opacity 500ms',
-                zIndex: 50,
-                minHeight: '100vh',
-                minWidth: '100vw',
-            }} >
-                <div style={{
-                    wordWrap: 'break-word',
-                    backgroundColor: 'white',
-                    opacity: '100%',
-                    width: 600,
-                    height: 600,
-                    maxWidth: '90vw',
-                    margin: '0 auto 0px',
-                    padding: '30px',
-                    borderRadius: '25px',
-                    overflowY: 'auto',
-                    scrollbarWidth: 'none'
-                }}>
-                    <button onClick={() => { setModalIsVisible(!modalIsVisible) }} style={{
-                        background: 'none',
-                        fill: 'black',
-                        padding: '3px 0px 0px 0px',
-                        margin: '0px 0px 20px 0px',
-                        border: 'none',
-                        float: 'right',
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        width: '100%',
-                        cursor: 'pointer'
-                    }}>Close</button>
+            <section className='blockin-modal' >
+                <div className="blockin-modal-popup">
+                    <button onClick={() => { setModalIsVisible(!modalIsVisible) }} className='closeButton'>Close</button>
                     <h1>Sign In with Blockin!</h1>
                     <img src={chain.logo} height='100px' width='auto' />
 
@@ -172,14 +128,14 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
                                         <div style={{ textAlign: 'right' }}>
                                             {selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
-                                                <button style={buttonStyle} onClick={() => {
+                                                <button onClick={() => {
                                                     const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
                                                     setSelectedResources(newArr);
                                                 }}
                                                     disabled={elem.frozen}>
                                                     Deselect
                                                 </button> :
-                                                <button style={buttonStyle} disabled={elem.frozen} onClick={() => {
+                                                <button disabled={elem.frozen} onClick={() => {
                                                     const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
                                                     setSelectedResources(newArr);
                                                 }}>
@@ -218,13 +174,13 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                         </div>
                                         <div style={{ textAlign: 'right' }}>
                                             {selectedResources.includes(elem.uri) ?
-                                                <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
+                                                <button disabled={elem.frozen} onClick={() => {
                                                     const newArr = selectedResources.filter(resource => resource !== elem.uri)
                                                     setSelectedResources(newArr);
                                                 }}>
                                                     Deselect
                                                 </button> :
-                                                <button disabled={elem.frozen} style={buttonStyle} onClick={() => {
+                                                <button disabled={elem.frozen} onClick={() => {
                                                     const newArr = [...selectedResources, elem.uri]
                                                     setSelectedResources(newArr);
                                                 }}>
@@ -291,7 +247,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
 
                     <hr />
-                    <button style={buttonStyle} onClick={async () => {
+                    <button onClick={async () => {
                         const nonce = generateNonce ? await generateNonce() : challengeParams.nonce;
 
                         const challenge = {
