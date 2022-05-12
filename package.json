@@ -12,8 +12,7 @@
     "build": "rm -rf dist && rollup -c && npm run postrollup && tsc --build",
     "postrollup": "mv ./dist/index* ./dist/*.scss ./dist/ui",
     "storybook": "start-storybook -p 6006",
-    "storybook:export": "build-storybook",
-    "generate": "node ./util/create-component"
+    "storybook:export": "build-storybook"
   },
   "keywords": [],
   "author": "",

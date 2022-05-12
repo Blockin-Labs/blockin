@@ -19,6 +19,7 @@ export default {
             format: 'esm',
             sourcemap: true,
         },
+        //TODO: add commonjs mappings too
     ],
     plugins: [
         peerDepsExternal(),

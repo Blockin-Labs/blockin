@@ -3,8 +3,8 @@ import { ChainProps } from "../SignInWithBlockinButton/SignInWithBlockinButton.t
 // Generated with util/create-component.js
 export interface ChainSelectProps {
     /**
-        *  Array of chain props inputted to SignInWithBlockinButton. See ChainProps type. Default selected chain will be chains[0].
-        */
+    *  Array of chain props inputted to SignInWithBlockinButton. See ChainProps type. Default selected chain will be chains[0].
+    */
     chains: ChainProps[],
     /**
      * Update function that is called when the user selects a new chain. This function should handle all the functionality
