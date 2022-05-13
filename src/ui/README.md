@@ -1,8 +1,8 @@
 # Blockin UI
-Welcome to the Blockin UI library. Here, you can find all the importable UI components for Blockin.
+Welcome to the Blockin UI library.
 
-They can be imported by 
-```
+The UI components found here can be imported by 
+```TSX
 import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/ui';
 ```
  Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
@@ -16,8 +16,14 @@ npm run storybook
 ```
 
 Please don't use any generic CSS styles. All styles applied to these UI components should use class names prefixed with 'blockin' such as:
-```
+```HTML
 <button className='blockin-button'></button>
+```
+and
+```CSS
+.blockin-button {
+  padding: 10px;
+}
 ```
 
 # Building
