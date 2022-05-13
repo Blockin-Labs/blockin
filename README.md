@@ -70,11 +70,11 @@ Blockin is a universal, multi-chain sign-in interface for Web 3.0. The Blockin i
 For a visual demo, visit the [`Blockin Demo`](https://blockin.vercel.app/).
 
 The Blockin interface can be split into the following categories:
-* Asset Creation: If an asset is to be used while signing in, the asset must be created on-chain before being used for signing in. 
+* **Asset Creation**: If an asset is to be used while signing in, the asset must be created on-chain before being used for signing in. 
   * The asset can be created by the user, the resource provider, or via a smart contract. Each method has its own pros and cons which are explained on the [`Blockin Demo Site`](https://blockin.vercel.app/).
   * This library provides the necessary tools to create an asset via any of the methods.
-* Sign-In Verification: Each time a user would like to sign-in, they will use their private key to cryptographically sign a challenge which specifies all the details about their sign-in attempt such as expiration date, statement, URIs, chain IDs, etc. Blockin will then verify the challenge was signed correctly, the challenge is valid, and the user owns all requested assets by querying the public blockchain.
-  * The challenge interface used is the EIP-4361 Sign-In With Ethereum interface with the addition of specifying assets as resources with the prefix of 'Asset ID: '.
+* **Sign-In Verification**: Each time a user would like to sign-in, they will use their private key to cryptographically sign a challenge which specifies all the details about their sign-in attempt such as expiration date, statement, URIs, chain IDs, etc. Blockin will then verify the challenge was signed correctly, the challenge is valid, and the user owns all requested assets by querying the public blockchain.
+  * The challenge interface used is the [`EIP-4361 Sign-In With Ethereum`](https://eips.ethereum.org/EIPS/eip-4361) interface. We extend this interface with the addition of specifying assets as resources with the prefix of 'Asset ID: '.
 
 This library supports all the needed tools you may need at any stage of the process. 
 
@@ -100,11 +100,11 @@ Blockin should be used with both a frontend and a backend.
   ```import { ChainSelect, SignInWithBlockinButton } from 'blockin/ui';```. Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) to view the documentation for these components.
   * The above components are implemented using the createChallenge() function exported by Blockin, so if you would like to custom implement your own buttons and challenges, all you need to do is to call createChallenge().
   * **Note that most functions exported from Blockin need an API key. These functions should not be called from any frontend because that will leak your API key. It is strongly recommended these are called from the backend.**
-* Backend: The backend is responsible for the verification. The frontend should send a request to the backend to verify a (challenge, signature) pair. The backend will first call Blockin's verifyChallenge() function. This will check if challenge is well-formed and valid. Next, the backend will perform any additional validity checks. If everything is valid, the backend can grant access via any method that one chooses (JWTs, session tokens, cookies, etc).
+* Backend: The backend is responsible for the verification. The frontend should send a request to the backend to verify a (challenge, signature) pair. The backend should first call Blockin's verifyChallenge() function. Blockin will check if challenge is well-formed and valid. Next, the backend will perform any additional validity checks, not checked by Blockin. If everything is valid, the backend can grant access via any method that one chooses (JWTs, session tokens, cookies, etc).
   * To import functions on the backend you will call: ```import { setChainDriver, ... } from 'blockin';```
   * Before calling any function, you must specify a valid ChainDriver by: ```setChainDriver(new AlgoDriver(..., API_KEY, ...));```
     * AlgoDriver is the ChainDriver for Algorand. Replace accordingly with the ChainDriver for your blockchain.
-    * Some ChainDrivers are already implemented and exported for your convenience. However, you may also implement your own ChainDriver for a new blockchain by implementing the ChainDriver interface that is defined. If you do this, it would greatly be appreciated if it is shared with us, so we can add it to this library for others to use!
+    * Some ChainDrivers are already implemented and exported for your convenience in src/ChainDrivers. However, Blockin is flexible. You may implement your own ChainDriver for any blockchain by implementing the ChainDriver interface that is defined. If you do this, it would greatly be appreciated if it is shared with us, so we can add it to this library for others to use!
     * **Note that you will need to specify an API key for your specific ChainDriver because Blockin will call APIs to query the blockchain. More details can be found in the documentation of the ChainDriver you wish to use.**
 
 
