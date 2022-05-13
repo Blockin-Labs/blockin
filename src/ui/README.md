@@ -1,16 +1,24 @@
 # Blockin UI
-Welcome to the Blockin UI portion of the library. This folder will host all the importable UI components for Blockin. These aim to make it super easy to integrate Blockin into any frontend application.
+Welcome to the Blockin UI library. Here, you can find all the importable UI components for Blockin.
 
-They can be imported by ```import { ChainSelect, SignInWithBlockinButton } from 'blockin/ui';```. Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
+They can be imported by ```import { ChainSelect, SignInWithBlockinButton, } from 'blockin/ui';```. Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
 
-For development, we strongly recommend using the Storybook development tool by calling ```npm run storybook```. A sample frontend integration with these components can be found at [`Blockin Sample Integration Site`](https://github.com/trevormil/Blockin-Sample-Integration).
+A sample frontend integration with these components can be found at [`Blockin Sample Integration Site`](https://github.com/trevormil/Blockin-Sample-Integration).
 
-Also, we would like to note that we do not want to mess up existing CSS that is defined by a frontend that is importing our library. Any styles applied to these UI components should use class names prefixed with 'blockin' such as ```<button className='blockin-button'></button>```
+# Contributing to this Library
+We strongly recommend developing using the Storybook development tool by calling ```npm run storybook```.
 
-I want to give credit to the amazing template repository, created by HarveyD, for React components at [React Component Library](https://github.com/HarveyD/react-component-library). Everything else defined in the README below this section is taken from this repository's README. Note that if you need to use the Publishing or Installing Locally sections below, you will need to do this with the whole blockin library, not just the ui folder.
+Please don't use any generic CSS styles. All styles applied to these UI components should use class names prefixed with 'blockin' such as ```<button className='blockin-button'></button>```
 
-This folder is built using Rollup within the ```npm run build``` command. The config files for this folder are rollup.config.js and tsconfig.rollup.json. Everything is built into the dist/ui folder. One minor note is that the directory hierarchy after building is slightly off due to how rollup works and how the library is setup. We run ```mv ./dist/index* ./dist/*.scss ./dist/ui``` as a part of the build process as a minor hack to fix this.
+# Building
+This folder is built using [Rollup](https://github.com/rollup/rollup) within the ```npm run build``` command. The config files for this folder are [rollup.config.js](../../rollup.config.js) and [tsconfig.rollup.json](../../tsconfig.rollup.json). Everything is built into the dist/ui folder. 
 
+One minor note is that the directory hierarchy after building is slightly off due to how rollup works and how the library is setup. We run ```mv ./dist/index* ./dist/*.scss ./dist/ui``` as a part of the build process as a minor hack to fix this.
+
+# Credit for the Repository Template
+I want to give credit to the amazing template repository, created by HarveyD, for React components at [React Component Library](https://github.com/HarveyD/react-component-library). Everything else defined in the README below this section is taken from this repository's README. 
+
+Note that if you need to use the Publishing or Installing Locally sections below, you will need to do this with the whole blockin library, not just the ui folder.
 
 # React Component Library
 
