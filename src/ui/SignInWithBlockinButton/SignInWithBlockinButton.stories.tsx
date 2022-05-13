@@ -58,7 +58,9 @@ const props = {
         frozen: false,
         defaultSelected: true,
     }],
-    currentChainInfo: undefined
+    currentChainInfo: undefined,
+    canAddCustomAssets: true,
+    canAddCustomUris: true
 }
 
 export const SuccessfulSignAndVerify = () => {

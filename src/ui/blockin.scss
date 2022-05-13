@@ -1,0 +1,112 @@
+
+
+.blockin-button {
+  background-color: rgb(176, 215, 252);
+  color: black;
+  padding: 12px 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.blockin-button:disabled {
+    cursor:not-allowed;
+}
+
+.blockin-input {
+  display: block;
+  background-color: rgb(236, 236, 236);
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 30px auto;
+  text-align: center;
+}
+
+
+.blockin-closebutton {
+  background: none;
+  fill: black;
+  padding: 3px 0px 0px 0px;
+  margin: 0px 0px 20px 0px;
+  border: none;
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  cursor: pointer;
+}
+
+.blockin-root {
+    text-align: center;
+    padding: 100px 0px;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.7);
+    top: 0;
+    left: 0;
+    transition: opacity 500ms;
+    z-index: 50;
+    min-height: 100vh;
+    min-width: 100vw;
+}
+
+.blockin-popup {
+    word-wrap: break-word;
+    background-color: white;
+    opacity: 100%;
+    width: 600px;
+    height: 600px;
+    max-width: 90vw;
+    margin: 0 auto 0px;
+    padding: 30px;
+    border-radius: 25px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.blockin-listitem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.blockin-listitem-metadata {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    height: 100%;
+}
+
+.blockin-listitem-button {
+    display: flex;
+    text-align: right;
+    align-items: center;
+    height: 100%;
+}
+
+.blockin-listitem-logo {
+    margin-right: 10px;
+}
+
+.blockin-header {
+
+}
+
+.blockin-challenge {
+
+}
+
+.blockin-preset-resources {
+    
+}
+
+.blockin-custom-add-resources {
+
+}
+
+.blockin-sign-challenge-button {
+    
+}
+
+.blockin-selected-resources-summary {
+    
+}

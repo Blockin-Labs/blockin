@@ -26,12 +26,19 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain }) => {
     }
 
     return <>
-        <b>Current Chain: {chain}</b> <button onClick={() => setMenuIsVisible(!menuIsVisible)}>{menuIsVisible ? 'Hide' : 'Show'}</button>
+        <b>Current Chain: {chain}</b>
+        <button className='blockin-button' onClick={() => setMenuIsVisible(!menuIsVisible)}>
+            {menuIsVisible ? 'Hide' : 'Show'}
+        </button>
         <div>
             {menuIsVisible && <>
                 {
                     chains.map(chain => {
-                        return <div key={chain.name}><button onClick={() => handleChainChange(chain)}  >Switch to Chain: {chain.name}</button></div>
+                        return <div key={chain.name}>
+                            <button className='blockin-button' onClick={() => handleChainChange(chain)}>
+                                Switch to Chain: {chain.name}
+                            </button>
+                        </div>
                     })
                 }
             </>}
