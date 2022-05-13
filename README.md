@@ -111,7 +111,14 @@ Blockin should be used with both a frontend and a backend.
 An example frontend and backend using Blockin can be found at [`Blockin Sample Integration Site`](https://github.com/Blockin-Labs/Blockin-Sample-Integration). 
 * The pages folder shows how to use it in the frontend. The api folder shows how to use it via a backend API.
 
+## Current Supported Chains
+These are the chains that are natively supported by this library.
+* **Algorand** via AlgoDriver defined in the ChainDrivers folder
+  * Uses Purestake API and algosdk npm library
 
+To add support for a new blockchain, please visit the README in the ChainDrivers folder.
+
+We are currently working on adding implementations for more blockchains.
 
 ## Example Sites Using Blockin
 * [`Netflix Proof of Concept`](https://github.com/Blockin-Labs/Blockin-Sample-Integration)
