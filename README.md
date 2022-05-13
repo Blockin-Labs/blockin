@@ -29,7 +29,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/blockinlogo.png" alt="Logo" width="80" height="80">
+    <img src="images/blockinlogo.PNG" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Blockin</h3>
@@ -48,7 +48,7 @@
   </p>
 </div>
 
-<img src="images/blockinbanner.png" />
+<img src="images/blockinbanner.PNG" />
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
