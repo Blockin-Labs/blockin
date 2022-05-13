@@ -212,7 +212,7 @@ export class AlgoDriver implements IChainDriver {
 
         return challengeString;
     }
-    
+
     async lookupApplicationLocalState(address: string) {
         return this.indexer.lookupAccountAppLocalStates(address).do();
     }

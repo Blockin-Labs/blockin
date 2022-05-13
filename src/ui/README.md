@@ -29,7 +29,7 @@ and
 # Building
 This folder is built using [Rollup](https://github.com/rollup/rollup) within the ```npm run build``` command. The config files for this folder are [rollup.config.js](../../rollup.config.js) and [tsconfig.rollup.json](../../tsconfig.rollup.json). Everything is built into the [dist/ui](../../dist/ui) folder. 
 
-One minor note is that the directory hierarchy after building is slightly off due to how rollup works and how the library is setup. We run 
+One minor note is that the directory hierarchy after building is slightly off due to how rollup works and how the library is setup. We run
 ```
 mv ./dist/index* ./dist/*.scss ./dist/ui
 ``` 

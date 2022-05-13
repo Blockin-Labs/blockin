@@ -47,7 +47,7 @@ The aim of this repository is:
 
   - To provide a universal, multi-chain sign-in standard for Web 3.0
   - Be easy to integrate into any project
-  - Provide all the necessary tools and code to achieve the above two bullet points.
+  - Provide all the necessary tools and code to achieve the above two bullet points
   - Foster a culture of respect and gratitude in the open source
     community.
 

@@ -28,7 +28,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://trevormil.gitbook.io/blockin/">
     <img src="images/blockinlogo.PNG" alt="Logo" width="80" height="80">
   </a>
 
@@ -37,7 +37,7 @@
   <p align="center">
     A multi-chain sign-in standard for Web 3.0!
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://trevormil.gitbook.io/blockin/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://blockin.vercel.app/">View Demo</a>
@@ -53,9 +53,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-
-
-
 Blockin is a universal, multi-chain sign-in interface for Web 3.0. The Blockin interface supports all of the following features:
 
 * **Multi-Chain**: Previous solutions, such as EIP-4361 Sign-In with Ethereum, are limited to a single blockchain. The Blockin interface supports any blockchain!
@@ -66,11 +63,11 @@ Blockin is a universal, multi-chain sign-in interface for Web 3.0. The Blockin i
 * **Dynamic Role-Based Access**: Through specifying authorization assets (explained above) and URIs, resource providers can differentiate between sign-in requests from different users and grant different role-based privileges accordingly.
   * Note that this is optional. The Blockin interface can be used without dynamic role-based access.
 
-# How Blockin Works
+## How Blockin Works
 For a visual demo, visit the [`Blockin Demo`](https://blockin.vercel.app/).
 
 The Blockin interface can be split into the following categories:
-* **Asset Creation**: If an asset is to be used while signing in, the asset must be created on-chain before being used for signing in. 
+* **Asset Creation**: As mentioned above, authorization assets, like NFTs, can be added to Blockin sign-in requests. This allows resource providers to differentiate between different sign-in requests and grant different privileges to different users. If an asset is to be used while signing in, the asset must be created on-chain before being used for signing in. 
   * The asset can be created by the user, the resource provider, or via a smart contract. Each method has its own pros and cons which are explained on the [`Blockin Demo Site`](https://blockin.vercel.app/).
   * This library provides the necessary tools to create an asset via any of the methods.
 * **Sign-In Verification**: Each time a user would like to sign-in, they will use their private key to cryptographically sign a challenge which specifies all the details about their sign-in attempt such as expiration date, statement, URIs, chain IDs, etc. Blockin will then verify the challenge was signed correctly, the challenge is valid, and the user owns all requested assets by querying the public blockchain.
@@ -90,7 +87,7 @@ npm install blockin
 
 Then, you can import any function via 
 ```TSX
-import { ... } from 'blockin/ui';'
+import { ... } from 'blockin';'
 ```
 Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
 

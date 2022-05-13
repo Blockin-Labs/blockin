@@ -87,7 +87,7 @@ export type SignInWithBlockinButtonProps = {
      */
     displayedAssets: PresetAsset[],
     /**
-     * Uris to be displayed as resource options to sign-inn with. See PresetUri type.
+     * Uris to be displayed as resource options to sign-in with. See PresetUri type.
      */
     displayedUris: PresetUri[],
     /**

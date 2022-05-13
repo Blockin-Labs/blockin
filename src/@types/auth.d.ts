@@ -51,6 +51,7 @@ export type CreateTransferAssetParams = {
     extras?: any
 }
 
+
 export type CreatePaymentParams = {
     to: string,
     from?: string,
