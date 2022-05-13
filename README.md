@@ -108,13 +108,13 @@ Blockin should be used with both a frontend and a backend.
     * **Note that you will need to specify an API key for your specific ChainDriver because Blockin will call APIs to query the blockchain. More details can be found in the documentation of the ChainDriver you wish to use.**
 
 
-An example frontend and backend using Blockin can be found at [`Blockin Sample Integration Site`](https://github.com/trevormil/Blockin-Sample-Integration). 
+An example frontend and backend using Blockin can be found at [`Blockin Sample Integration Site`](https://github.com/Blockin-Labs/Blockin-Sample-Integration). 
 * The pages folder shows how to use it in the frontend. The api folder shows how to use it via a backend API.
 
 
 
 ## Example Sites Using Blockin
-* [`Netflix Proof of Concept`](https://github.com/trevormil/Blockin-Sample-Integration)
+* [`Netflix Proof of Concept`](https://github.com/Blockin-Labs/Blockin-Sample-Integration)
 
 ## Contributing to the Library
 To develop and contribute to this library directly, all you should need to do is ```npm install```. 

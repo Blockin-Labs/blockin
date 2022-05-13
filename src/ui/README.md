@@ -7,7 +7,7 @@ import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/ui';
 ```
  Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
 
-A sample frontend integration with these components can be found at [`Blockin Sample Integration Site`](https://github.com/trevormil/Blockin-Sample-Integration).
+A sample frontend integration with these components can be found at [`Blockin Sample Integration Site`](https://github.com/Blockin-Labs/Blockin-Sample-Integration).
 
 # Contributing to this Library
 We strongly recommend developing using the Storybook development tool by calling: 
