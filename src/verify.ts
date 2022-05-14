@@ -1,5 +1,5 @@
 import { IChainDriver } from './@types/ChainDriver'
-import { ChallengeParams, CreateChallengeOptions, EIP4361Challenge, VerifyChallengeOptions } from './@types/verify'
+import { ChallengeParams, CreateChallengeOptions, VerifyChallengeOptions } from './@types/verify'
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
@@ -22,7 +22,7 @@ export function initializeVerify(driver: IChainDriver) {
  * @returns Well-formed challenge string to be signed by the user, if successsful. Error string is returned
  * upon failure.
  */
-export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions) {
+export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions): Promise<string> {
     /**
      *  This function should remain completely ChainDriver free. ChainDriver dependencies tend to mess up the
      * React component generation in the browser.
@@ -43,7 +43,7 @@ export async function createChallenge(challengeParams: ChallengeParams, options?
     } = challengeParams;
 
     try {
-        const challenge: EIP4361Challenge = {
+        const challenge: ChallengeParams = {
             domain,
             statement,
             address,
@@ -77,7 +77,7 @@ export async function createChallenge(challengeParams: ChallengeParams, options?
 export async function verifyChallenge(originalChallenge: Uint8Array, signedChallenge: Uint8Array, options?: VerifyChallengeOptions) {
     const verificationData: any = {};
     const generatedEIP4361ChallengeStr: string = await getChallengeStringFromBytes(originalChallenge);
-    const challenge: EIP4361Challenge = constructChallengeObjectFromString(generatedEIP4361ChallengeStr);
+    const challenge: ChallengeParams = constructChallengeObjectFromString(generatedEIP4361ChallengeStr);
 
     validateChallengeObjectIsWellFormed(challenge);
     console.log("Success: Constructed challenge from string and verified it is well-formed.");
@@ -161,7 +161,7 @@ export async function generateNonceWithLastBlockTimestamp() {
  * to the interface for Blockin. 
  * @param challenge - Valid JSON challenge object
  */
-export function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge) {
+export function validateChallengeObjectIsWellFormed(challenge: ChallengeParams) {
     if (!URI_REGEX.test(challenge.domain)) {
         throw `Inputted domain (${challenge.domain}) is not a valid URI`;
     }
@@ -182,7 +182,7 @@ export function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge)
         throw `No nonce (${challenge.nonce}) specified`;
     }
 
-    if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
+    if (challenge.issuedAt && !ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
         throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
     }
 
@@ -209,7 +209,7 @@ export function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge)
  * @param challenge - Well-formatted JSON object specifying the EIP-4361 fields.
  * @returns - Well-formatted EIP-4361 challenge string to be signed.
  */
-export function constructChallengeStringFromChallengeObject(challenge: EIP4361Challenge): string {
+export function constructChallengeStringFromChallengeObject(challenge: ChallengeParams): string {
     let message = "";
     message += `${challenge.domain} wants you to sign in with your Algorand account:\n`
     message += `${challenge.address}\n\n`;
@@ -256,7 +256,7 @@ export async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise
  * @param challenge - Valid EIP-4361 challenge string
  * @returns JSON challenge object with all specified EIP-4361 fields
  */
-export function constructChallengeObjectFromString(challenge: string): EIP4361Challenge {
+export function constructChallengeObjectFromString(challenge: string): ChallengeParams {
     const messageArray = challenge.split("\n");
     const domain = messageArray[0].split(' ')[0];
     const address = messageArray[1];

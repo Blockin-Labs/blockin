@@ -120,7 +120,7 @@ function validateChallengeObjectIsWellFormed(challenge) {
     if (!challenge.nonce) {
         throw `No nonce (${challenge.nonce}) specified`;
     }
-    if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
+    if (challenge.issuedAt && !ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
         throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
     }
     if (challenge.expirationDate && !ISO8601_DATE_REGEX.test(challenge.expirationDate)) {
@@ -232,7 +232,7 @@ const getDefaultSelectedResources = (assets, uris) => {
  * As props, you can pass in everything needed to generate, sign, and verify the challenge. See the documentation
  * for each prop for more information.
  */
-const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displayedUris = [], signChallenge, verifyChallenge, generateNonce, currentChain, currentChainInfo, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage = '', }) => {
+const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displayedUris = [], signChallenge, verifyChallengeOnBackend, generateNonce, currentChain, currentChainInfo, canAddCustomAssets = false, canAddCustomUris = false, customAddResourcesMessage = '', }) => {
     const [modalIsVisible, setModalIsVisible] = useState(false);
     const [selectedResources, setSelectedResources] = useState(getDefaultSelectedResources(displayedAssets, displayedUris));
     const [displayMessage, setDisplayMessage] = useState('');
@@ -290,7 +290,7 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
          *
          * Expects { success: boolean, message: string }
          */
-        const { success, message } = yield verifyChallenge(signChallengeResponse);
+        const { success, message } = yield verifyChallengeOnBackend(signChallengeResponse);
         /**
          * Handle success / failure
          */

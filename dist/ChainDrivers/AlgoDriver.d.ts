@@ -1,5 +1,34 @@
 import algosdk from 'algosdk';
-import { IChainDriver, MakeAssetParams, MakeOptInAssetParams, MakeContractOptInParams, MakeContractNoOpParams, MakePaymentParams, MakeTransferAssetParams, UniversalTxn } from '../@types/ChainDriver';
+import { CreateAssetParams, CreateTransferAssetParams } from '../@types/auth';
+import { IChainDriver, UniversalTxn } from '../@types/ChainDriver';
+declare type CreateContractOptInParams = {
+    from: string;
+    appIndex: number;
+    extras?: any;
+};
+declare type CreateContractNoOpParams = {
+    from: string;
+    appIndex: number;
+    appArgs: Uint8Array[] | undefined;
+    accounts: string[] | undefined;
+    foreignAssets: number[] | undefined;
+};
+/**
+ * Universal type for any chain's opt-in to asset transaction parameters.
+ */
+declare type CreateOptInAssetParams = {
+    to: string;
+    from?: string;
+    assetIndex: number;
+    extras?: any;
+};
+declare type CreatePaymentParams = {
+    to: string;
+    from?: string;
+    amount?: number | bigint;
+    note?: string;
+    extras?: any;
+};
 /**
  * Algorand implementation of the IChainDriver interface. This implementation is based off the algoSdk
  * npm library. Another backbone of this implementation is the PureStake API.
@@ -21,12 +50,12 @@ export declare class AlgoDriver implements IChainDriver {
     client: algosdk.Algodv2;
     indexer: algosdk.Indexer;
     constructor(chain: 'Mainnet' | 'Testnet', API_KEY?: string);
-    makeAssetTxn(assetParams: MakeAssetParams): Promise<UniversalTxn>;
-    makePaymentTxn(assetParams: MakePaymentParams): Promise<UniversalTxn>;
-    makeContractOptInTxn(appParams: MakeContractOptInParams): Promise<UniversalTxn>;
-    makeContractNoOpTxn(appParams: MakeContractNoOpParams): Promise<UniversalTxn>;
-    makeAssetOptInTxn(assetParams: MakeOptInAssetParams): Promise<UniversalTxn>;
-    makeAssetTransferTxn(assetParams: MakeTransferAssetParams): Promise<UniversalTxn>;
+    makeAssetTxn(assetParams: CreateAssetParams): Promise<UniversalTxn>;
+    makePaymentTxn(assetParams: CreatePaymentParams): Promise<UniversalTxn>;
+    makeContractOptInTxn(appParams: CreateContractOptInParams): Promise<UniversalTxn>;
+    makeContractNoOpTxn(appParams: CreateContractNoOpParams): Promise<UniversalTxn>;
+    makeAssetOptInTxn(assetParams: CreateOptInAssetParams): Promise<UniversalTxn>;
+    makeAssetTransferTxn(assetParams: CreateTransferAssetParams): Promise<UniversalTxn>;
     sendTxn(signedTxnResult: any, txnId: string): Promise<any>;
     getChallengeStringFromBytesToSign(txnBytes: Uint8Array): Promise<string>;
     lookupApplicationLocalState(address: string): Promise<Record<string, any>>;
@@ -46,3 +75,4 @@ export declare class AlgoDriver implements IChainDriver {
     } | undefined>;
     private createUniversalTxn;
 }
+export {};

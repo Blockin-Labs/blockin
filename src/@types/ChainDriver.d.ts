@@ -6,10 +6,6 @@ export type UniversalTxn = {
 }
 
 interface IMakeAssetTxn { (assetParams: MakeAssetParams): Promise<UniversalTxn> }
-interface IMakeAssetOptInTxn { (assetParams: MakeOptInAssetParams): Promise<UniversalTxn> }
-interface IMakeContractOptInTxn { (appParams: MakeContractOptInParams): Promise<UniversalTxn>}
-interface IMakeContractNoOpTxn { (appParams: MakeContractNoOpParams): Promise<UniversalTxn>}
-interface ILookupApplicationLocalState { (address: string): Promise<any> }
 interface IMakeAssetTransferTxn { (assetParams: MakeTransferAssetParams): Promise<UniversalTxn> }
 interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
 interface IGetAssets { (address: string): Promise<any> }
@@ -36,93 +32,58 @@ interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], asset
  * in AlgoDriver
  */
 export interface IChainDriver {
+    /**
+     * Parses the challenge string from the original signed bytes. Often used because chain's signature algorithms
+     * add prefixes to strings before signing them. This reverses that.
+     */
     getChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
+    /**
+     * Creates an authorization asset on-chain.
+     */
     makeAssetTxn: IMakeAssetTxn,
-    makeAssetOptInTxn: IMakeAssetOptInTxn,
-    makeContractOptInTxn: IMakeContractOptInTxn,
-    makeContractNoOpTxn: IMakeContractNoOpTxn,
-    lookupApplicationLocalState: ILookupApplicationLocalState,
+    /**
+     * Transfers an asset to a specified address. Asset must be transferable.
+     */
     makeAssetTransferTxn: IMakeAssetTransferTxn,
+    /**
+     * Sends a signed transaction to the blockchain network
+     */
     sendTxn: ISendTx,
+    /**
+     * Gets the last block hash or index.
+     */
     getLastBlockIndex: IGetLastBlockIndex,
+    /**
+     * Gets all asset data for an address. Be cautious when using this. It may be more 
+     * efficient to query address' balances for each asset individually.
+     */
     getAllAssetsForAddress: IGetAssets,
+    /**
+     * Gets the latest block's timestamp.
+     */
     getTimestampForBlock: IGetTimestampForBlock,
+    /**
+     * Checks if an address is well-formed.
+     */
     isValidAddress: IIsValidAddress,
+    /**
+     * Gets the public key from an address
+     */
     getPublicKeyFromAddress: IGetPublicKey,
+    /**
+     * Gets the metadata about a specific asset
+     */
     getAssetDetails: IGetAssetDetails,
+    /**
+     * Gets the metadata about a specific transaction ID
+     */
     lookupTransactionById: ILookupTransactionById,
+    /**
+     * Verifies a signature is signed correctly by an address
+     */
     verifySignature: IVerifySignature,
+    /**
+     * Verifies user owns enough of certain assets by querying the public blockchain
+     */
     verifyOwnershipOfAssets: IVerifyOwnershipOfAssets,
-}
-
-export type MakeAssetParams = {
-    from: string,
-    to: string,
-    assetName: string,
-    assetURL: string,
-    note: string,
-    amount: number,
-    unitName: string,
-    decimals: number,
-    total: number,
-    assetMetadata: string,
-    extras: any
-}
-
-export type MakeOptInAssetParams = {
-    to: string,
-    from: string,
-    assetIndex: number,
-    extras: any
-}
-
-export type MakeContractOptInParams = {
-    from: string,
-    appIndex: number,
-    extras: any
-}
-
-export type MakeContractNoOpParams = {
-    from: string,
-    appIndex: number,
-    appArgs: Uint8Array[] | undefined,
-    accounts: string[] | undefined,
-    foreignAssets: number[] | undefined
-}
-
-export type MakeTransferAssetParams = {
-    to: string,
-    from: string,
-    amount: number | bigint,
-    note: Uint8Array | undefined,
-    assetIndex: number,
-    extras: any
-}
-
-export type MakePaymentParams = {
-    to: string,
-    from: string,
-    amount: number | bigint,
-    note: string,
-    extras: any
-}
-
-/**
- * Interface for EIP-4361 Challenge - Sign in With Ethereum
- * 
- * For more information and documentation, view the EIP proposal.
- * 
- * Note that we support prefixing resources with 'Asset ID: ' as well.
- */
-export type ChallengeParams = {
-    domain: string,
-    statement: string,
-    address: string,
-    uri: string,
-    issuedAt?: string,
-    version?: string,
-    chainId?: string,
-    expirationDate?: string,
-    notBefore?: string,
-    resources?: string[]
 }

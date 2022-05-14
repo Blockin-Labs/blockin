@@ -7,14 +7,14 @@ export type ChainProps = {
     displayedAssets?: PresetAsset[];
     displayedUris?: PresetUri[];
     name: string;
-    signChallenge?: (challenge: string) => Promise<VerifyChallengeRequest>;
+    signChallenge?: (challenge: string) => Promise<VerifyChallengeOnBackendRequest>;
     currentChainInfo?: any | undefined;
 }
 
 /**
  * Specifies what should be returned from signChallenge.
  */
-export type VerifyChallengeRequest = {
+export type VerifyChallengeOnBackendRequest = {
     originalBytes?: Uint8Array;
     signatureBytes?: Uint8Array;
     message?: string;
@@ -23,7 +23,7 @@ export type VerifyChallengeRequest = {
 /**
  * Specifies what should be returned from verifyChallenge.
  */
-export type VerifyChallengeResponse = {
+export type BlockinVerifyChallengeResponse = {
     success: boolean;
     message: string;
     challenge: ChallengeParams
@@ -56,7 +56,7 @@ export type PresetUri = {
 /**
  * Defines schema for displaying an asset within pop-up window.
  */
-export type ChallengeResponse = {
+export type VerifyChallengeOnBackendResponse = {
     success: boolean,
     message: string
 }
@@ -92,19 +92,19 @@ export type SignInWithBlockinButtonProps = {
     displayedUris: PresetUri[],
     /**
      * Blockin doesn't handle any signing functionality. When user clicks sign-in, it will call this
-     * function which is passed in as a prop. Expects a return value that is consistent with the VerifyChallengeRequest 
+     * function which is passed in as a prop. Expects a return value that is consistent with the VerifyChallengeOnBackendRequest 
      * type.
      */
-    signChallenge: (challenge: string) => Promise<VerifyChallengeRequest>,
+    signChallenge: (challenge: string) => Promise<VerifyChallengeOnBackendRequest>,
     /**
      * This is where you perform the following: 1) call Blockin's verifyChallenge() within your backend,
      * 2) include any other additional verification checks about the challenge (like nonce verification if using a custom scheme 
      * or assert anything else about the challenge details that should be expected ), 3) if verification passes, update whatever is
-     * needed on frontend and backend to authenticate the user. Expects a response consistent with the ChallengeResponse type. 
+     * needed on frontend and backend to authenticate the user. Expects a response consistent with the VerifyChallengeOnBackendResponse type. 
      * Note that we do this because for verification, you must have a valid API key and ChainDriver which is only accessible
      * via the authorizing resource's backend.
      */
-    verifyChallenge: (verifyRequest: VerifyChallengeRequest) => Promise<ChallengeResponse>,
+    verifyChallengeOnBackend: (verifyRequest: VerifyChallengeOnBackendRequest) => Promise<VerifyChallengeOnBackendResponse>,
     /**
      * To generate a valid challenge, you must specify a nonce. This can either be done by specifying it in
      * challengeParams or via this function which returns a nonce string. This prop is optional, but if defined, we will 

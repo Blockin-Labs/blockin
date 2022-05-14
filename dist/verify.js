@@ -142,7 +142,7 @@ export function validateChallengeObjectIsWellFormed(challenge) {
     if (!challenge.nonce) {
         throw `No nonce (${challenge.nonce}) specified`;
     }
-    if (!ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
+    if (challenge.issuedAt && !ISO8601_DATE_REGEX.test(challenge.issuedAt)) {
         throw `Issued at date (${challenge.issuedAt}) is not in valid ISO 8601 format`;
     }
     if (challenge.expirationDate && !ISO8601_DATE_REGEX.test(challenge.expirationDate)) {

@@ -56,7 +56,7 @@ export class AlgoDriver {
         const suggestedParams = await this.getTransactionParams();
         const algoTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject(Object.assign({ from,
             to,
-            amount, note: new Uint8Array(Buffer.from(note)), suggestedParams }, extras));
+            amount, note: note ? new Uint8Array(Buffer.from(note)) : new Uint8Array(Buffer.from('')), suggestedParams }, extras));
         return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`);
     }
     async makeContractOptInTxn(appParams) {

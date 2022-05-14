@@ -1,6 +1,6 @@
 // Generated with util/create-component.js
 import React from "react";
-import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, VerifyChallengeRequest } from "./SignInWithBlockinButton.types";
+import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, VerifyChallengeOnBackendRequest } from "./SignInWithBlockinButton.types";
 import "./SignInWithBlockinButton.scss";
 import { createChallenge } from "../../verify";
 import { useEffect, useState } from 'react';
@@ -39,7 +39,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     displayedAssets = [],
     displayedUris = [],
     signChallenge,
-    verifyChallenge,
+    verifyChallengeOnBackend,
     generateNonce,
     currentChain,
     currentChainInfo,
@@ -106,7 +106,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
          * 
          * Expects { originalBytes: Uint8Array, signatureBytes: Uint8Array }
          */
-        const signChallengeResponse: VerifyChallengeRequest = await signChallenge(challengeString);
+        const signChallengeResponse: VerifyChallengeOnBackendRequest = await signChallenge(challengeString);
 
         /**
          * Verify the challenge using the passed in verifyChallenge() props function. Note that this 
@@ -115,7 +115,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
          * 
          * Expects { success: boolean, message: string }
          */
-        const { success, message } = await verifyChallenge(signChallengeResponse);
+        const { success, message } = await verifyChallengeOnBackend(signChallengeResponse);
 
         /**
          * Handle success / failure

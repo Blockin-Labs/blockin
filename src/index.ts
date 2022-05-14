@@ -1,37 +1,26 @@
 export type {
     IChainDriver,
-    MakeAssetParams,
-    MakeOptInAssetParams,
-    MakeContractNoOpParams,
-    MakeContractOptInParams,
-    MakePaymentParams,
-    MakeTransferAssetParams,
     UniversalTxn
 } from './@types/ChainDriver'
 
 export type {
     CreateAssetParams,
-    // CreatePaymentParams,
-    CreateOptInAssetParams,
-    CreateContractOptInParams,
-    CreateContractNoOpParams,
     CreateTransferAssetParams,
 } from './@types/auth'
 
 export type {
-    EIP4361Challenge,
     ChallengeParams
 } from './@types/verify'
 
 export type {
-    VerifyChallengeRequest,
-    VerifyChallengeResponse,
+    VerifyChallengeOnBackendRequest,
+    VerifyChallengeOnBackendResponse,
     ChainProps,
     PresetAsset,
     PresetUri,
-    ChallengeResponse,
+    BlockinVerifyChallengeResponse,
     SupportedChain
-} from './@types/SignInWithBlockinButton'
+} from './ui/SignInWithBlockinButton/SignInWithBlockinButton.types'
 
 export {
     setChainDriver
@@ -43,11 +32,7 @@ export {
 
 export {
     createAssetTxn,
-    createAssetOptInTxn,
     createAssetTransferTxn,
-    createContractOptInTxn,
-    createContractNoOpTxn,
-    lookupApplicationLocalState,
     sendTxn
 } from './auth'
 

@@ -1,15 +1,40 @@
 import algosdk, { decodeAddress, Transaction } from 'algosdk';
 import nacl from 'tweetnacl';
-import {
-    IChainDriver,
-    MakeAssetParams,
-    MakeOptInAssetParams,
-    MakeContractOptInParams,
-    MakeContractNoOpParams,
-    MakePaymentParams,
-    MakeTransferAssetParams,
-    UniversalTxn,
-} from '../@types/ChainDriver'
+import { CreateAssetParams, CreateTransferAssetParams } from '../@types/auth';
+import { IChainDriver, UniversalTxn } from '../@types/ChainDriver'
+
+type CreateContractOptInParams = {
+    from: string,
+    appIndex: number,
+    extras?: any
+}
+
+type CreateContractNoOpParams = {
+    from: string,
+    appIndex: number,
+    appArgs: Uint8Array[] | undefined,
+    accounts: string[] | undefined,
+    foreignAssets: number[] | undefined
+}
+
+/**
+ * Universal type for any chain's opt-in to asset transaction parameters. 
+ */
+type CreateOptInAssetParams = {
+    to: string,
+    from?: string,
+    assetIndex: number,
+    extras?: any
+}
+
+type CreatePaymentParams = {
+    to: string,
+    from?: string,
+    amount?: number | bigint,
+    note?: string,
+    extras?: any
+}
+
 
 /**
  * Algorand implementation of the IChainDriver interface. This implementation is based off the algoSdk
@@ -42,7 +67,7 @@ export class AlgoDriver implements IChainDriver {
         this.indexer = new algosdk.Indexer(this.token, this.indexerServer, this.port);
     }
 
-    async makeAssetTxn(assetParams: MakeAssetParams) {
+    async makeAssetTxn(assetParams: CreateAssetParams) {
         const {
             from,
             to,
@@ -85,7 +110,7 @@ export class AlgoDriver implements IChainDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to create asset ${assetName}`)
     }
 
-    async makePaymentTxn(assetParams: MakePaymentParams) {
+    async makePaymentTxn(assetParams: CreatePaymentParams) {
         const {
             to,
             from,
@@ -99,14 +124,14 @@ export class AlgoDriver implements IChainDriver {
             from,
             to,
             amount,
-            note: new Uint8Array(Buffer.from(note)),
+            note: note ? new Uint8Array(Buffer.from(note)) : new Uint8Array(Buffer.from('')),
             suggestedParams,
             ...extras
         })
         return this.createUniversalTxn(algoTxn, `Sign this txn to make a payment of ${amount} algos to ${to}`)
     }
 
-    async makeContractOptInTxn(appParams: MakeContractOptInParams) {
+    async makeContractOptInTxn(appParams: CreateContractOptInParams) {
         const {
             from,
             appIndex,
@@ -124,7 +149,7 @@ export class AlgoDriver implements IChainDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to contract ${appIndex} from ${from}`)
     }
 
-    async makeContractNoOpTxn(appParams: MakeContractNoOpParams) {
+    async makeContractNoOpTxn(appParams: CreateContractNoOpParams) {
         const {
             from,
             appIndex,
@@ -139,7 +164,7 @@ export class AlgoDriver implements IChainDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to call contract ${appIndex} from ${from}`)
     }
 
-    async makeAssetOptInTxn(assetParams: MakeOptInAssetParams) {
+    async makeAssetOptInTxn(assetParams: CreateOptInAssetParams) {
         const {
             to,
             from,
@@ -163,7 +188,7 @@ export class AlgoDriver implements IChainDriver {
         return this.createUniversalTxn(algoTxn, `Sign this txn to opt-in to receive asset ${assetIndex} from ${from}`)
     }
 
-    async makeAssetTransferTxn(assetParams: MakeTransferAssetParams) {
+    async makeAssetTransferTxn(assetParams: CreateTransferAssetParams) {
         const {
             to,
             from,

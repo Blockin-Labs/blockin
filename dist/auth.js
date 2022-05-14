@@ -25,23 +25,31 @@ export async function createAssetTxn(createAssetParams) {
         total,
         assetMetadata }, extras));
 }
-/**
- * This function attempts to create a universal function that will opt-in to an assets. This
- * uses the chain driver, so it is chain specific. Note that some chains like Ethereum don't have this
- * requirement of opting in, so this may be left blank for some blockchains. This generates an unsigned
- * asset opt-in transaction, and this is to be signed and broadcasted to the blockchain network. Note this may
- * need an API key defined in your chain driver depending on your chain driver implementation.
- * @param optInAssetParams - JSON object specifying universal asset opt-in fields like assetIndex and the
- * 'to' address
- * @returns If successful, will return a UniversalTxn object that specifies the bytes to sign and submit
- * to create a valid asset opt-in transaction. Throws upon error.
- */
-export async function createAssetOptInTxn(optInAssetParams) {
-    const { to, from = to, assetIndex, extras = undefined } = optInAssetParams;
-    return await chainDriver.makeAssetOptInTxn(Object.assign({ to,
-        from,
-        assetIndex }, extras));
-}
+// /**
+//  * This function attempts to create a universal function that will opt-in to an assets. This 
+//  * uses the chain driver, so it is chain specific. Note that some chains like Ethereum don't have this 
+//  * requirement of opting in, so this may be left blank for some blockchains. This generates an unsigned 
+//  * asset opt-in transaction, and this is to be signed and broadcasted to the blockchain network. Note this may 
+//  * need an API key defined in your chain driver depending on your chain driver implementation.
+//  * @param optInAssetParams - JSON object specifying universal asset opt-in fields like assetIndex and the 
+//  * 'to' address
+//  * @returns If successful, will return a UniversalTxn object that specifies the bytes to sign and submit
+//  * to create a valid asset opt-in transaction. Throws upon error.
+//  */
+// export async function createAssetOptInTxn(optInAssetParams: CreateOptInAssetParams): Promise<UniversalTxn> {
+//     const {
+//         to,
+//         from = to,
+//         assetIndex,
+//         extras = undefined
+//     } = optInAssetParams
+//     return await chainDriver.makeAssetOptInTxn({
+//         to,
+//         from,
+//         assetIndex,
+//         ...extras
+//     });
+// }
 /**
  * This function attempts to create a universal function that will transfer an asset. This
  * uses the chain driver, so it is chain specific. Note that the asset must be transferable for this to work.
@@ -70,21 +78,34 @@ export async function createAssetTransferTxn(transferAssetParams) {
 export async function sendTxn(signedTxnBytes, txnId) {
     return await chainDriver.sendTxn(signedTxnBytes, txnId);
 }
-export async function createContractOptInTxn(contractOptInParams) {
-    const { from, appIndex, extras = undefined } = contractOptInParams;
-    return await chainDriver.makeContractOptInTxn(Object.assign({ from,
-        appIndex }, extras));
-}
-export async function createContractNoOpTxn(contractNoOpParams) {
-    const { from, appIndex, appArgs, accounts, foreignAssets } = contractNoOpParams;
-    return await chainDriver.makeContractNoOpTxn({
-        from,
-        appIndex,
-        appArgs,
-        accounts,
-        foreignAssets
-    });
-}
-export async function lookupApplicationLocalState(address) {
-    return await chainDriver.lookupApplicationLocalState(address);
-}
+// export async function createContractOptInTxn(contractOptInParams: CreateContractOptInParams) {
+//     const {
+//         from,
+//         appIndex,
+//         extras = undefined
+//     } = contractOptInParams
+//     return await chainDriver.makeContractOptInTxn({
+//         from,
+//         appIndex,
+//         ...extras
+//     })
+// }
+// export async function createContractNoOpTxn(contractNoOpParams: CreateContractNoOpParams) {
+//     const {
+//         from,
+//         appIndex,
+//         appArgs,
+//         accounts,
+//         foreignAssets
+//     } = contractNoOpParams
+//     return await chainDriver.makeContractNoOpTxn({
+//         from,
+//         appIndex,
+//         appArgs,
+//         accounts,
+//         foreignAssets
+//     })
+// }
+// export async function lookupApplicationLocalState(address: string) {
+//     return await chainDriver.lookupApplicationLocalState(address);
+// }

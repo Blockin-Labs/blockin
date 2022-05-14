@@ -1,5 +1,5 @@
 import { IChainDriver } from './@types/ChainDriver';
-import { ChallengeParams, CreateChallengeOptions, EIP4361Challenge, VerifyChallengeOptions } from './@types/verify';
+import { ChallengeParams, CreateChallengeOptions, VerifyChallengeOptions } from './@types/verify';
 export declare function initializeVerify(driver: IChainDriver): void;
 /**
  * Creates a challenge that is well-formed according to EIP-4361 - Sign in With Ethereum. Some
@@ -54,14 +54,14 @@ export declare function generateNonceWithLastBlockTimestamp(): Promise<any>;
  * to the interface for Blockin.
  * @param challenge - Valid JSON challenge object
  */
-export declare function validateChallengeObjectIsWellFormed(challenge: EIP4361Challenge): void;
+export declare function validateChallengeObjectIsWellFormed(challenge: ChallengeParams): void;
 /**
  * Parses a JSON object that specifies the challenge fields and returns a well-formatted EIP-4361 string.
  * Note that there is no validity checks on the inputs. It is a precondition that it is well-formed.
  * @param challenge - Well-formatted JSON object specifying the EIP-4361 fields.
  * @returns - Well-formatted EIP-4361 challenge string to be signed.
  */
-export declare function constructChallengeStringFromChallengeObject(challenge: EIP4361Challenge): string;
+export declare function constructChallengeStringFromChallengeObject(challenge: ChallengeParams): string;
 /**
  * This function is called in order to parse the challenge string from the bytes that were signed.
  * It is specific to the specified chain driver. This function is needed because most signing
@@ -77,7 +77,7 @@ export declare function getChallengeStringFromBytes(txnBytes: Uint8Array): Promi
  * @param challenge - Valid EIP-4361 challenge string
  * @returns JSON challenge object with all specified EIP-4361 fields
  */
-export declare function constructChallengeObjectFromString(challenge: string): EIP4361Challenge;
+export declare function constructChallengeObjectFromString(challenge: string): ChallengeParams;
 /**
  * Verifies a challenge is signed by the given addresses. Throws error if invalid. Specific to
  * specified chain driver.
