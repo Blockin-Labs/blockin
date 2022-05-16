@@ -31,7 +31,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain }) => {
 
     return <div className="blockin-chain-select blockin-global">
         <button className='blockin-button main-button' onClick={() => setMenuIsVisible(!menuIsVisible)}>
-            Selected Chain: {getChain(chain).name} <img className='blockin-chain-select-logo' src={getChain(chain).logo} height='20px' width='20px' />
+            Selected Chain: {getChain(chain ? chain : '').name} <img className='blockin-chain-select-logo' src={getChain(chain ? chain : '').logo} height='20px' width='20px' />
         </button>
         <div>
             {menuIsVisible && <div className='blockin-root'>
