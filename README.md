@@ -100,9 +100,13 @@ The library has a few separate parts to it:
   * If contributing to this part of the library, it is important that you become familiar with the ChainDriver interface and how it used. More information can be found at [`Blockin Docs`](https://trevormil.gitbook.io/blockin/).
 * UI Components: These importable UI components can be found in the src/ui folder. This, in theory, should be able to become its own library in the future.
   * View the README in src/ui for more information.
+  * <img src="images/signin-chainselect-together.PNG" />
+  * <img src="images/signin-popup.PNG" />
+  * <img src="images/chainselect-popup.PNG" />
 
 
 Everything is built using ```npm run build``` which creates a build folder in the ```dist``` directory. The build command first rolls up the UI components using rollup.js, and then it builds everything else.
+
 
 ## Documentation
 For more in-depth documentation, visit the [`Blockin Docs`](https://trevormil.gitbook.io/blockin/) or the [`Blockin Paper`](https://github.com/kking935/Blockin-Demo).
