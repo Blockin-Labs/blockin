@@ -29,18 +29,6 @@ export declare function verifyChallenge(originalChallenge: Uint8Array, signedCha
     verificationData: any;
 }>;
 /**
- * Looks up transaction data by ID using the specified chain driver
- * @param txnID - Transaction ID broadcasted to the network
- * @returns Metadata about the transaction
- */
-export declare function lookupTransactionById(txnID: string): Promise<any>;
-/**
- * Gets information about a specific asset using sepecified chain driver
- * @param assetId - Unique asset identifier
- * @returns Metadata about the asset
- */
-export declare function getAssetDetails(assetId: string): Promise<any>;
-/**
  * Generates a nonce using the most recent block index. Can be called directly
  * or by specifiying the useBlockTimestampsForNonce flag in the createChallenge
  * options. verifyChallenge also offers two flags: (verifyNonceWithBlockTimestamps?: boolean;
@@ -63,14 +51,6 @@ export declare function validateChallengeObjectIsWellFormed(challenge: Challenge
  */
 export declare function constructChallengeStringFromChallengeObject(challenge: ChallengeParams): string;
 /**
- * This function is called in order to parse the challenge string from the bytes that were signed.
- * It is specific to the specified chain driver. This function is needed because most signing
- * algorithms add a prefix to the string before signing, so this function attempts to undo that.
- * @param txnBytes - Original bytes that were signed as a Uint8Array
- * @returns Parses out and returns the challenge string that was signed
- */
-export declare function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string>;
-/**
  * Constructs a valid JSON challenge object from a valid well-formed EIP-4361 string. Note this
  * doesn't check for validity at all. See the EIP-4361 proposal for more details about exact formatting
  * requirements of the string.
@@ -78,33 +58,3 @@ export declare function getChallengeStringFromBytes(txnBytes: Uint8Array): Promi
  * @returns JSON challenge object with all specified EIP-4361 fields
  */
 export declare function constructChallengeObjectFromString(challenge: string): ChallengeParams;
-/**
- * Verifies a challenge is signed by the given addresses. Throws error if invalid. Specific to
- * specified chain driver.
- * @param originalChallengeToUint8Array - Uint8Array of the original bytes that were signed
- * @param signedChallenge - Uint8Array of the signature bytes
- * @param originalAddress - string that specifies the address who signed these bytes
- */
-export declare function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string): Promise<void>;
-/**
- * Gets all asset data for an address. Specific to specified chain driver. Be cautious when using this. It
- * may be more efficient to query address' balances for each asset.
- * @param address - address of user to lookup asset data for
- * @returns Metadata about all a user's owned assets
- */
-export declare function getAllAssetsForAddress(address: string): Promise<any>;
-/**
- * Verifies an address owns all specified resources. Ignores everything that doesn't start with 'Asset ID: '.
- * Defaults to succeeding if user has a balance of >= 1 for every asset.
- * @param address - Address to verify
- * @param resources - String array of URIs or Asset IDs. This function ignores every resource that doesn't start
- * with 'Asset ID: '
- * @param assetMinimumBalancesMap - Optional, but here, one can define a JSON object mapping of
- * 'assetIDs' => minimumBalances. If assetMinimumBalancesMap[assetId] exists, it will check that the user owns
- * more than the specified minimum balance. If not defined, will use the default.
- * @param defaultMinimum - Optional. Default is normally set to check if user owns >= 1. Here, you can specify a
- * new default minimum for all assets to fallback on if not defined in assetMinimumBalancesMap.
- * @returns If successful, verification was successful. Looked up asset data is also returned for convenience.
- * Throws error if invalid.
- */
-export declare function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any>;

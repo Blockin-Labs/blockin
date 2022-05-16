@@ -126,24 +126,6 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
 }
 
 /**
- * Looks up transaction data by ID using the specified chain driver
- * @param txnID - Transaction ID broadcasted to the network
- * @returns Metadata about the transaction
- */
-export async function lookupTransactionById(txnID: string) {
-    return await chainDriver.lookupTransactionById(txnID);
-}
-
-/**
- * Gets information about a specific asset using sepecified chain driver
- * @param assetId - Unique asset identifier
- * @returns Metadata about the asset
- */
-export async function getAssetDetails(assetId: string) {
-    return await chainDriver.getAssetDetails(assetId)
-}
-
-/**
  * Generates a nonce using the most recent block index. Can be called directly
  * or by specifiying the useBlockTimestampsForNonce flag in the createChallenge
  * options. verifyChallenge also offers two flags: (verifyNonceWithBlockTimestamps?: boolean;
@@ -245,7 +227,7 @@ export function constructChallengeStringFromChallengeObject(challenge: Challenge
  * @param txnBytes - Original bytes that were signed as a Uint8Array
  * @returns Parses out and returns the challenge string that was signed
  */
-export async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string> {
+async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string> {
     return chainDriver.getChallengeStringFromBytesToSign(txnBytes);
 }
 
@@ -316,18 +298,8 @@ export function constructChallengeObjectFromString(challenge: string): Challenge
  * @param signedChallenge - Uint8Array of the signature bytes
  * @param originalAddress - string that specifies the address who signed these bytes
  */
-export async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
+async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
     await chainDriver.verifySignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
-}
-
-/**
- * Gets all asset data for an address. Specific to specified chain driver. Be cautious when using this. It 
- * may be more efficient to query address' balances for each asset.
- * @param address - address of user to lookup asset data for
- * @returns Metadata about all a user's owned assets
- */
-export async function getAllAssetsForAddress(address: string) {
-    return (await chainDriver.getAllAssetsForAddress(address))
 }
 
 /**
@@ -344,17 +316,7 @@ export async function getAllAssetsForAddress(address: string) {
  * @returns If successful, verification was successful. Looked up asset data is also returned for convenience. 
  * Throws error if invalid.
  */
-export async function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
-    let assetIds: string[] = [];
-    if (resources) {
-        const filteredAssetIds = resources.filter(elem => elem.startsWith('Asset ID: '));
-        for (const assetStr of filteredAssetIds) {
-            const assetId = assetStr.substring(10);
-            assetIds.push(assetId);
-        }
-    }
-
-    const assetLookupData = await chainDriver.verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum);
-
+async function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
+    const assetLookupData = await chainDriver.verifyOwnershipOfAssets(address, resources, assetMinimumBalancesMap, defaultMinimum);
     return assetLookupData;
 }

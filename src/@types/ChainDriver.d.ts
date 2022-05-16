@@ -1,3 +1,5 @@
+import { CreateAssetParams, CreateTransferAssetParams } from "./auth";
+
 export type UniversalTxn = {
     txn: Uint8Array;
     message: string;
@@ -5,8 +7,8 @@ export type UniversalTxn = {
     nativeTxn: any
 }
 
-interface IMakeAssetTxn { (assetParams: MakeAssetParams): Promise<UniversalTxn> }
-interface IMakeAssetTransferTxn { (assetParams: MakeTransferAssetParams): Promise<UniversalTxn> }
+interface IMakeAssetTxn { (assetParams: CreateAssetParams): Promise<UniversalTxn> }
+interface IMakeAssetTransferTxn { (assetParams: CreateTransferAssetParams): Promise<UniversalTxn> }
 interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
 interface IGetAssets { (address: string): Promise<any> }
 interface IGetLastBlockIndex { (): Promise<any> }
@@ -17,7 +19,7 @@ interface IGetAssetDetails { (txnId: string): Promise<any> }
 interface ILookupTransactionById { (txnId: string): Promise<any> }
 interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
-interface IVerifyOwnershipOfAssets { (address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any> }
+interface IVerifyOwnershipOfAssets { (address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any> }
 
 /**
  * This interface attempts to define all the chain-specific functionality needed for this library.
@@ -83,7 +85,21 @@ export interface IChainDriver {
      */
     verifySignature: IVerifySignature,
     /**
-     * Verifies user owns enough of certain assets by querying the public blockchain
+     * Verifies user owns enough of certain assets by querying the public blockchain.
+     * 
+     * Note that resources can be either URIs or prefixed with 'Asset ID: '. This implementation
+     * must parse and only look at the assets, not URIs.
+     * 
+     * Verifies an address owns enough of all specified resources. Should ignore every resource that 
+     * doesn't start with 'Asset ID: '. Defaults to succeeding if user has a balance of >= 1 for every asset.
+     * 
+     * assetMinimumBalancesMap is optional, but here, one can define a JSON object mapping of 
+     * 'assetIDs' => minimumBalances. If assetMinimumBalancesMap[assetId] exists, it will check 
+     * that the user owns more than the specified minimum balance. If not defined, will use the default.
+     * 
+     * defaultMinimum is optional, but here, you can specify a new default minimum for all assets to 
+     * fallback on if not defined in assetMinimumBalancesMap. Default is normally set to check if 
+     * user owns >= 1.
      */
     verifyOwnershipOfAssets: IVerifyOwnershipOfAssets,
 }

@@ -5,7 +5,7 @@ The UI components found here can be imported by
 ```TSX
 import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/ui';
 ```
- Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
+Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
 
 A sample frontend integration with these components can be found at [`Blockin Sample Integration Site`](https://github.com/Blockin-Labs/Blockin-Sample-Integration).
 

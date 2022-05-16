@@ -39,14 +39,8 @@ export {
 export {
     createChallenge,
     verifyChallenge,
-    getAssetDetails,
-    getAllAssetsForAddress,
-    lookupTransactionById,
     constructChallengeObjectFromString,
     constructChallengeStringFromChallengeObject,
-    getChallengeStringFromBytes,
-    verifyChallengeSignature,
     validateChallengeObjectIsWellFormed,
-    verifyOwnershipOfAssets,
     generateNonceWithLastBlockTimestamp
 } from './verify'

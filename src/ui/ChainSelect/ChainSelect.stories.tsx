@@ -1,7 +1,7 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import { SignInWithBlockinButton } from "..";
-import { ChainProps, VerifyChallengeRequest } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
+import { ChainProps, VerifyChallengeOnBackendRequest } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
 import ChainSelect from "./ChainSelect";
 import { ChainSelectProps } from "./ChainSelect.types";
 
@@ -54,7 +54,7 @@ const chainOptions =
             }],
             currentChainInfo: undefined,
             signChallenge: async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }
         },
@@ -82,7 +82,7 @@ const chainOptions =
             }],
             currentChainInfo: undefined,
             signChallenge: async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }
         },
@@ -110,7 +110,7 @@ const chainOptions =
             }],
             currentChainInfo: undefined,
             signChallenge: async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }
         }
@@ -130,7 +130,7 @@ export const ChainSelectWithSignInButton = () => {
     });
 
 
-    return <>
+    return <div style={{ display: 'flex' }}>
         <ChainSelect
             updateChain={(newChainProps: ChainProps) => { setChainProps(newChainProps) }}
             chains={chainOptions}
@@ -147,10 +147,10 @@ export const ChainSelectWithSignInButton = () => {
             displayedAssets={chainProps.displayedAssets ? chainProps.displayedAssets : []}
             displayedUris={chainProps.displayedUris ? chainProps.displayedUris : []}
             signChallenge={async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }}
-            verifyChallenge={async (signChallengeResponse: VerifyChallengeRequest) => {
+            verifyChallengeOnBackend={async (signChallengeResponse: VerifyChallengeOnBackendRequest) => {
                 if (!signChallengeResponse.signatureBytes || !signChallengeResponse.originalBytes) {
                     return { success: false, message: `Error: Problem reading signature of challenge: ${signChallengeResponse.message}` }
                 }
@@ -160,6 +160,6 @@ export const ChainSelectWithSignInButton = () => {
             }}
         />
 
-    </>
+    </div>
 };
 

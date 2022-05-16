@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -52,7 +52,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z$1 = ":root {\n  --background: #fff;\n  --font-color: #494949; }\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --background: #3c3c3c;\n    --font-color: #fafafa; } }\n\n.blockin-button {\n  background-color: #b0d7fc;\n  color: black;\n  padding: 12px 15px;\n  font-weight: 600;\n  border-radius: 10px;\n  cursor: pointer; }\n\n.blockin-button:disabled {\n  cursor: not-allowed; }\n\n.blockin-input {\n  display: block;\n  background-color: #ececec;\n  border-radius: 5px;\n  padding: 5px 10px;\n  margin: 30px auto;\n  text-align: center; }\n\n.blockin-closebutton {\n  background: none;\n  fill: black;\n  padding: 3px 0px 0px 0px;\n  margin: 0px 0px 20px 0px;\n  border: none;\n  float: right;\n  display: flex;\n  justify-content: flex-end;\n  width: 100%;\n  cursor: pointer; }\n\n.blockin-root {\n  text-align: center;\n  padding: 100px 0px;\n  position: fixed;\n  background: rgba(0, 0, 0, 0.7);\n  top: 0;\n  left: 0;\n  transition: opacity 500ms;\n  z-index: 50;\n  min-height: 100vh;\n  min-width: 100vw; }\n\n.blockin-popup {\n  word-wrap: break-word;\n  background-color: white;\n  opacity: 100%;\n  width: 600px;\n  height: 600px;\n  max-width: 90vw;\n  margin: 0 auto 0px;\n  padding: 30px;\n  border-radius: 25px;\n  overflow-y: auto;\n  scrollbar-width: none; }\n\n.blockin-listitem {\n  display: flex;\n  justify-content: space-between;\n  align-items: center; }\n\n.blockin-listitem-metadata {\n  display: flex;\n  text-align: left;\n  align-items: center;\n  height: 100%; }\n\n.blockin-listitem-button {\n  display: flex;\n  text-align: right;\n  align-items: center;\n  height: 100%; }\n\n.blockin-listitem-logo {\n  margin-right: 10px; }\n\n.foo-bar {\n  font-family: \"Avenir Next\", Helvetica, Arial, sans-serif;\n  color: #005f20; }\n";
+var css_248z$1 = ":root {\n  --background: #fff;\n  --font-color: #494949; }\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --background: #3c3c3c;\n    --font-color: #fafafa; } }\n\n.blockin-global {\n  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,\r Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; }\n\n.blockin-button {\n  background-color: #b0d7fc;\n  opacity: 0.85;\n  color: black;\n  padding: 12px 15px;\n  font-weight: 600;\n  border-radius: 10px;\n  cursor: pointer; }\n\n.blockin-button:hover {\n  opacity: 1; }\n\n.blockin-button:disabled {\n  cursor: not-allowed; }\n\n.blockin-input {\n  display: block;\n  background-color: #ececec;\n  border-radius: 5px;\n  padding: 5px 10px;\n  margin: 10px auto;\n  text-align: center; }\n\n.blockin-closebutton {\n  background: none;\n  fill: black;\n  margin: 0px 0px 20px 0px;\n  border: none;\n  float: right;\n  display: flex;\n  justify-content: flex-end;\n  width: 100%;\n  cursor: pointer; }\n\n.blockin-root {\n  text-align: center;\n  padding: 100px 0px;\n  position: fixed;\n  background: rgba(0, 0, 0, 0.7);\n  top: 0;\n  left: 0;\n  transition: opacity 500ms;\n  z-index: 50;\n  min-height: 100vh;\n  min-width: 100vw;\n  display: flex;\n  justify-content: center; }\n\n.blockin-popup-container {\n  word-wrap: break-word;\n  background-color: white;\n  opacity: 100%;\n  max-width: 600px;\n  max-height: 600px;\n  margin: 0px 10px 0px;\n  padding: 30px;\n  border-radius: 25px;\n  justify-content: center; }\n\n.blockin-popup {\n  word-wrap: break-word;\n  background-color: white;\n  opacity: 100%;\n  max-width: 600px;\n  max-height: 600px;\n  justify-content: center;\n  overflow-y: auto;\n  padding-right: 10px; }\n\n/* width */\n.blockin-popup::-webkit-scrollbar {\n  width: 10px; }\n\n/* Track */\n.blockin-popup::-webkit-scrollbar-track {\n  background: #f1f1f1; }\n\n/* Handle */\n.blockin-popup::-webkit-scrollbar-thumb {\n  background: #888;\n  background-clip: padding-box; }\n\n/* Handle on hover */\n.blockin-popup::-webkit-scrollbar-thumb:hover {\n  background: #555; }\n\n.blockin-addcustom {\n  justify-content: space-between;\n  align-items: center;\n  width: 100%; }\n\n.blockin-listitem {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%; }\n\n.blockin-listitem-metadata {\n  display: flex;\n  text-align: left;\n  align-items: center;\n  height: 100%; }\n\n.blockin-listitem-button {\n  display: flex;\n  text-align: right;\n  align-items: center;\n  height: 100%;\n  min-width: 125px;\n  margin-left: 10px; }\n\n.blockin-listitem-button button {\n  width: 100%;\n  align-items: center;\n  text-align: center;\n  vertical-align: middle; }\n\n.blockin-listitem-logo {\n  margin-right: 10px; }\n\n.blockin-header {\n  display: flex;\n  width: 100%; }\n\n.blockin-header-chain-info {\n  display: flex;\n  justify-content: space-evenly;\n  align-items: center; }\n\n.blockin-header .header-end {\n  width: 10%; }\n\n.blockin-header .header-middle {\n  width: 80%; }\n\n.blockin-header h1 {\n  margin-top: 0;\n  font-size: larger;\n  font-size: 24px; }\n\n.blockin-challenge-details {\n  max-width: 500px;\n  margin: 0px auto 0px;\n  justify-content: center; }\n\n.blockin-chain-select button {\n  display: flex;\n  align-items: center;\n  justify-content: center; }\n\n.blockin-chain-select .blockin-popup button {\n  width: 100%;\n  margin: 5px; }\n\n.blockin-chain-select-logo {\n  margin-left: 5px; }\n\n.blockin-global .main-button {\n  height: 50px; }\n\n.foo-bar {\n  font-family: \"Avenir Next\", Helvetica, Arial, sans-serif;\n  color: #005f20; }\n";
 styleInject(css_248z$1);
 
 const URI_REGEX = /\w+:(\/?\/?)[^\s]+/;
@@ -189,21 +189,29 @@ const getChain = (chainName, currentChainInfo) => {
     else
         return {
             name: chainName,
-            logo: 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png'
+            logo: 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png',
+            getAddressExplorerUrl: (address) => ``,
+            getAssetExplorerUrl: (asset) => ``,
         };
 };
 const SUPPORTED_CHAIN_MAP = {
     'Ethereum': {
         name: 'Ethereum',
-        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png'
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+        getAddressExplorerUrl: (address) => ``,
+        getAssetExplorerUrl: (asset) => ``,
     },
     'Algorand Mainnet': {
         name: 'Algorand',
-        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
+        getAddressExplorerUrl: (address) => `https://algoexplorer.io/address/${address}`,
+        getAssetExplorerUrl: (asset) => `https://algoexplorer.io/asset/${asset}`,
     },
     'Algorand Testnet': {
         name: 'Algorand (Testnet)',
-        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
+        getAddressExplorerUrl: (address) => `https://algoexplorer.io/address/${address}`,
+        getAssetExplorerUrl: (asset) => `https://algoexplorer.io/asset/${asset}`,
     },
 };
 
@@ -227,6 +235,12 @@ const getDefaultSelectedResources = (assets, uris) => {
     }
     return selectedResources;
 };
+const LockIcon = () => {
+    return React.createElement(React.Fragment, null, '\uD83D\uDD12');
+};
+const Link = ({ url, text }) => {
+    return React.createElement("a", { href: url, target: '_blank', rel: "noreferrer" }, text ? text : url);
+};
 /**
  * SignInWithBlockinButton - React Button that handles functionality of creating a Blockin challenge for a user.
  * As props, you can pass in everything needed to generate, sign, and verify the challenge. See the documentation
@@ -239,6 +253,7 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
     const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
     const [assetId, setAssetId] = useState('');
     const [uri, setUri] = useState('');
+    const [advancedIsVisible, setAdvancedIsVisible] = useState(false);
     /**
      * This will be true when 1) there are no selectable resources passed in by provider and 2) user can not add custom
      * resources.
@@ -299,138 +314,279 @@ const SignInWithBlockinButton = ({ challengeParams, displayedAssets = [], displa
         }
         else {
             setDisplayMessage('');
-            setSelectedResources([]);
+            setSelectedResources(getDefaultSelectedResources(displayedAssets, displayedUris));
             setModalIsVisible(false);
         }
     });
-    return React.createElement(React.Fragment, null,
-        React.createElement("button", { className: 'blockin-button', onClick: () => setModalIsVisible(!modalIsVisible) }, "Sign In with Blockin"),
+    const generateHumanReadableTimeDetails = (notBefore, expirationDate) => {
+        if (!notBefore && !expirationDate) {
+            return 'This sign-in attempt has no expiration date.';
+        }
+        else if (notBefore && !expirationDate) {
+            return `This sign-in attempt has no expiration date but is not valid until ${notBefore}.`;
+        }
+        else if (!notBefore && expirationDate) {
+            return `This sign-in attempt expires at ${expirationDate}.`;
+        }
+        else {
+            return `This sign-in attempt expires at ${expirationDate} and is not valid until ${notBefore}.`;
+        }
+    };
+    return React.createElement("div", { className: 'blockin-global' },
+        React.createElement("button", { className: 'blockin-button main-button', onClick: () => setModalIsVisible(!modalIsVisible) }, "Sign In with Blockin"),
         modalIsVisible && React.createElement(React.Fragment, null,
             React.createElement("section", { className: 'blockin-root' },
-                React.createElement("div", { className: "blockin-popup" },
-                    React.createElement("header", { className: 'blockin-header' },
-                        React.createElement("button", { className: 'blockin-closebutton', onClick: () => { setModalIsVisible(!modalIsVisible); } },
-                            React.createElement("svg", { width: 25, height: 25, xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 320 512" },
-                                React.createElement("path", { d: "M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z" }))),
-                        React.createElement("section", null,
-                            React.createElement("h1", null, "Sign In with Blockin!"),
-                            React.createElement("img", { src: chain.logo, height: '100px', width: 'auto' }))),
-                    React.createElement("div", { className: 'blockin-challenge' },
-                        React.createElement("h3", null,
+                React.createElement("div", { className: "blockin-popup-container" },
+                    React.createElement("div", { className: "blockin-popup" },
+                        React.createElement("header", { className: 'blockin-header' },
+                            React.createElement("span", { className: "header-end" }),
+                            React.createElement("section", { className: "header-middle" },
+                                React.createElement("h1", null, "Sign In with Blockin!"),
+                                React.createElement("div", { className: 'blockin-header-chain-info' },
+                                    React.createElement("div", null,
+                                        React.createElement("img", { src: chain.logo, height: '100px', width: 'auto' }),
+                                        React.createElement("h5", null, chain.name)),
+                                    React.createElement("div", null,
+                                        React.createElement("b", null, "X")),
+                                    React.createElement("div", null,
+                                        React.createElement("img", { src: 'https://avatars.githubusercontent.com/u/105506360?s=200&v=4', height: '100px', width: 'auto' }),
+                                        React.createElement("h5", null, "Blockin")))),
+                            React.createElement("span", { className: "header-end" },
+                                React.createElement("button", { className: 'blockin-closebutton', onClick: () => { setModalIsVisible(!modalIsVisible); } },
+                                    React.createElement("svg", { width: 25, height: 25, xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 320 512" },
+                                        React.createElement("path", { d: "M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z" }))))),
+                        React.createElement("hr", null),
+                        React.createElement("div", { className: 'blockin-challenge' },
+                            React.createElement("h3", null, "Sign-In Details"),
+                            React.createElement("div", { className: 'blockin-challenge-details' },
+                                React.createElement("p", null,
+                                    React.createElement("b", null,
+                                        React.createElement(Link, { url: challengeParams.uri }))),
+                                React.createElement("p", null,
+                                    React.createElement("b", null,
+                                        React.createElement(Link, { url: challengeParams.domain }),
+                                        " wants you to sign in with your ",
+                                        chain.name,
+                                        " account: ",
+                                        React.createElement(Link, { text: challengeParams.address, url: chain.getAddressExplorerUrl(challengeParams.address) }))),
+                                React.createElement("p", null,
+                                    React.createElement("b", null, challengeParams.statement)),
+                                challengeParams.issuedAt && React.createElement(React.Fragment, null,
+                                    React.createElement("p", null,
+                                        React.createElement("b", null,
+                                            "This sign-in attempt was issued at ",
+                                            challengeParams.issuedAt))),
+                                React.createElement("p", null,
+                                    React.createElement("b", null, generateHumanReadableTimeDetails(challengeParams.notBefore, challengeParams.expirationDate)))),
+                            React.createElement("hr", null),
+                            React.createElement("div", null,
+                                React.createElement("h3", null, "Advanced Sign-In Details"),
+                                React.createElement("button", { className: "blockin-button", onClick: () => setAdvancedIsVisible(!advancedIsVisible) }, advancedIsVisible ? 'Hide' : 'Show'),
+                                advancedIsVisible && React.createElement("div", null,
+                                    React.createElement("p", null,
+                                        React.createElement("b", null,
+                                            "Nonce: ",
+                                            generateNonce ? 'Nonce will be generated upon clicking sign-in.' : challengeParams.nonce)),
+                                    React.createElement("p", null,
+                                        React.createElement("b", null,
+                                            "Chain ID: ",
+                                            challengeParams.chainId ? challengeParams.chainId : '1 (Default)')),
+                                    React.createElement("p", null,
+                                        React.createElement("b", null,
+                                            "Version: ",
+                                            challengeParams.version ? challengeParams.version : '1 (Default)'))))),
+                        React.createElement("hr", null),
+                        React.createElement("div", { className: 'blockin-preset-resources' }, !resourcesAreHidden && React.createElement(React.Fragment, null, (displayedAssets.length !== 0 || displayedUris.length !== 0) && React.createElement(React.Fragment, null,
+                            React.createElement("h3", null, "Select Resources"),
+                            React.createElement("p", null, "Select the resources you would like to receive access to:"),
+                            displayedAssets.map(elem => {
+                                return React.createElement(React.Fragment, null,
+                                    React.createElement("hr", null),
+                                    React.createElement("div", { className: 'blockin-listitem' },
+                                        React.createElement("div", { className: 'blockin-listitem-metadata' },
+                                            React.createElement("div", { className: 'blockin-listitem-logo' },
+                                                React.createElement("img", { src: chain.logo, height: '50px', width: 'auto' })),
+                                            React.createElement("div", null,
+                                                React.createElement("b", null, elem.name),
+                                                React.createElement("br", null),
+                                                "Asset ID:",
+                                                ' ',
+                                                React.createElement(Link, { url: `https://testnet.algoexplorer.io/asset/${elem.assetId}`, text: elem.assetId }),
+                                                " - ",
+                                                elem.description)),
+                                        React.createElement("div", { className: 'blockin-listitem-button' }, selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
+                                            React.createElement("button", { className: 'blockin-button', onClick: () => {
+                                                    const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`);
+                                                    setSelectedResources(newArr);
+                                                }, disabled: elem.frozen },
+                                                "Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)) :
+                                            React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
+                                                    const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`];
+                                                    setSelectedResources(newArr);
+                                                } },
+                                                "Not Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)))));
+                            }),
+                            displayedUris.map(elem => {
+                                return React.createElement(React.Fragment, null,
+                                    React.createElement("hr", null),
+                                    React.createElement("div", { className: 'blockin-listitem' },
+                                        React.createElement("div", { className: 'blockin-listitem-metadata' },
+                                            React.createElement("div", { className: 'blockin-listitem-logo' },
+                                                React.createElement("img", { src: 'https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png', height: 'auto', width: '50px' })),
+                                            React.createElement("div", null,
+                                                React.createElement("b", null, elem.name),
+                                                React.createElement("br", null),
+                                                "URI: ",
+                                                ' ',
+                                                React.createElement("a", { href: `${elem.uri}`, target: "_blank", rel: "noreferrer" }, elem.uri),
+                                                " - ",
+                                                elem.description)),
+                                        React.createElement("div", { className: 'blockin-listitem-button' }, selectedResources.includes(elem.uri) ?
+                                            React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
+                                                    const newArr = selectedResources.filter(resource => resource !== elem.uri);
+                                                    setSelectedResources(newArr);
+                                                } },
+                                                "Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)) :
+                                            React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
+                                                    const newArr = [...selectedResources, elem.uri];
+                                                    setSelectedResources(newArr);
+                                                } },
+                                                "Not Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)))));
+                            })))),
+                        React.createElement("div", { className: 'blockin-custom-add-resources' }, (canAddCustomAssets || canAddCustomUris) &&
                             React.createElement(React.Fragment, null,
-                                challengeParams.domain,
-                                " wants you to sign in with your ",
+                                React.createElement("hr", null),
+                                React.createElement("h3", null, "Add Custom Resources"),
+                                React.createElement("p", null,
+                                    React.createElement(Link, { url: challengeParams.domain }),
+                                    " is allowing you to add your own custom resources to this sign-in attempt below. "),
+                                React.createElement("p", null, customAddResourcesMessage),
+                                React.createElement("hr", null),
+                                canAddCustomAssets && React.createElement(React.Fragment, null,
+                                    React.createElement("div", { className: 'blockin-addcustom' },
+                                        React.createElement("h4", null, "Add Custom Asset"),
+                                        React.createElement("div", null,
+                                            React.createElement("input", { className: 'blockin-input', value: assetId, type: "text", placeholder: 'Enter Asset ID #', onChange: e => setAssetId(e.target.value) })),
+                                        React.createElement("div", null,
+                                            React.createElement("button", { className: 'blockin-button', onClick: () => __awaiter(void 0, void 0, void 0, function* () {
+                                                    yield addCustomResource(assetId, true);
+                                                    setAssetId('');
+                                                }) }, "Add Asset ID")))),
+                                React.createElement("hr", null),
+                                canAddCustomUris && React.createElement(React.Fragment, null,
+                                    React.createElement("div", { className: 'blockin-addcustom' },
+                                        React.createElement("h4", null, "Add Custom URI"),
+                                        React.createElement("input", { className: 'blockin-input', value: uri, type: "text", placeholder: 'Enter URI', onChange: e => setUri(e.target.value) }),
+                                        React.createElement("button", { className: 'blockin-button', onClick: () => __awaiter(void 0, void 0, void 0, function* () {
+                                                yield addCustomResource(uri);
+                                                setUri('');
+                                            }) }, "Add URI"))),
+                                React.createElement("hr", null))),
+                        React.createElement("div", { className: 'blockin-selected-resources-summary' },
+                            (selectedResources === null || selectedResources === void 0 ? void 0 : selectedResources.length) > 0 && React.createElement(React.Fragment, null,
+                                React.createElement("h3", null, "Summary of Selected Resources"),
+                                React.createElement("p", null, "Please take a moment to review all your selected resources for this sign-in attempt."),
+                                React.createElement("hr", null)),
+                            displayedAssets.map(elem => {
+                                if (!selectedResources.includes(`Asset ID: ${elem.assetId}`))
+                                    return React.createElement(React.Fragment, null);
+                                return React.createElement(React.Fragment, null,
+                                    React.createElement("div", { className: 'blockin-listitem' },
+                                        React.createElement("div", { className: 'blockin-listitem-metadata' },
+                                            React.createElement("div", { className: 'blockin-listitem-logo' },
+                                                React.createElement("img", { src: chain.logo, height: '50px', width: 'auto' })),
+                                            React.createElement("div", null,
+                                                React.createElement("b", null, elem.name),
+                                                React.createElement("br", null),
+                                                "Asset ID:",
+                                                ' ',
+                                                React.createElement(Link, { url: `https://testnet.algoexplorer.io/asset/${elem.assetId}`, text: elem.assetId }),
+                                                " - ",
+                                                elem.description)),
+                                        React.createElement("div", { className: 'blockin-listitem-button' }, selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
+                                            React.createElement("button", { className: 'blockin-button', onClick: () => {
+                                                    const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`);
+                                                    setSelectedResources(newArr);
+                                                }, disabled: elem.frozen },
+                                                "Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)) :
+                                            React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
+                                                    const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`];
+                                                    setSelectedResources(newArr);
+                                                } },
+                                                "Not Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)))));
+                            }),
+                            displayedUris.map(elem => {
+                                if (!selectedResources.includes(`${elem.uri}`))
+                                    return React.createElement(React.Fragment, null);
+                                return React.createElement(React.Fragment, null,
+                                    React.createElement("hr", null),
+                                    React.createElement("div", { className: 'blockin-listitem' },
+                                        React.createElement("div", { className: 'blockin-listitem-metadata' },
+                                            React.createElement("div", { className: 'blockin-listitem-logo' },
+                                                React.createElement("img", { src: 'https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png', height: 'auto', width: '50px' })),
+                                            React.createElement("div", null,
+                                                React.createElement("b", null, elem.name),
+                                                React.createElement("br", null),
+                                                "URI: ",
+                                                ' ',
+                                                React.createElement("a", { href: `${elem.uri}`, target: "_blank", rel: "noreferrer" }, elem.uri),
+                                                " - ",
+                                                elem.description)),
+                                        React.createElement("div", { className: 'blockin-listitem-button' }, selectedResources.includes(elem.uri) ?
+                                            React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
+                                                    const newArr = selectedResources.filter(resource => resource !== elem.uri);
+                                                    setSelectedResources(newArr);
+                                                } },
+                                                "Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)) :
+                                            React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
+                                                    const newArr = [...selectedResources, elem.uri];
+                                                    setSelectedResources(newArr);
+                                                } },
+                                                "Not Selected ",
+                                                elem.frozen && React.createElement(LockIcon, null)))));
+                            }),
+                            selectedResources.map(resource => {
+                                if (displayedAssets.find(elem => `Asset ID: ${elem.assetId}` === resource) || displayedUris.find(elem => elem.uri === resource))
+                                    return React.createElement(React.Fragment, null);
+                                return React.createElement(React.Fragment, null,
+                                    React.createElement("hr", null),
+                                    React.createElement("div", { className: 'blockin-listitem' },
+                                        React.createElement("div", { className: 'blockin-listitem-metadata' },
+                                            React.createElement("div", { className: 'blockin-listitem-logo' },
+                                                React.createElement("img", { src: 'https://cdn4.iconfinder.com/data/icons/meBaze-Freebies/512/add-user.png', height: 'auto', width: '50px' })),
+                                            React.createElement("div", null,
+                                                React.createElement("b", null,
+                                                    "User Added: ",
+                                                    resource))),
+                                        React.createElement("div", { className: 'blockin-listitem-button' },
+                                            React.createElement("button", { className: 'blockin-button', onClick: () => {
+                                                    const newArr = selectedResources.filter(elem => resource !== elem);
+                                                    setSelectedResources(newArr);
+                                                } }, "Remove"))));
+                            })),
+                        React.createElement("div", { className: 'blockin-sign-challenge-button' },
+                            (selectedResources === null || selectedResources === void 0 ? void 0 : selectedResources.length) == 0 && React.createElement("hr", null),
+                            React.createElement("h3", null, "Sign Challenge and Submit"),
+                            React.createElement("p", null,
+                                "The last step is for you to sign the message. Once you click the button below, this site will send a signature request to your ",
                                 chain.name,
-                                " account: ",
-                                challengeParams.address)),
-                        React.createElement("h3", null, challengeParams.statement),
-                        React.createElement("h3", null,
-                            "URI: ",
-                            challengeParams.uri),
-                        React.createElement("h3", null,
-                            "You will be authorized starting ",
-                            challengeParams.notBefore ? challengeParams.notBefore : `now (${new Date().toISOString()})`,
-                            " ",
-                            challengeParams.expirationDate && `until ${challengeParams.expirationDate}`),
-                        React.createElement("h3", null,
-                            "Issued At: ",
-                            challengeParams.issuedAt),
-                        React.createElement("h3", null,
-                            "Nonce: ",
-                            challengeParams.nonce),
-                        React.createElement("h3", null,
-                            "Chain ID: ",
-                            challengeParams.chainId),
-                        React.createElement("h3", null,
-                            "Version: ",
-                            challengeParams.version)),
-                    React.createElement("div", { className: 'blockin-preset-resources' }, !resourcesAreHidden && React.createElement(React.Fragment, null, (displayedAssets.length !== 0 || displayedUris.length !== 0) && React.createElement(React.Fragment, null,
-                        React.createElement("h3", null, "Select from the resources you would like to receive access to:"),
-                        displayedAssets.map(elem => {
-                            return React.createElement(React.Fragment, null,
-                                React.createElement("hr", null),
-                                React.createElement("div", { className: 'blockin-listitem' },
-                                    React.createElement("div", { className: 'blockin-listitem-metadata' },
-                                        React.createElement("div", { className: 'blockin-listitem-logo' },
-                                            React.createElement("img", { src: chain.logo, height: '50px', width: 'auto' })),
-                                        React.createElement("div", null,
-                                            React.createElement("b", null, elem.name),
-                                            React.createElement("br", null),
-                                            "Asset ID:",
-                                            ' ',
-                                            React.createElement("a", { href: `https://testnet.algoexplorer.io/asset/${elem.assetId}`, target: "_blank", rel: "noreferrer" }, elem.assetId),
-                                            " - ",
-                                            elem.description)),
-                                    React.createElement("div", { className: 'blockin-listitem-button' }, selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
-                                        React.createElement("button", { className: 'blockin-button', onClick: () => {
-                                                const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`);
-                                                setSelectedResources(newArr);
-                                            }, disabled: elem.frozen }, "Deselect") :
-                                        React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
-                                                const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`];
-                                                setSelectedResources(newArr);
-                                            } }, "Select"))));
-                        }),
-                        displayedUris.map(elem => {
-                            return React.createElement(React.Fragment, null,
-                                React.createElement("hr", null),
-                                React.createElement("div", { className: 'blockin-listitem' },
-                                    React.createElement("div", { className: 'blockin-listitem-metadata' },
-                                        React.createElement("div", { className: 'blockin-listitem-logo' },
-                                            React.createElement("img", { src: 'https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png', height: 'auto', width: '50px' })),
-                                        React.createElement("div", null,
-                                            React.createElement("b", null, elem.name),
-                                            React.createElement("br", null),
-                                            "URI: ",
-                                            ' ',
-                                            React.createElement("a", { href: `${elem.uri}`, target: "_blank", rel: "noreferrer" }, elem.uri),
-                                            " - ",
-                                            elem.description)),
-                                    React.createElement("div", { className: 'blockin-listitem-button' }, selectedResources.includes(elem.uri) ?
-                                        React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
-                                                const newArr = selectedResources.filter(resource => resource !== elem.uri);
-                                                setSelectedResources(newArr);
-                                            } }, "Deselect") :
-                                        React.createElement("button", { className: 'blockin-button', disabled: elem.frozen, onClick: () => {
-                                                const newArr = [...selectedResources, elem.uri];
-                                                setSelectedResources(newArr);
-                                            } }, "Select"))));
-                        })))),
-                    React.createElement("div", { className: 'blockin-custom-add-resources' }, (canAddCustomAssets || canAddCustomUris) &&
-                        React.createElement(React.Fragment, null,
-                            React.createElement("h3", null, "You may also add custom resources below: "),
-                            React.createElement("h3", null, customAddResourcesMessage),
-                            canAddCustomAssets && React.createElement(React.Fragment, null,
-                                React.createElement("div", { className: 'blockin-listitem' },
-                                    React.createElement("input", { className: 'blockin-input', value: assetId, type: "text", placeholder: 'Add Asset ID #', onChange: e => setAssetId(e.target.value) }),
-                                    React.createElement("button", { className: 'blockin-button', onClick: () => __awaiter(void 0, void 0, void 0, function* () {
-                                            yield addCustomResource(assetId, true);
-                                            setAssetId('');
-                                        }) }, "Add Asset ID"))),
-                            canAddCustomUris && React.createElement(React.Fragment, null,
-                                React.createElement("div", { className: 'blockin-listitem' },
-                                    React.createElement("input", { className: 'blockin-input', value: uri, type: "text", placeholder: 'Add URI', onChange: e => setUri(e.target.value) }),
-                                    React.createElement("button", { className: 'blockin-button', onClick: () => __awaiter(void 0, void 0, void 0, function* () {
-                                            yield addCustomResource(uri);
-                                            setUri('');
-                                        }) }, "Add URI"))))),
-                    React.createElement("div", { className: 'blockin-selected-resources-summary' },
-                        selectedResources && React.createElement("h3", null, "List of Selected Resources"),
-                        selectedResources.map(resource => {
-                            return React.createElement("li", null,
-                                resource,
-                                React.createElement("button", { className: 'blockin-button', onClick: () => {
-                                        const newArr = selectedResources.filter(elem => resource !== elem);
-                                        setSelectedResources(newArr);
-                                    } }, "Remove"));
-                        })),
-                    React.createElement("hr", null),
-                    React.createElement("div", { className: 'blockin-sign-challenge-button' },
-                        React.createElement("button", { className: 'blockin-button', onClick: handleSignIn }, "Sign In"),
-                        displayMessage && React.createElement("p", null, displayMessage))))));
+                                " wallet."),
+                            React.createElement("button", { className: 'blockin-button', onClick: handleSignIn }, "Sign In"),
+                            displayMessage && React.createElement("b", null,
+                                React.createElement("p", null, "Oops! We ran into an error."),
+                                React.createElement("p", null,
+                                    "Error message: ",
+                                    displayMessage))))))));
 };
 
-var css_248z = ":root {\n  --background: #fff;\n  --font-color: #494949; }\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --background: #3c3c3c;\n    --font-color: #fafafa; } }\n\n.blockin-button {\n  background-color: #b0d7fc;\n  color: black;\n  padding: 12px 15px;\n  font-weight: 600;\n  border-radius: 10px;\n  cursor: pointer; }\n\n.blockin-button:disabled {\n  cursor: not-allowed; }\n\n.blockin-input {\n  display: block;\n  background-color: #ececec;\n  border-radius: 5px;\n  padding: 5px 10px;\n  margin: 30px auto;\n  text-align: center; }\n\n.blockin-closebutton {\n  background: none;\n  fill: black;\n  padding: 3px 0px 0px 0px;\n  margin: 0px 0px 20px 0px;\n  border: none;\n  float: right;\n  display: flex;\n  justify-content: flex-end;\n  width: 100%;\n  cursor: pointer; }\n\n.blockin-root {\n  text-align: center;\n  padding: 100px 0px;\n  position: fixed;\n  background: rgba(0, 0, 0, 0.7);\n  top: 0;\n  left: 0;\n  transition: opacity 500ms;\n  z-index: 50;\n  min-height: 100vh;\n  min-width: 100vw; }\n\n.blockin-popup {\n  word-wrap: break-word;\n  background-color: white;\n  opacity: 100%;\n  width: 600px;\n  height: 600px;\n  max-width: 90vw;\n  margin: 0 auto 0px;\n  padding: 30px;\n  border-radius: 25px;\n  overflow-y: auto;\n  scrollbar-width: none; }\n\n.blockin-listitem {\n  display: flex;\n  justify-content: space-between;\n  align-items: center; }\n\n.blockin-listitem-metadata {\n  display: flex;\n  text-align: left;\n  align-items: center;\n  height: 100%; }\n\n.blockin-listitem-button {\n  display: flex;\n  text-align: right;\n  align-items: center;\n  height: 100%; }\n\n.blockin-listitem-logo {\n  margin-right: 10px; }\n";
+var css_248z = ":root {\n  --background: #fff;\n  --font-color: #494949; }\n\n@media (prefers-color-scheme: dark) {\n  :root {\n    --background: #3c3c3c;\n    --font-color: #fafafa; } }\n\n.blockin-global {\n  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,\r Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif; }\n\n.blockin-button {\n  background-color: #b0d7fc;\n  opacity: 0.85;\n  color: black;\n  padding: 12px 15px;\n  font-weight: 600;\n  border-radius: 10px;\n  cursor: pointer; }\n\n.blockin-button:hover {\n  opacity: 1; }\n\n.blockin-button:disabled {\n  cursor: not-allowed; }\n\n.blockin-input {\n  display: block;\n  background-color: #ececec;\n  border-radius: 5px;\n  padding: 5px 10px;\n  margin: 10px auto;\n  text-align: center; }\n\n.blockin-closebutton {\n  background: none;\n  fill: black;\n  margin: 0px 0px 20px 0px;\n  border: none;\n  float: right;\n  display: flex;\n  justify-content: flex-end;\n  width: 100%;\n  cursor: pointer; }\n\n.blockin-root {\n  text-align: center;\n  padding: 100px 0px;\n  position: fixed;\n  background: rgba(0, 0, 0, 0.7);\n  top: 0;\n  left: 0;\n  transition: opacity 500ms;\n  z-index: 50;\n  min-height: 100vh;\n  min-width: 100vw;\n  display: flex;\n  justify-content: center; }\n\n.blockin-popup-container {\n  word-wrap: break-word;\n  background-color: white;\n  opacity: 100%;\n  max-width: 600px;\n  max-height: 600px;\n  margin: 0px 10px 0px;\n  padding: 30px;\n  border-radius: 25px;\n  justify-content: center; }\n\n.blockin-popup {\n  word-wrap: break-word;\n  background-color: white;\n  opacity: 100%;\n  max-width: 600px;\n  max-height: 600px;\n  justify-content: center;\n  overflow-y: auto;\n  padding-right: 10px; }\n\n/* width */\n.blockin-popup::-webkit-scrollbar {\n  width: 10px; }\n\n/* Track */\n.blockin-popup::-webkit-scrollbar-track {\n  background: #f1f1f1; }\n\n/* Handle */\n.blockin-popup::-webkit-scrollbar-thumb {\n  background: #888;\n  background-clip: padding-box; }\n\n/* Handle on hover */\n.blockin-popup::-webkit-scrollbar-thumb:hover {\n  background: #555; }\n\n.blockin-addcustom {\n  justify-content: space-between;\n  align-items: center;\n  width: 100%; }\n\n.blockin-listitem {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  width: 100%; }\n\n.blockin-listitem-metadata {\n  display: flex;\n  text-align: left;\n  align-items: center;\n  height: 100%; }\n\n.blockin-listitem-button {\n  display: flex;\n  text-align: right;\n  align-items: center;\n  height: 100%;\n  min-width: 125px;\n  margin-left: 10px; }\n\n.blockin-listitem-button button {\n  width: 100%;\n  align-items: center;\n  text-align: center;\n  vertical-align: middle; }\n\n.blockin-listitem-logo {\n  margin-right: 10px; }\n\n.blockin-header {\n  display: flex;\n  width: 100%; }\n\n.blockin-header-chain-info {\n  display: flex;\n  justify-content: space-evenly;\n  align-items: center; }\n\n.blockin-header .header-end {\n  width: 10%; }\n\n.blockin-header .header-middle {\n  width: 80%; }\n\n.blockin-header h1 {\n  margin-top: 0;\n  font-size: larger;\n  font-size: 24px; }\n\n.blockin-challenge-details {\n  max-width: 500px;\n  margin: 0px auto 0px;\n  justify-content: center; }\n\n.blockin-chain-select button {\n  display: flex;\n  align-items: center;\n  justify-content: center; }\n\n.blockin-chain-select .blockin-popup button {\n  width: 100%;\n  margin: 5px; }\n\n.blockin-chain-select-logo {\n  margin-left: 5px; }\n\n.blockin-global .main-button {\n  height: 50px; }\n";
 styleInject(css_248z);
 
 // Generated with util/create-component.js
@@ -449,18 +605,37 @@ const ChainSelect = ({ chains, updateChain }) => {
     const handleChainChange = (chain) => {
         setChain(chain.name);
         updateChain(chain);
+        if (menuIsVisible) {
+            setMenuIsVisible(false);
+        }
     };
-    return React.createElement(React.Fragment, null,
-        React.createElement("b", null,
-            "Current Chain: ",
-            chain),
-        React.createElement("button", { className: 'blockin-button', onClick: () => setMenuIsVisible(!menuIsVisible) }, menuIsVisible ? 'Hide' : 'Show'),
-        React.createElement("div", null, menuIsVisible && React.createElement(React.Fragment, null, chains.map(chain => {
-            return React.createElement("div", { key: chain.name },
-                React.createElement("button", { className: 'blockin-button', onClick: () => handleChainChange(chain) },
-                    "Switch to Chain: ",
-                    chain.name));
-        }))));
+    return React.createElement("div", { className: "blockin-chain-select blockin-global" },
+        React.createElement("button", { className: 'blockin-button main-button', onClick: () => setMenuIsVisible(!menuIsVisible) },
+            "Selected Chain: ",
+            getChain(chain).name,
+            " ",
+            React.createElement("img", { className: 'blockin-chain-select-logo', src: getChain(chain).logo, height: '20px', width: '20px' })),
+        React.createElement("div", null, menuIsVisible && React.createElement("div", { className: 'blockin-root' },
+            React.createElement("div", { className: "blockin-popup-container" },
+                React.createElement("div", { className: "blockin-popup" },
+                    React.createElement("header", { className: 'blockin-header' },
+                        React.createElement("span", { className: "header-end" }),
+                        React.createElement("section", { className: "header-middle" },
+                            React.createElement("h1", null, "Chain Select"),
+                            React.createElement("div", { className: 'blockin-header-chain-info' })),
+                        React.createElement("span", { className: "header-end" },
+                            React.createElement("button", { className: 'blockin-closebutton', onClick: () => { setMenuIsVisible(!menuIsVisible); } },
+                                React.createElement("svg", { width: 25, height: 25, xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 320 512" },
+                                    React.createElement("path", { d: "M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z" }))))),
+                    React.createElement("hr", null),
+                    chains.map(chain => {
+                        return React.createElement("div", { key: chain.name },
+                            React.createElement("button", { className: 'blockin-button', onClick: () => handleChainChange(chain) },
+                                "Select ",
+                                chain.name,
+                                " ",
+                                React.createElement("img", { className: 'blockin-chain-select-logo', height: '20px', width: '20px', src: getChain(chain.name).logo })));
+                    }))))));
 };
 
 export { ChainSelect, SignInWithBlockinButton };

@@ -166,9 +166,17 @@ export class AlgoDriver {
             throw 'Invalid signature';
         }
     }
-    async verifyOwnershipOfAssets(address, assetIds, assetMinimumBalancesMap, defaultMinimum) {
-        if (!assetIds || assetIds.length == 0)
+    async verifyOwnershipOfAssets(address, resources, assetMinimumBalancesMap, defaultMinimum) {
+        if (!resources || resources.length == 0)
             return;
+        let assetIds = [];
+        if (resources) {
+            const filteredAssetIds = resources.filter(elem => elem.startsWith('Asset ID: '));
+            for (const assetStr of filteredAssetIds) {
+                const assetId = assetStr.substring(10);
+                assetIds.push(assetId);
+            }
+        }
         let assets = (await this.getAllAssetsForAddress(address));
         const assetLookupData = {
             assetsForAddress: assets,

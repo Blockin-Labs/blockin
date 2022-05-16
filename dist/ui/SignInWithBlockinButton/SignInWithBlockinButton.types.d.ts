@@ -58,6 +58,8 @@ export declare type VerifyChallengeOnBackendResponse = {
 export declare type SupportedChain = {
     name: string;
     logo: string;
+    getAddressExplorerUrl: (address: string) => string;
+    getAssetExplorerUrl: (asset: string) => string;
 };
 /**
  * Props to pass into the SignInWithBlockinButton component

@@ -290,8 +290,17 @@ export class AlgoDriver implements IChainDriver {
         }
     }
 
-    async verifyOwnershipOfAssets(address: string, assetIds: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
-        if (!assetIds || assetIds.length == 0) return;
+    async verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
+        if (!resources || resources.length == 0) return;
+
+        let assetIds: string[] = [];
+        if (resources) {
+            const filteredAssetIds = resources.filter(elem => elem.startsWith('Asset ID: '));
+            for (const assetStr of filteredAssetIds) {
+                const assetId = assetStr.substring(10);
+                assetIds.push(assetId);
+            }
+        }
 
         let assets = (await this.getAllAssetsForAddress(address));
 

@@ -1,4 +1,4 @@
-import { SupportedChain } from "../@types/SignInWithBlockinButton";
+import { SupportedChain } from "./SignInWithBlockinButton/SignInWithBlockinButton.types";
 /**
  * Gets metadata about the current chain. First, if currentChainInfo is passed, we just return that.
  * Next, we check the supported chains map and see if the name passed in matches. If nothing else was

@@ -67,6 +67,8 @@ export type VerifyChallengeOnBackendResponse = {
 export type SupportedChain = {
     name: string;
     logo: string;
+    getAddressExplorerUrl: (address: string) => string;
+    getAssetExplorerUrl: (asset: string) => string;
 }
 
 /**

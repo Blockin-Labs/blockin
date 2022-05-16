@@ -1,4 +1,4 @@
-import { SupportedChain } from "../@types/SignInWithBlockinButton";
+import { SupportedChain } from "./SignInWithBlockinButton/SignInWithBlockinButton.types";
 
 /**
  * Gets metadata about the current chain. First, if currentChainInfo is passed, we just return that. 
@@ -15,21 +15,29 @@ export const getChain = (chainName: string, currentChainInfo?: SupportedChain): 
     else if (SUPPORTED_CHAIN_MAP[chainName]) return SUPPORTED_CHAIN_MAP[chainName];
     else return {
         name: chainName,
-        logo: 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png'
+        logo: 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png',
+        getAddressExplorerUrl: (address: string) => ``,
+        getAssetExplorerUrl: (asset: string) => ``,
     }
 }
 
 const SUPPORTED_CHAIN_MAP: any = {
     'Ethereum': {
         name: 'Ethereum',
-        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png'
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+        getAddressExplorerUrl: (address: string) => ``,
+        getAssetExplorerUrl: (asset: string) => ``,
     },
     'Algorand Mainnet': {
         name: 'Algorand',
-        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
+        getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
     },
     'Algorand Testnet': {
         name: 'Algorand (Testnet)',
-        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png'
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
+        getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
     },
 }
