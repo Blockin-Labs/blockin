@@ -55,7 +55,7 @@
 
 Blockin is a universal, multi-chain sign-in interface for Web 3.0 that supports micro-authorizations! 
 
-This README focuses mainly on this codebase. The [`Blockin Docs`](https://trevormil.gitbook.io/blockin/) and the [`Blockin Demo`](https://blockin.vercel.app/) provide much more documentation on what Blockin is, how it works, and how to use it.
+This README focuses mainly on this codebase. The [`Blockin Docs`](https://blockin.gitbook.io/blockin/) and the [`Blockin Demo`](https://blockin.vercel.app/) provide much more documentation on what Blockin is, how it works, and how to use it.
 
 ## Scope of the Library
 This library supports creating digital authorization assets, such as NFTs, on any blockchain that supports them, as well as generating and verifying sign-in requests in the form of a challenge / response. 
@@ -74,7 +74,7 @@ Then, you can import any function via
 ```TSX
 import { ... } from 'blockin';'
 ```
-Visit the [`Blockin Docs`](https://trevormil.gitbook.io/blockin/) for documentation on how to use this library.
+Visit the [`Blockin Docs`](https://blockin.gitbook.io/blockin/) for documentation on how to use this library.
 
 An example frontend and backend using Blockin can be found at [`Blockin Sample Integration Site`](https://github.com/Blockin-Labs/Blockin-Sample-Integration). 
 * The pages folder shows how to use it in the frontend. The api folder shows how to use it via a backend API.
@@ -97,7 +97,7 @@ To develop and contribute to this library directly, all you should need to do is
 The library has a few separate parts to it:
 * Smart Contracts: These live in the smart_contracts folder. This is where example smart contracts for the creation of assets and other use case examples can be found.
 * Blockin Library Functions: These live in the src folder (excluding the src/ui folder). This is for all the asset creation and verification functions.
-  * If contributing to this part of the library, it is important that you become familiar with the ChainDriver interface and how it used. More information can be found at [`Blockin Docs`](https://trevormil.gitbook.io/blockin/).
+  * If contributing to this part of the library, it is important that you become familiar with the ChainDriver interface and how it used. More information can be found at [`Blockin Docs`](https://blockin.gitbook.io/blockin/).
 * UI Components: These importable UI components can be found in the src/ui folder. This, in theory, should be able to become its own library in the future.
   * View the README in src/ui for more information.
   * <img src="images/signin-chainselect-together.PNG" />
@@ -109,7 +109,7 @@ Everything is built using ```npm run build``` which creates a build folder in th
 
 
 ## Documentation
-For more in-depth documentation, visit the [`Blockin Docs`](https://trevormil.gitbook.io/blockin/) or the [`Blockin Paper`](https://github.com/kking935/Blockin-Demo).
+For more in-depth documentation, visit the [`Blockin Docs`](https://blockin.gitbook.io/blockin/) or the [`Blockin Paper`](https://github.com/kking935/Blockin-Demo).
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
