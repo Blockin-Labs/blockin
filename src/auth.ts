@@ -1,6 +1,6 @@
 // This file handles creating, opting in to, and transfering an auth asset from resource to owner
-import { IChainDriver, UniversalTxn } from './@types/ChainDriver'
-import { CreateAssetParams, CreateTransferAssetParams } from "./@types/auth";
+import { IChainDriver, UniversalTxn } from './types/ChainDriver.types.js'
+import { CreateAssetParams, CreateTransferAssetParams } from "./types/auth.types.js";
 
 var chainDriver: IChainDriver
 

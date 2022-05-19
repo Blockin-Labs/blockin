@@ -1,7 +1,3 @@
-/**
- * As a build hack, we run mv ./dist/index* ./dist/*.scss ./dist/ui after building this rollup
- * in order to have correct directory structure for the types in dist/ui.
- */
 {
   "compilerOptions": {
     "rootDir": "src",

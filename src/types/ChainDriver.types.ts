@@ -1,4 +1,4 @@
-import { CreateAssetParams, CreateTransferAssetParams } from "./auth";
+import { CreateAssetParams, CreateTransferAssetParams } from "./auth.types.js";
 
 export type UniversalTxn = {
     txn: Uint8Array;
@@ -34,6 +34,11 @@ interface IVerifyOwnershipOfAssets { (address: string, resources: string[], asse
  * in AlgoDriver
  */
 export interface IChainDriver {
+    /**
+     * Prepares the challenge string to be signed. Often used to prefix before signing. To reverse this
+     * prefix and just get the challenge string during verification, use getChallengeStringFromBytesToSign().
+     */
+    // prepareChallengeStringToSign: IPrepareBytesToSign,
     /**
      * Parses the challenge string from the original signed bytes. Often used because chain's signature algorithms
      * add prefixes to strings before signing them. This reverses that.

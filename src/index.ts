@@ -1,16 +1,16 @@
 export type {
     IChainDriver,
     UniversalTxn
-} from './@types/ChainDriver'
+} from './types/ChainDriver.types.js'
 
 export type {
     CreateAssetParams,
     CreateTransferAssetParams,
-} from './@types/auth'
+} from './types/auth.types.js'
 
 export type {
     ChallengeParams
-} from './@types/verify'
+} from './types/verify.types.js'
 
 export type {
     VerifyChallengeOnBackendRequest,
@@ -20,21 +20,30 @@ export type {
     PresetUri,
     BlockinVerifyChallengeResponse,
     SupportedChain
-} from './ui/SignInWithBlockinButton/SignInWithBlockinButton.types'
+} from './ui/SignInWithBlockinButton/SignInWithBlockinButton.types.js'
 
 export {
     setChainDriver
-} from './blockin'
+} from './blockin.js'
 
-export {
-    AlgoDriver
-} from './ChainDrivers/AlgoDriver'
+/**
+ * We have removed ChainDrivers from being exported for a few reasons. 
+ * 
+ * 1) Package size becomes way too big
+ * 2) Security considerations
+ * 3) CJS and ESM support was not fully working with dependencies
+ * 
+ * We still provide the files in the ChainDrivers folder for convenience
+ */
+// export {
+//     AlgoDriver
+// } from './ChainDrivers/AlgoDriver.js'
 
 export {
     createAssetTxn,
     createAssetTransferTxn,
     sendTxn
-} from './auth'
+} from './auth.js'
 
 export {
     createChallenge,
@@ -43,4 +52,4 @@ export {
     constructChallengeStringFromChallengeObject,
     validateChallengeObjectIsWellFormed,
     generateNonceWithLastBlockTimestamp
-} from './verify'
+} from './verify.js'

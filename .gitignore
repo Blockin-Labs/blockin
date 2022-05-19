@@ -4,4 +4,3 @@ __pycache__/
 storybook-static
 .local-pack
 dist
-ui

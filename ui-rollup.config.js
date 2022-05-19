@@ -12,16 +12,18 @@ import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: 'src/index.ts',
+    input: 'src/ui/index.ts',
     output: [
         {
             file: 'dist/index.js',
             format: 'esm',
+            name: 'blockin-ui',
             sourcemap: true,
         },
         {
             file: 'dist/index.cjs',
             format: 'cjs',
+            name: 'blockin-ui',
             sourcemap: true,
         },
         //TODO: add commonjs mappings too
@@ -30,10 +32,28 @@ export default {
         peerDepsExternal(),
         resolve({ browser: true }),
         commonjs(),
-        typescript({ tsconfig: './tsconfig.json' }),
+        typescript({ tsconfig: './ui-tsconfig.json' }),
         postcss(),
         json(),
         //If anything else is added to here, also confirm the postrollup script in package.json handles it
-        copy(),
+        copy({
+            targets: [
+                {
+                    src: 'src/ui/variables.scss',
+                    dest: 'dist/',
+                    rename: 'variables.scss',
+                },
+                {
+                    src: 'src/ui/typography.scss',
+                    dest: 'dist/',
+                    rename: 'typography.scss',
+                },
+                {
+                    src: 'src/ui/blockin.scss',
+                    dest: 'dist/',
+                    rename: 'blockin.scss',
+                },
+            ],
+        }),
     ],
 };

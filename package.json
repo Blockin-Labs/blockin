@@ -2,21 +2,48 @@
   "name": "blockin",
   "version": "1.0.0",
   "description": "",
-  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "prepublish": "tsc",
+  "main": "./dist/index.js",
+  "module": "./dist/index.cjs",
+  "type": "module",
+  "exports": {
+      ".": {
+        "require": "./dist/index.cjs",
+        "import": "./dist/index.js",
+        "default": "./dist/index.js"
+    },
+    "./ui": {
+        "require": "./dist/ui/index.cjs",
+        "import": "./dist/ui/index.js",
+        "default": "./dist/ui/index.js"
+    },
+    "./dist/ui": {
+        "require": "./dist/ui/index.cjs",
+        "import": "./dist/ui/index.js",
+        "default": "./dist/ui/index.js"
+    }
+  },
   "scripts": {
+    "prepack": "npm run build && rm -rf ./dist/*.map ./dist/ui/*.map",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && rollup -c && npm run postrollup && tsc --build",
-    "postrollup": "mv ./dist/index* ./dist/*.scss ./dist/ui",
+    "build": "rm -rf dist && npm run build:ui && npm run build:core",
+    "build:ui": "rollup --config ./ui-rollup.config.js && npm run postuirollup",
+    "build:core": "rollup --config ./rollup.config.js && npm run postcorerollup",
+    "postcorerollup": "cp ./dist/index.d.ts ./dist/index.d.cts",
+    "postuirollup": "mv ./dist/index*  ./dist/*.scss ./dist/ui && cp ./dist/ui/index.d.ts ./dist/ui/index.d.cts",
     "storybook": "start-storybook -p 6006",
     "storybook:export": "build-storybook"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "prepublishOnly": "npm run build",
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@rollup/plugin-commonjs": "^22.0.0",
@@ -35,9 +62,10 @@
     "babel-preset-react-app": "^10.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.6.3",
+    "local-package-publisher": "^1.0.4",
     "node-sass": "^5.0.0",
     "postcss": "^8.4.13",
-    "react": "^17.0.1",
+    "react": "^18.0.0",
     "react-dom": "^17.0.1",
     "rollup": "^2.72.1",
     "rollup-plugin-copy": "^3.4.0",
@@ -52,13 +80,5 @@
     "tslib": "^2.4.0",
     "typescript": "^4.5.5"
   },
-  "dependencies": {
-    "algosdk": "^1.15.0",
-    "react": "^18.1.0",
-    "tweetnacl": "^1.0.3"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  }
+  "dependencies": {}
 }

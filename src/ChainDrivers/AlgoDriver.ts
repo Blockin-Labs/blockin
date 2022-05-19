@@ -1,7 +1,7 @@
 import algosdk, { decodeAddress, Transaction } from 'algosdk';
 import nacl from 'tweetnacl';
-import { CreateAssetParams, CreateTransferAssetParams } from '../@types/auth';
-import { IChainDriver, UniversalTxn } from '../@types/ChainDriver'
+import { CreateAssetParams, CreateTransferAssetParams } from '../types/auth.types.js';
+import { IChainDriver, UniversalTxn } from '../types/ChainDriver.types.js'
 
 type CreateContractOptInParams = {
     from: string,

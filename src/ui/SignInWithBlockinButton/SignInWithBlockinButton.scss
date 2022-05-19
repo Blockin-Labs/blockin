@@ -3,8 +3,3 @@
 @import "../typography.scss";
 @import "../blockin.scss";
 
-.foo-bar {
-  @include font-defaults;
-
-  color: $harvey-green;
-}
