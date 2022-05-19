@@ -5,7 +5,7 @@ import { ChainSelectProps } from "./ChainSelect.types";
 import { useEffect, useState } from "react";
 import "./ChainSelect.scss";
 import { ChainProps } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
-import { getChain } from "../SupportedChains.js";
+import { getChain } from "../SupportedChains";
 
 /**
  * ChainSelect - Component to handle updating the chain for multi-chain dApps. This is to be used in conjunction

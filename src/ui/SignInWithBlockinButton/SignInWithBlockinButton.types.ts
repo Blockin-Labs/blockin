@@ -1,4 +1,4 @@
-import { ChallengeParams } from "../../@types/verify";
+import { ChallengeParams } from "../../types/verify.types.js";
 
 /**
  * Used if needed to input different props for multiple chains using ChainSelect.

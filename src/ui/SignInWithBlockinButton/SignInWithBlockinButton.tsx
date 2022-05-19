@@ -2,9 +2,9 @@
 import React from "react";
 import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, VerifyChallengeOnBackendRequest } from "./SignInWithBlockinButton.types";
 import "./SignInWithBlockinButton.scss";
-import { createChallenge } from "../../verify.js";
+import { createChallenge } from "../../verify";
 import { useEffect, useState } from 'react';
-import { getChain } from '../SupportedChains.js'
+import { getChain } from '../SupportedChains'
 
 /*
  * Gets the default selected resources from the passed-in props
@@ -202,9 +202,10 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                 </button>
                             </div>
                         </div>
-                        <hr />
+
                         {/* Challenge Details */}
                         <div className='blockin-challenge'>
+                            <hr />
                             <h3>Sign-In Details</h3>
                             <div className='blockin-challenge-details'>
 
@@ -236,11 +237,12 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                 }
                             </div>
                         </div>
-                        <hr />
+
                         {/* Challenge Resources Preset According to Props */}
                         <div className='blockin-preset-resources'>
                             {!resourcesAreHidden && <>
                                 {(displayedAssets.length !== 0 || displayedUris.length !== 0) && <>
+                                    <hr />
                                     <h3>Select Resources</h3>
                                     {<p>Select the resources you would like to receive access to:</p>}
 
@@ -389,19 +391,20 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                             </button>
                                         </div>
                                     </>}
-                                    <hr />
                                 </>
                             }
                         </div>
 
                         {/* Here, we display a complete list of all the selected resources for the challenge */}
                         <div className='blockin-selected-resources-summary'>
+                            <hr />
                             {/* {console.log(selectedResources)} */}
-                            {selectedResources?.length > 0 && <><h3>Summary of Selected Resources</h3><p>Please take a moment to review all your selected resources for this sign-in attempt.</p><hr /></>}
+                            {selectedResources?.length > 0 && <><h3>Summary of Selected Resources</h3><p>Please take a moment to review all your selected resources for this sign-in attempt.</p></>}
                             {/* First display selectable assets */}
                             {displayedAssets.map(elem => {
                                 if (!selectedResources.includes(`Asset ID: ${elem.assetId}`)) return <></>;
                                 return <>
+                                    <hr />
                                     <div className='blockin-listitem'>
                                         {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
                                                 4) desccription of asset
@@ -536,7 +539,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
                         {/* Final Sign Challenge Button. Calls signChallenge() and verifyChallenge(). */}
                         <div className='blockin-sign-challenge-button'>
-                            {selectedResources?.length == 0 && <hr />}
+                            <hr />
                             <h3>Sign Challenge and Submit</h3>
                             <p>The last step is for you to sign the message. Once you click the button below, this site will send a signature request to your {chain.name} wallet.</p>
                             <button className='blockin-button' onClick={handleSignIn}>
