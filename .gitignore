@@ -2,3 +2,6 @@ node_modules
 __pycache__/
 .env
 storybook-static
+.local-pack
+dist
+ui
