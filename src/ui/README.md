@@ -5,7 +5,14 @@ The UI components found here can be imported by
 ```TSX
 import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/ui';
 ```
-Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation.
+or
+```TSX
+import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/dist/ui';
+```
+
+Both imports are supported because TypeScript <4.7 gives an error for the former.
+
+Visit the [`Blockin Docs`](https://github.com/kking935/Blockin-Demo) for more documentation on the components and how to use them.
 
 A sample frontend integration with these components can be found at [`Blockin Sample Integration Site`](https://github.com/Blockin-Labs/Blockin-Sample-Integration).
 
@@ -27,11 +34,15 @@ and
 ```
 
 # Building
-This folder is built using [Rollup](https://github.com/rollup/rollup) within the ```npm run build``` command. The config files for this folder are [rollup.config.js](../../rollup.config.js) and [tsconfig.rollup.json](../../tsconfig.rollup.json). Everything is built into the [dist/ui](../../dist/ui) folder. 
+This folder is built using [Rollup](https://github.com/rollup/rollup) within the ```npm run build``` command. The config files for this folder are [rollup.config.js](../../ui-rollup.config.js) and [tsconfig.rollup.json](../../ui-tsconfig.json). Everything is built into the [dist/ui](../../dist/ui) folder. 
 
 One minor note is that the directory hierarchy after building is slightly off due to how rollup works and how the library is setup. We run
 ```
 mv ./dist/index* ./dist/*.scss ./dist/ui
+``` 
+or
+```
+npm run postuirollup
 ``` 
 as a part of the build process as a minor hack to fix this.
 

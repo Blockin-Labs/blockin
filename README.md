@@ -80,13 +80,13 @@ An example frontend and backend using Blockin can be found at [`Blockin Sample I
 * The pages folder shows how to use it in the frontend. The api folder shows how to use it via a backend API.
 
 ## Current Supported Chains
-These are the chains that are natively supported by this library.
+These are the chains that are natively supported by this library as templates.
 * **Algorand** via AlgoDriver defined in the ChainDrivers folder
   * Uses Purestake API and algosdk npm library
 
 To add support for a new blockchain, please visit the README in the ChainDrivers folder.
 
-We are currently working on adding implementations for more blockchains.
+We are currently working on adding implementations for more blockchains and also making it more convenient to import/export these templates.
 
 ## Example Sites Using Blockin
 * [`Netflix Proof of Concept`](https://github.com/Blockin-Labs/Blockin-Sample-Integration)
@@ -98,14 +98,14 @@ The library has a few separate parts to it:
 * Smart Contracts: These live in the smart_contracts folder. This is where example smart contracts for the creation of assets and other use case examples can be found.
 * Blockin Library Functions: These live in the src folder (excluding the src/ui folder). This is for all the asset creation and verification functions.
   * If contributing to this part of the library, it is important that you become familiar with the ChainDriver interface and how it used. More information can be found at [`Blockin Docs`](https://blockin.gitbook.io/blockin/).
-* UI Components: These importable UI components can be found in the src/ui folder. This, in theory, should be able to become its own library in the future.
+* UI Components: These importable UI components can be found in the src/ui folder. This, in theory, should be decoupled from the core library and able to eventually become its own library in the future.
   * View the README in src/ui for more information.
   * <img src="images/signin-chainselect-together.PNG" />
   * <img src="images/signin-popup.PNG" />
   * <img src="images/chainselect-popup.PNG" />
 
 
-Everything is built using ```npm run build``` which creates a build folder in the ```dist``` directory. The build command first rolls up the UI components using rollup.js, and then it builds everything else.
+Everything is built using ```npm run build``` which creates a build folder in the ```dist``` directory. The build command first rolls up the UI components, and then it builds everything else.
 
 
 ## Documentation
