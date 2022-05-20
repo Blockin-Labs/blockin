@@ -80,8 +80,8 @@ An example frontend and backend using Blockin can be found at [`Blockin Sample I
 * The pages folder shows how to use it in the frontend. The api folder shows how to use it via a backend API.
 
 ## Current Supported Chains
-These are the chains that are natively supported by this library as templates.
-* **Algorand** via AlgoDriver defined in the ChainDrivers folder
+These are the chains that are natively supported by this library.
+* **Algorand** (AlgoDriver) via the blockin-algo-driver NPM package ([`Source Code`](https://github.com/Blockin-Labs/blockin-algo-driver)).
   * Uses Purestake API and algosdk npm library
 
 To add support for a new blockchain, please visit the README in the ChainDrivers folder.
