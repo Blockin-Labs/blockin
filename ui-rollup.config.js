@@ -26,7 +26,6 @@ export default {
             name: 'blockin-ui',
             sourcemap: true,
         },
-        //TODO: add commonjs mappings too
     ],
     plugins: [
         peerDepsExternal(),
@@ -35,7 +34,7 @@ export default {
         typescript({ tsconfig: './ui-tsconfig.json' }),
         postcss(),
         json(),
-        //If anything else is added to here, also confirm the postrollup script in package.json handles it
+        //If anything else is added to here, also confirm the postuirollup script in package.json handles it
         copy({
             targets: [
                 {

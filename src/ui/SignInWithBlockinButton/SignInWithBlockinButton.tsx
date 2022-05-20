@@ -397,9 +397,9 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
                         {/* Here, we display a complete list of all the selected resources for the challenge */}
                         <div className='blockin-selected-resources-summary'>
-                            <hr />
+
                             {/* {console.log(selectedResources)} */}
-                            {selectedResources?.length > 0 && <><h3>Summary of Selected Resources</h3><p>Please take a moment to review all your selected resources for this sign-in attempt.</p></>}
+                            {selectedResources?.length > 0 && <><hr /><h3>Summary of Selected Resources</h3><p>Please take a moment to review all your selected resources for this sign-in attempt.</p></>}
                             {/* First display selectable assets */}
                             {displayedAssets.map(elem => {
                                 if (!selectedResources.includes(`Asset ID: ${elem.assetId}`)) return <></>;

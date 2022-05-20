@@ -24,7 +24,6 @@ export default {
             format: 'cjs',
             sourcemap: true,
         },
-        //TODO: add commonjs mappings too
     ],
     plugins: [
         peerDepsExternal(),
