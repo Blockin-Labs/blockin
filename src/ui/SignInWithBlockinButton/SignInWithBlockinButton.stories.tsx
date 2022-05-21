@@ -1,7 +1,8 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
+import { ChallengeParams } from "../../types/verify.types";
 import SignInWithBlockinButton from "./SignInWithBlockinButton";
-import { SignInWithBlockinButtonProps, VerifyChallengeOnBackendRequest } from "./SignInWithBlockinButton.types";
+import { SignInWithBlockinButtonProps, SignChallengeResponse } from "./SignInWithBlockinButton.types";
 
 export default {
     title: "SignInWithBlockinButton"
@@ -75,18 +76,14 @@ export const SuccessfulSignAndVerify = () => {
         <SignInWithBlockinButton
             {...props}
             signChallenge={async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }}
-            verifyChallengeOnBackend={async (signChallengeResponse: VerifyChallengeOnBackendRequest) => {
-                if (!signChallengeResponse.signatureBytes || !signChallengeResponse.originalBytes) {
-                    return { success: false, message: `${signChallengeResponse.message}` }
-                }
-
+            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
                 const verificationResponse = await getVerifyChallengeSuccess();
 
                 setSignedIn(true);
-                return verificationResponse
+                return verificationResponse;
             }}
         />
     </>
@@ -102,18 +99,14 @@ export const SignFailure = () => {
         <SignInWithBlockinButton
             {...props}
             signChallenge={async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeFailure(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeFailure(challenge);
                 return signChallengeResponse;
             }}
-            verifyChallengeOnBackend={async (signChallengeResponse: VerifyChallengeOnBackendRequest) => {
-                if (!signChallengeResponse.signatureBytes || !signChallengeResponse.originalBytes) {
-                    return { success: false, message: `${signChallengeResponse.message}` }
-                }
-
+            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
                 const verificationResponse = await getVerifyChallengeSuccess();
 
                 setSignedIn(true);
-                return verificationResponse
+                return verificationResponse;
             }}
         />
     </>
@@ -131,14 +124,10 @@ export const VerifyFailure = () => {
         <SignInWithBlockinButton
             {...props}
             signChallenge={async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }}
-            verifyChallengeOnBackend={async (signChallengeResponse: VerifyChallengeOnBackendRequest) => {
-                if (!signChallengeResponse.signatureBytes || !signChallengeResponse.originalBytes) {
-                    return { success: false, message: `Problem reading signature of challenge: ${signChallengeResponse.message}` }
-                }
-
+            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
                 const verificationResponse = await getVerifyChallengeFailure();
                 return verificationResponse
             }}

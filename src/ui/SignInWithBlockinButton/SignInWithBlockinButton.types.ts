@@ -7,14 +7,14 @@ export type ChainProps = {
     displayedAssets?: PresetAsset[];
     displayedUris?: PresetUri[];
     name: string;
-    signChallenge?: (challenge: string) => Promise<VerifyChallengeOnBackendRequest>;
+    signChallenge?: (challenge: string) => Promise<SignChallengeResponse>;
     currentChainInfo?: any | undefined;
 }
 
 /**
  * Specifies what should be returned from signChallenge.
  */
-export type VerifyChallengeOnBackendRequest = {
+export type SignChallengeResponse = {
     originalBytes?: Uint8Array;
     signatureBytes?: Uint8Array;
     message?: string;
@@ -102,10 +102,10 @@ export type SignInWithBlockinButtonProps = {
     displayedUris: PresetUri[],
     /**
      * Blockin doesn't handle any signing functionality. When user clicks sign-in, it will call this
-     * function which is passed in as a prop. Expects a return value that is consistent with the VerifyChallengeOnBackendRequest 
+     * function which is passed in as a prop. Expects a return value that is consistent with the SignChallengeResponse 
      * type.
      */
-    signChallenge: (challenge: string) => Promise<VerifyChallengeOnBackendRequest>,
+    signChallenge: (challenge: string) => Promise<SignChallengeResponse>,
     /**
      * This is where you perform the following: 1) call Blockin's verifyChallenge() within your backend,
      * 2) include any other additional verification checks about the challenge (like nonce verification if using a custom scheme 
@@ -114,7 +114,12 @@ export type SignInWithBlockinButtonProps = {
      * Note that we do this because for verification, you must have a valid API key and ChainDriver which is only accessible
      * via the authorizing resource's backend.
      */
-    verifyChallengeOnBackend: (verifyRequest: VerifyChallengeOnBackendRequest) => Promise<VerifyChallengeOnBackendResponse>,
+    verifyChallengeOnBackend: (
+        originalBytes: Uint8Array,
+        signatureBytes: Uint8Array,
+        challengeObject: ChallengeParams
+    )
+        => Promise<VerifyChallengeOnBackendResponse>,
     /**
      * To generate a valid challenge, you must specify a nonce. This can either be done by specifying it in
      * challengeParams or via this function which returns a nonce string. This prop is optional, but if defined, we will 

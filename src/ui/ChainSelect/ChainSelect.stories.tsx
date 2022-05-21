@@ -1,7 +1,8 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import { SignInWithBlockinButton } from "..";
-import { ChainProps, VerifyChallengeOnBackendRequest } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
+import { ChallengeParams } from "../../types/verify.types";
+import { ChainProps, SignChallengeResponse } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
 import ChainSelect from "./ChainSelect";
 import { ChainSelectProps } from "./ChainSelect.types";
 
@@ -54,7 +55,7 @@ const chainOptions =
             }],
             currentChainInfo: undefined,
             signChallenge: async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }
         },
@@ -82,7 +83,7 @@ const chainOptions =
             }],
             currentChainInfo: undefined,
             signChallenge: async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }
         },
@@ -110,7 +111,7 @@ const chainOptions =
             }],
             currentChainInfo: undefined,
             signChallenge: async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }
         }
@@ -147,14 +148,10 @@ export const ChainSelectWithSignInButton = () => {
             displayedAssets={chainProps.displayedAssets ? chainProps.displayedAssets : []}
             displayedUris={chainProps.displayedUris ? chainProps.displayedUris : []}
             signChallenge={async (challenge: string) => {
-                const signChallengeResponse: VerifyChallengeOnBackendRequest = await handleSignChallengeSuccess(challenge);
+                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
             }}
-            verifyChallengeOnBackend={async (signChallengeResponse: VerifyChallengeOnBackendRequest) => {
-                if (!signChallengeResponse.signatureBytes || !signChallengeResponse.originalBytes) {
-                    return { success: false, message: `Error: Problem reading signature of challenge: ${signChallengeResponse.message}` }
-                }
-
+            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
                 const verificationResponse = await getVerifyChallengeSuccess();
                 return verificationResponse
             }}

@@ -1,8 +1,8 @@
 // Generated with util/create-component.js
 import React from "react";
-import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, VerifyChallengeOnBackendRequest } from "./SignInWithBlockinButton.types";
+import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, SignChallengeResponse } from "./SignInWithBlockinButton.types";
 import "./SignInWithBlockinButton.scss";
-import { createChallenge } from "../../verify";
+import { constructChallengeObjectFromString, createChallenge } from "../../verify";
 import { useEffect, useState } from 'react';
 import { getChain } from '../SupportedChains'
 
@@ -118,7 +118,12 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
          * 
          * Expects { originalBytes: Uint8Array, signatureBytes: Uint8Array }
          */
-        const signChallengeResponse: VerifyChallengeOnBackendRequest = await signChallenge(challengeString);
+        const signChallengeResponse: SignChallengeResponse = await signChallenge(challengeString);
+
+        if (!signChallengeResponse.originalBytes || !signChallengeResponse.signatureBytes) {
+            setDisplayMessage(signChallengeResponse.message);
+            return;
+        }
 
         /**
          * Verify the challenge using the passed in verifyChallenge() props function. Note that this 
@@ -127,7 +132,11 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
          * 
          * Expects { success: boolean, message: string }
          */
-        const { success, message } = await verifyChallengeOnBackend(signChallengeResponse);
+        const { success, message } = await verifyChallengeOnBackend(
+            signChallengeResponse.originalBytes,
+            signChallengeResponse.signatureBytes,
+            constructChallengeObjectFromString(challengeString)
+        );
 
         /**
          * Handle success / failure
