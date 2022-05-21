@@ -76,6 +76,14 @@ export type SupportedChain = {
  */
 export type SignInWithBlockinButtonProps = {
     /**
+     * Valid CSS style JSON. Will be applied as an inline style to the button.
+     */
+    buttonStyle?: any,
+    /**
+     * Valid CSS style JSON. Will be applied as an inline style to the modal.
+     */
+    modalStyle?: any,
+    /**
      * EIP-4361 params that will make up the challenge. See ChallengeParams type.
      */
     challengeParams: ChallengeParams,

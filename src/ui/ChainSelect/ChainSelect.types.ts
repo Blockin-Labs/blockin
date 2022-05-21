@@ -3,6 +3,14 @@ import { ChainProps } from "../SignInWithBlockinButton/SignInWithBlockinButton.t
 // Generated with util/create-component.js
 export interface ChainSelectProps {
     /**
+     * Valid CSS style JSON. Will be applied as an inline style to the button.
+     */
+    buttonStyle?: any,
+    /**
+     * Valid CSS style JSON. Will be applied as an inline style to the modal.
+     */
+    modalStyle?: any,
+    /**
     *  Array of chain props inputted to SignInWithBlockinButton. See ChainProps type. Default selected chain will be chains[0].
     */
     chains: ChainProps[],

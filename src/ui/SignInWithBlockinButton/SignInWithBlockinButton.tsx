@@ -54,6 +54,8 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     canAddCustomAssets = false,
     canAddCustomUris = false,
     customAddResourcesMessage = '',
+    buttonStyle,
+    modalStyle
 }) => {
     const [modalIsVisible, setModalIsVisible] = useState(false);
 
@@ -157,13 +159,13 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
     return <div className='blockin-global'>
         {/* Main Sign In Button */}
-        <button className='blockin-button main-button' onClick={() => setModalIsVisible(!modalIsVisible)}>
+        <button className='blockin-button main-button' style={buttonStyle} onClick={() => setModalIsVisible(!modalIsVisible)}>
             Sign In with Blockin
         </button>
 
         {/* Popup Modal Once Clicked */}
         {modalIsVisible && <>
-            <div className='blockin-root' >
+            <div className='blockin-root' style={modalStyle}>
                 <div className="blockin-popup-container">
                     <div className="blockin-popup">
                         {/* Header with the Close Button */}
