@@ -13,7 +13,7 @@ export type {
 } from './types/verify.types.js'
 
 export type {
-    VerifyChallengeOnBackendRequest,
+    SignChallengeResponse,
     VerifyChallengeOnBackendResponse,
     ChainProps,
     PresetAsset,
@@ -52,4 +52,4 @@ export {
     constructChallengeStringFromChallengeObject,
     validateChallengeObjectIsWellFormed,
     generateNonceWithLastBlockTimestamp
-} from './verify.js'
+} from './verify.js';
