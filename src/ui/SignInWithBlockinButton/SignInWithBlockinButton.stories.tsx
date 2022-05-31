@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ChallengeParams } from "../../types/verify.types";
 import SignInWithBlockinButton from "./SignInWithBlockinButton";
-import { SignInWithBlockinButtonProps, SignChallengeResponse } from "./SignInWithBlockinButton.types";
+import { SignInWithBlockinButtonProps, SignChallengeResponse, SupportedChain } from "./SignInWithBlockinButton.types";
 
 export default {
     title: "SignInWithBlockinButton"
@@ -31,7 +31,6 @@ const handleSignChallengeSuccess = async (challenge: string) => {
 }
 
 const props = {
-    currentChain: 'Algorand Testnet',
     challengeParams: {
         domain: 'https://blockin.com',
         statement: 'Sign in to this website via Blockin. You will remain signed in until you terminate your browser session.',
@@ -67,7 +66,8 @@ const props = {
 
 export const SuccessfulSignAndVerify = () => {
     const [signedIn, setSignedIn] = useState(false);
-
+    const [connected, setConnected] = useState(false);
+    const [chain, setChain] = useState('Ethereum');
 
     return <>
         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
@@ -75,6 +75,17 @@ export const SuccessfulSignAndVerify = () => {
         <br />
         <SignInWithBlockinButton
             {...props}
+            currentChain={chain}
+            onChainUpdate={async (chain: SupportedChain) => {
+                setChain(chain.name);
+            }}
+            chainOptions={
+                [
+                    { name: 'Ethereum' },
+                    { name: 'Algorand Testnet' },
+                ]
+            }
+            loggedIn={signedIn}
             signChallenge={async (challenge: string) => {
                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
@@ -84,6 +95,16 @@ export const SuccessfulSignAndVerify = () => {
 
                 setSignedIn(true);
                 return verificationResponse;
+            }}
+            logout={async () => {
+                setSignedIn(false);
+            }}
+            connected={connected}
+            connect={async () => {
+                setConnected(true);
+            }}
+            disconnect={async () => {
+                setConnected(false);
             }}
         />
     </>

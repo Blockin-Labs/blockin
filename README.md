@@ -60,7 +60,7 @@ This README focuses mainly on this codebase. The [`Blockin Docs`](https://blocki
 ## Scope of the Library
 This library supports creating digital authorization assets, such as NFTs, on any blockchain that supports them, as well as generating and verifying sign-in requests in the form of a challenge / response. 
 
-Note that the Blockin library does not handle signing the challenges and will never ask for your private key. It only uses public data and cryptographic signatures to verify.
+Note that the Blockin library does not handle signing the challenges and will never ask for your private key. Challenge signatures should be implemented separately. It only uses public data and cryptographic signatures to verify.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -70,7 +70,7 @@ For using the Blockin library on either a backend or frontend codebase, all you 
 npm install blockin
 ```
 
-Then, you can import any function via 
+Then, you can import via 
 ```TSX
 import { ... } from 'blockin';'
 ```

@@ -66,15 +66,21 @@ export type VerifyChallengeOnBackendResponse = {
  */
 export type SupportedChain = {
     name: string;
-    logo: string;
-    getAddressExplorerUrl: (address: string) => string;
-    getAssetExplorerUrl: (asset: string) => string;
+    logo?: string;
+    getAddressExplorerUrl?: (address: string) => string;
+    getAssetExplorerUrl?: (asset: string) => string;
 }
 
 /**
  * Props to pass into the SignInWithBlockinButton component
  */
 export type SignInWithBlockinButtonProps = {
+    /**
+     * String name of current selected chain to use. There are a few chains that are preset as supported chains. If
+     * currentChain does not match any of the supported chains, you must specify currentChainInfo to provide metadata about the chain.
+     */
+    currentChain: string,
+
     /**
      * Valid CSS style JSON. Will be applied as an inline style to the button.
      */
@@ -83,43 +89,83 @@ export type SignInWithBlockinButtonProps = {
      * Valid CSS style JSON. Will be applied as an inline style to the modal.
      */
     modalStyle?: any,
+
+    /**
+     * Defaults to false. If set to true, will hide the connect button and other connect props will be ignored.
+     */
+    hideConnect?: boolean,
+    /**
+     * Defaults to false. Determines whether to display the connect or disconnect button.  
+     */
+    connected?: boolean,
+    /**
+     * Function to be called when connect is clicked. Must update connected prop.
+     */
+    connect?: () => Promise<void>,
+    /**
+     * Function to be called when disconnect is clicked. Must update connected prop.
+     */
+    disconnect?: () => Promise<void>,
+
+    /**
+     * List of selectable options for supported blockchains. If a supported name,
+     * you will only need to specify { name: string }, else you can optionally specify other
+     * metadata as in the SupportedChain type.
+     */
+    chainOptions?: SupportedChain[],
+    /**
+     * Function that is called after a new chain is selected. You will have to update the currentChain prop here.
+     */
+    onChainUpdate?: (chain: SupportedChain) => Promise<void>
+
+    /**
+     * Defaults to false. If set to true, will hide the login button and other login props will be ignored.
+     */
+    hideLogin?: boolean,
+    /**
+     * Defaults to false. Determines whether to display the login or logout button.  
+     */
+    loggedIn?: boolean,
+    /**
+     * Function to be called when logout is clicked. Must update loggedIn prop.
+     */
+    logout?: () => Promise<void>,
+
     /**
      * EIP-4361 params that will make up the challenge. See ChallengeParams type.
      */
-    challengeParams: ChallengeParams,
+    challengeParams?: ChallengeParams,
+
     /**
-     * String name of current selected chain to use. There are a few chains that are preset as supported chains. If
-     * currentChain does not match any of the supported chains, you must specify currentChainInfo to provide metadata about the chain.
-     */
-    currentChain: string,
+    * Blockin doesn't handle any signing functionality. When user clicks sign-in, it will call this
+    * function which is passed in as a prop. Expects a return value that is consistent with the SignChallengeResponse 
+    * type.
+    */
+    signChallenge?: (challenge: string) => Promise<SignChallengeResponse>,
     /**
-     *  Assets to be displayed as resource options to sign-in with. See PresetAsset type.
-     */
-    displayedAssets: PresetAsset[],
-    /**
-     * Uris to be displayed as resource options to sign-in with. See PresetUri type.
-     */
-    displayedUris: PresetUri[],
-    /**
-     * Blockin doesn't handle any signing functionality. When user clicks sign-in, it will call this
-     * function which is passed in as a prop. Expects a return value that is consistent with the SignChallengeResponse 
-     * type.
-     */
-    signChallenge: (challenge: string) => Promise<SignChallengeResponse>,
-    /**
-     * This is where you perform the following: 1) call Blockin's verifyChallenge() within your backend,
-     * 2) include any other additional verification checks about the challenge (like nonce verification if using a custom scheme 
-     * or assert anything else about the challenge details that should be expected ), 3) if verification passes, update whatever is
-     * needed on frontend and backend to authenticate the user. Expects a response consistent with the VerifyChallengeOnBackendResponse type. 
-     * Note that we do this because for verification, you must have a valid API key and ChainDriver which is only accessible
-     * via the authorizing resource's backend.
-     */
-    verifyChallengeOnBackend: (
+    * This is where you perform the following: 1) call Blockin's verifyChallenge() within your backend,
+    * 2) include any other additional verification checks about the challenge (like nonce verification if using a custom scheme 
+    * or assert anything else about the challenge details that should be expected ), 3) if verification passes, update whatever is
+    * needed on frontend and backend to authenticate the user. Expects a response consistent with the VerifyChallengeOnBackendResponse type. 
+    * Note that we do this because for verification, you must have a valid API key and ChainDriver which is only accessible
+    * via the authorizing resource's backend.
+    * 
+    * Must update loggedIn prop.
+    */
+    verifyChallengeOnBackend?: (
         originalBytes: Uint8Array,
         signatureBytes: Uint8Array,
         challengeObject: ChallengeParams
-    )
-        => Promise<VerifyChallengeOnBackendResponse>,
+    ) => Promise<VerifyChallengeOnBackendResponse>,
+    /**
+     *  Assets to be displayed as resource options to sign-in with. See PresetAsset type.
+     */
+    displayedAssets?: PresetAsset[],
+    /**
+     * Uris to be displayed as resource options to sign-in with. See PresetUri type.
+     */
+    displayedUris?: PresetUri[],
+
     /**
      * To generate a valid challenge, you must specify a nonce. This can either be done by specifying it in
      * challengeParams or via this function which returns a nonce string. This prop is optional, but if defined, we will 

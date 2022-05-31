@@ -18,11 +18,12 @@ export function initializeVerify(driver: IChainDriver) {
  * 
  * 
  * @param challengeParams - JSON object with the challenge details such as domain, uri, statement, address, etc.
+ * @param chainName - Name of the blockchain to include in the statement - "Sign in with your ____ account"
  * @param options - JSON object speicfying any additional options when creating the challenge
  * @returns Well-formed challenge string to be signed by the user, if successsful. Error string is returned
  * upon failure.
  */
-export async function createChallenge(challengeParams: ChallengeParams, options?: CreateChallengeOptions): Promise<string> {
+export async function createChallenge(challengeParams: ChallengeParams, chainName?: string, options?: CreateChallengeOptions): Promise<string> {
     /**
      *  This function should remain completely ChainDriver free. ChainDriver dependencies tend to mess up the
      * React component generation in the browser.
@@ -59,7 +60,7 @@ export async function createChallenge(challengeParams: ChallengeParams, options?
 
         validateChallengeObjectIsWellFormed(challenge); // will throw error if invalid
 
-        return constructChallengeStringFromChallengeObject(challenge);
+        return constructChallengeStringFromChallengeObject(challenge, chainName);
     } catch (error: unknown) {
         return `Error: ${error}`;
     }
@@ -189,11 +190,12 @@ export function validateChallengeObjectIsWellFormed(challenge: ChallengeParams) 
  * Parses a JSON object that specifies the challenge fields and returns a well-formatted EIP-4361 string. 
  * Note that there is no validity checks on the inputs. It is a precondition that it is well-formed. 
  * @param challenge - Well-formatted JSON object specifying the EIP-4361 fields.
+ * @param chainName - Name of the blockchain to include in the statement - "Sign in with your ____ account"
  * @returns - Well-formatted EIP-4361 challenge string to be signed.
  */
-export function constructChallengeStringFromChallengeObject(challenge: ChallengeParams): string {
+export function constructChallengeStringFromChallengeObject(challenge: ChallengeParams, chainName?: string): string {
     let message = "";
-    message += `${challenge.domain} wants you to sign in with your Algorand account:\n`
+    message += `${challenge.domain} wants you to sign in with your ${chainName ? chainName : 'Web3'} account:\n`
     message += `${challenge.address}\n\n`;
     if (challenge.statement) {
         message += `${challenge.statement}\n`;
@@ -239,6 +241,7 @@ async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string
  * @returns JSON challenge object with all specified EIP-4361 fields
  */
 export function constructChallengeObjectFromString(challenge: string): ChallengeParams {
+
     const messageArray = challenge.split("\n");
     const domain = messageArray[0].split(' ')[0];
     const address = messageArray[1];
@@ -289,6 +292,7 @@ export function constructChallengeObjectFromString(challenge: string): Challenge
     }
 
     return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce };
+
 }
 
 /**
