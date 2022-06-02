@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { ChallengeParams } from "../../types/verify.types";
 import SignInWithBlockinButton from "./SignInWithBlockinButton";
-import { SignInWithBlockinButtonProps, SignChallengeResponse, SupportedChain } from "./SignInWithBlockinButton.types";
+import { SignChallengeResponse, SupportedChain } from "./SignInWithBlockinButton.types";
 
 export default {
     title: "SignInWithBlockinButton"
@@ -49,25 +49,25 @@ const props = {
         assetId: '87987698',
         description: 'This asset represents a standard plan membership. You must have a minimum balance of 1 of this asset in your wallet to receive standard plan privileges.',
         frozen: true,
-        defaultSelected: true,
+        defaultSelected: false,
     }],
-    displayedUris: [{
-        name: 'Standard Access',
-        uri: 'https://blockin.com',
-        description: 'Anyone who verifies with a valid crypto address can be granted standard access.',
-        frozen: false,
-        defaultSelected: true,
-    }],
+    // displayedUris: [{
+    //     name: 'Standard Access',
+    //     uri: 'https://blockin.com',
+    //     description: 'Anyone who verifies with a valid crypto address can be granted standard access.',
+    //     frozen: false,
+    //     defaultSelected: true,
+    // }],
     currentChainInfo: undefined,
-    canAddCustomAssets: true,
-    canAddCustomUris: true,
+    // canAddCustomAssets: true,
+    // canAddCustomUris: true,
     customAddResourcesMessage: 'Example explanation message'
 }
 
 export const SuccessfulSignAndVerify = () => {
-    const [signedIn, setSignedIn] = useState(false);
+    const [signedIn, setSignedIn] = useState('');
     const [connected, setConnected] = useState(false);
-    const [chain, setChain] = useState('Ethereum');
+    const [chain, setChain] = useState('Algorand Testnet');
 
     return <>
         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
@@ -85,7 +85,9 @@ export const SuccessfulSignAndVerify = () => {
                     { name: 'Algorand Testnet' },
                 ]
             }
-            loggedIn={signedIn}
+            loggedIn={!!signedIn}
+            address={'0x336asd67a'}
+            loggedInMessage={signedIn}
             signChallenge={async (challenge: string) => {
                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
@@ -93,11 +95,11 @@ export const SuccessfulSignAndVerify = () => {
             verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
                 const verificationResponse = await getVerifyChallengeSuccess();
 
-                setSignedIn(true);
+                setSignedIn('Premium Plan');
                 return verificationResponse;
             }}
             logout={async () => {
-                setSignedIn(false);
+                setSignedIn('');
             }}
             connected={connected}
             connect={async () => {
@@ -110,49 +112,49 @@ export const SuccessfulSignAndVerify = () => {
     </>
 }
 
-export const SignFailure = () => {
-    const [signedIn, setSignedIn] = useState(false);
+// export const SignFailure = () => {
+//     const [signedIn, setSignedIn] = useState(false);
 
-    return <>
-        Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
-        <br />
-        <br />
-        <SignInWithBlockinButton
-            {...props}
-            signChallenge={async (challenge: string) => {
-                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeFailure(challenge);
-                return signChallengeResponse;
-            }}
-            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
-                const verificationResponse = await getVerifyChallengeSuccess();
+//     return <>
+//         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
+//         <br />
+//         <br />
+//         <SignInWithBlockinButton
+//             {...props}
+//             signChallenge={async (challenge: string) => {
+//                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeFailure(challenge);
+//                 return signChallengeResponse;
+//             }}
+//             verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
+//                 const verificationResponse = await getVerifyChallengeSuccess();
 
-                setSignedIn(true);
-                return verificationResponse;
-            }}
-        />
-    </>
-}
-
-
-export const VerifyFailure = () => {
-    const [signedIn, setSignedIn] = useState(false);
+//                 setSignedIn(true);
+//                 return verificationResponse;
+//             }}
+//         />
+//     </>
+// }
 
 
-    return <>
-        Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
-        <br />
-        <br />
-        <SignInWithBlockinButton
-            {...props}
-            signChallenge={async (challenge: string) => {
-                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
-                return signChallengeResponse;
-            }}
-            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
-                const verificationResponse = await getVerifyChallengeFailure();
-                return verificationResponse
-            }}
-        />
-    </>
-}
+// export const VerifyFailure = () => {
+//     const [signedIn, setSignedIn] = useState(false);
+
+
+//     return <>
+//         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
+//         <br />
+//         <br />
+//         <SignInWithBlockinButton
+//             {...props}
+//             signChallenge={async (challenge: string) => {
+//                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
+//                 return signChallengeResponse;
+//             }}
+//             verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
+//                 const verificationResponse = await getVerifyChallengeFailure();
+//                 return verificationResponse
+//             }}
+//         />
+//     </>
+// }
 

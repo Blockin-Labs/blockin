@@ -11,15 +11,21 @@ import { getChain } from "../SupportedChains";
  * ChainSelect - Component to handle updating the chain for multi-chain dApps. This is to be used in conjunction
  * with the SignInWithBlockin button.
  */
-const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain }) => {
+const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selectedChain, buttonStyle, modalStyle }) => {
     const [chain, setChain] = useState<string>();
     const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
 
     useEffect(() => {
-        if (chains[0]) {
+        if (!selectedChain && chains[0]) {
             handleChainChange(chains[0]);
+        } else if (selectedChain) {
+            handleChainChange(selectedChain);
         }
     }, []);
+
+    useEffect(() => {
+        handleChainChange(selectedChain);
+    }, [selectedChain]);
 
     const handleChainChange = (chain: SupportedChain) => {
         setChain(chain.name);
@@ -30,10 +36,12 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain }) => {
     }
 
     return <>
-        <button className='blockin-button main-button' onClick={() => setMenuIsVisible(!menuIsVisible)}>
-            Selected Chain: {getChain(chain ? chain : '').name}
+        <button className='blockin-button main-button' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
+            {/* Selected Chain: {getChain(chain ? chain : '').name} */}
+            Select
         </button>
-        {menuIsVisible && <div className='blockin-root blockin-chain-select'>
+
+        {menuIsVisible && <div className='blockin-root blockin-chain-select' style={modalStyle}>
             <div className="blockin-popup-container">
                 <div className="blockin-popup">
                     {/* Header with the Close Button */}
@@ -63,7 +71,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain }) => {
                     {
                         chains.map(chain => {
                             return <div key={chain.name}>
-                                <button className='blockin-button' onClick={() => handleChainChange(chain)}>
+                                <button style={buttonStyle} className='blockin-button' onClick={() => handleChainChange(chain)}>
                                     Select {chain.name} <img className='blockin-chain-select-logo' height='20px' width='20px' src={getChain(chain.name).logo} />
                                 </button>
                             </div>

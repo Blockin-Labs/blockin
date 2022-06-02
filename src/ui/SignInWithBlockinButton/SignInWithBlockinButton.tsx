@@ -6,6 +6,7 @@ import { constructChallengeObjectFromString, createChallenge } from "../../verif
 import { useEffect, useState } from 'react';
 import { getChain } from '../SupportedChains'
 import ChainSelect from '../ChainSelect';
+import Blockies from 'react-blockies';
 
 /*
  * Gets the default selected resources from the passed-in props
@@ -45,6 +46,8 @@ const Link = ({ url, text }: { url: string, text?: string }) => {
  */
 const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     challengeParams,
+    address,
+    loggedInMessage,
     displayedAssets = [],
     displayedUris = [],
     signChallenge,
@@ -74,6 +77,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
     const [assetId, setAssetId] = useState('');
     const [uri, setUri] = useState('');
+    const [displayNameAddress, setDisplayNameAddress] = useState('');
 
     const [advancedIsVisible, setAdvancedIsVisible] = useState(false);
 
@@ -103,10 +107,31 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
         setChain(getChain(currentChain, currentChainInfo));
     }, [currentChain]);
 
+    useEffect(() => {
+        setDisplayNameAddress('');
+        updateDisplayAddress(address);
+    }, [currentChain, chain, address]);
+
+    useEffect(() => {
+        if (address) {
+            updateDisplayAddress(address);
+        }
+    }, []);
+
     /**
      * Handles a user clicking the sign in button on the popup modal.
      */
     const handleSignIn = async () => {
+        if (!signChallenge || !verifyChallengeOnBackend) {
+            setDisplayMessage('Both signChallenge and verifyChallengeOnBackend need to be defined for signing in. If you did not want to include sign-in functionality, set hideLogin to true.');
+            throw 'Both signChallenge and verifyChallengeOnBackend need to be defined for signing in. If you did not want to include sign-in functionality, set hideLogin to true.'
+        }
+
+        if (!generateNonce && !challengeParams?.nonce) {
+            setDisplayMessage('One of generateNonce or challengeParams.nonce needs to be defined. Note that generateNonce will take priority.');
+            throw 'One of generateNonce or challengeParams.nonce needs to be defined. Note that generateNonce will take priority.'
+        }
+
         /**
          * Generate the challenge object by attempting to call generateNonce() and inputting
          * the selectedResources
@@ -175,10 +200,31 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
         }
     }
 
+    const updateDisplayAddress = async (address: string) => {
+        if (displayNameAddress) return displayNameAddress;
+        let displayName = '';
+        if (chain.getNameForAddress) {
+            displayName = await chain.getNameForAddress(address);
+        }
 
-    return <div className='blockin-global '>
-        {chainOptions?.length > 1 &&
-            <ChainSelect chains={chainOptions} updateChain={async (newChain: SupportedChain) => {
+        if (!displayName) {
+            if (address.length <= 11) {
+                displayName = address;
+            } else {
+                displayName = address.substring(0, 5) + '...' + address.substring(-5);
+            }
+        }
+
+        setDisplayNameAddress(displayName);
+    }
+
+    const challengeParamsAreValid = challengeParams && challengeParams.address && challengeParams.domain && challengeParams.statement && challengeParams.uri;
+
+
+    return <div className='blockin-global'>
+        {
+            chainOptions?.length > 1 &&
+            <ChainSelect selectedChain={chain} chains={chainOptions} updateChain={async (newChain: SupportedChain) => {
                 await onChainUpdate(newChain);
             }} />
         }
@@ -195,7 +241,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                     <button className='blockin-button main-button' style={buttonStyle} onClick={async () => {
                         await connect()
                     }}>
-                        Connect
+                        {currentChain} Connect
                     </button>
                 }
             </>
@@ -218,12 +264,24 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
             </>
         }
 
+        {/* Other sign-in information */}
+        {
+            connected && <>
+                {address && <p> <b><Blockies
+                    seed={address.toLowerCase()}
+                    size={40}
+                /> + Address - {displayNameAddress}</b></p>}
+                {loggedInMessage && <p><b>Signed In - {loggedInMessage}</b></p>}
+            </>
+        }
+
         {/* Popup Modal Once Clicked */}
         {
             signInModalIsVisible && <>
                 <div className='blockin-root' style={modalStyle}>
                     <div className="blockin-popup-container">
                         <div className="blockin-popup">
+                            {!connected && !hideConnect && <><b>Warning: Your wallet is not currently connected. You will not be able to sign the challenge message.  </b><hr /></>}
                             {/* Header with the Close Button */}
                             <div className='blockin-header'>
                                 <div className="header-end">
@@ -265,35 +323,37 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                             <div className='blockin-challenge'>
                                 <hr />
                                 <h3>Sign-In Details</h3>
-                                <div className='blockin-challenge-details'>
+                                {challengeParamsAreValid ? <>
+                                    <div className='blockin-challenge-details'>
 
-                                    <p><b>
-                                        <Link url={challengeParams.uri} />
-                                    </b></p>
-                                    <p><b>
-                                        <Link url={challengeParams.domain} /> wants you to sign in with your {chain.name} account: {<Link text={challengeParams.address} url={chain.getAddressExplorerUrl(challengeParams.address)} />}
-                                    </b></p>
-                                    <p><b>{challengeParams.statement}</b></p>
-                                    {challengeParams.issuedAt && <><p><b>This sign-in attempt was issued at {challengeParams.issuedAt}</b></p></>}
-                                    <p><b>{generateHumanReadableTimeDetails(challengeParams.notBefore, challengeParams.expirationDate)}</b></p>
+                                        <p><b>
+                                            <Link url={challengeParams.uri} />
+                                        </b></p>
+                                        <p><b>
+                                            <Link url={challengeParams.domain} /> wants you to sign in with your {chain.name} account: {<Link text={challengeParams.address} url={chain.getAddressExplorerUrl(challengeParams.address)} />}
+                                        </b></p>
+                                        <p><b>{challengeParams.statement}</b></p>
+                                        {challengeParams.issuedAt && <><p><b>This sign-in attempt was issued at {challengeParams.issuedAt}</b></p></>}
+                                        <p><b>{generateHumanReadableTimeDetails(challengeParams.notBefore, challengeParams.expirationDate)}</b></p>
 
 
-                                    {/* Would probably be nice to have an "Advanced" section here where the user can see all of the below fields which 99% wont understand */}
-                                    {/* Don't show if undefined */}
-                                </div>
-                                <hr />
-                                <div>
-                                    <h3>Advanced Sign-In Details</h3>
-                                    <button className="blockin-button" onClick={() => setAdvancedIsVisible(!advancedIsVisible)}>
-                                        {advancedIsVisible ? 'Hide' : 'Show'}
-                                    </button>
-                                    {advancedIsVisible && <div>
-                                        <p><b>Nonce: {generateNonce ? 'Nonce will be generated upon clicking sign-in.' : challengeParams.nonce}</b></p>
-                                        <p><b>Chain ID: {challengeParams.chainId ? challengeParams.chainId : '1 (Default)'}</b></p>
-                                        <p><b>Version: {challengeParams.version ? challengeParams.version : '1 (Default)'}</b></p>
+                                        {/* Would probably be nice to have an "Advanced" section here where the user can see all of the below fields which 99% wont understand */}
+                                        {/* Don't show if undefined */}
                                     </div>
-                                    }
-                                </div>
+                                    <hr />
+                                    <div>
+                                        <h3>Advanced Sign-In Details</h3>
+                                        <button className="blockin-button" onClick={() => setAdvancedIsVisible(!advancedIsVisible)}>
+                                            {advancedIsVisible ? 'Hide' : 'Show'}
+                                        </button>
+                                        {advancedIsVisible && <div>
+                                            <p><b>Nonce: {generateNonce ? 'Nonce will be generated upon clicking sign-in.' : challengeParams.nonce}</b></p>
+                                            <p><b>Chain ID: {challengeParams.chainId ? challengeParams.chainId : '1 (Default)'}</b></p>
+                                            <p><b>Version: {challengeParams.version ? challengeParams.version : '1 (Default)'}</b></p>
+                                        </div>
+                                        }
+                                    </div>
+                                </> : <><p><b>Error: Challenge parameters are invalid.</b></p></>}
                             </div>
 
                             {/* Challenge Resources Preset According to Props */}

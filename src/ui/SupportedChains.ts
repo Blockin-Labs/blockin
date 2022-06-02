@@ -11,6 +11,7 @@ import { SupportedChain } from "./SignInWithBlockinButton/SignInWithBlockinButto
  * @returns SupportedChain object containing metadata about the chain.
  */
 export const getChain = (chainName: string, currentChainInfo?: SupportedChain): SupportedChain => {
+    // console.log("CHAIN NAME", chainName)
     if (currentChainInfo) return currentChainInfo;
     else if (SUPPORTED_CHAIN_MAP[chainName]) return SUPPORTED_CHAIN_MAP[chainName];
     else return {
@@ -27,6 +28,7 @@ const SUPPORTED_CHAIN_MAP: any = {
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
         getAddressExplorerUrl: (address: string) => ``,
         getAssetExplorerUrl: (asset: string) => ``,
+        getNameForAddress: async (address: string) => 'trevormil.eth'
     },
     'Algorand Mainnet': {
         name: 'Algorand',
@@ -35,7 +37,7 @@ const SUPPORTED_CHAIN_MAP: any = {
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
     },
     'Algorand Testnet': {
-        name: 'Algorand (Testnet)',
+        name: 'Algorand Testnet',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
         getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,

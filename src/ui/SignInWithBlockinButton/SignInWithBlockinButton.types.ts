@@ -69,6 +69,7 @@ export type SupportedChain = {
     logo?: string;
     getAddressExplorerUrl?: (address: string) => string;
     getAssetExplorerUrl?: (asset: string) => string;
+    getNameForAddress?: (address: string) => Promise<string | undefined>;
 }
 
 /**
@@ -77,9 +78,21 @@ export type SupportedChain = {
 export type SignInWithBlockinButtonProps = {
     /**
      * String name of current selected chain to use. There are a few chains that are preset as supported chains. If
-     * currentChain does not match any of the supported chains, you must specify currentChainInfo to provide metadata about the chain.
+     * currentChain does not match any of the supported chains, you must specify currentChainInfo to provide metadata 
+     * about the chain.
      */
     currentChain: string,
+
+    /**
+     * Address of connected wallet.
+     */
+    address?: string;
+    /**
+     * Optional message to be displayed alongside address. Intended to display signed in user privileges here.
+     * 
+     * Example: 0x123456 (Premium) or 0xabcdefgh (Standard)
+     */
+    loggedInMessage?: string;
 
     /**
      * Valid CSS style JSON. Will be applied as an inline style to the button.

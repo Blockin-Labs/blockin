@@ -11,6 +11,12 @@ export interface ChainSelectProps {
      */
     modalStyle?: any,
     /**
+    * Current selected chain. If defined, this will be the selected chain. If not defined,
+    * this component will maintain an internal state with the default selected chain being the first chain
+    * specified in chains. 
+    */
+    selectedChain?: SupportedChain,
+    /**
     *  Array of chain props inputted to SignInWithBlockinButton. See ChainProps type. Default selected chain will be chains[0].
     */
     chains: SupportedChain[],
