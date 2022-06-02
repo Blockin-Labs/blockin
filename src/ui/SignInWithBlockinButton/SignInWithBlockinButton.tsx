@@ -272,6 +272,12 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                         seed={address ? address.toLowerCase() : ''}
                         size={40}
                     /> + Address - {displayNameAddress}</b></p>}
+
+            </>
+        }
+        {/* Other sign-in information */}
+        {
+            loggedIn && <>
                 {loggedInMessage && <p><b>Signed In - {loggedInMessage}</b></p>}
             </>
         }
