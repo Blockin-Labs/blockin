@@ -108,14 +108,11 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     }, [currentChain]);
 
     useEffect(() => {
-        setDisplayNameAddress('');
         updateDisplayAddress(address);
     }, [currentChain, chain, address]);
 
     useEffect(() => {
-        if (address) {
-            updateDisplayAddress(address);
-        }
+        updateDisplayAddress(address);
     }, []);
 
     /**
@@ -201,7 +198,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     }
 
     const updateDisplayAddress = async (address: string) => {
-        if (displayNameAddress) return displayNameAddress;
+        // if (displayNameAddress) return displayNameAddress;
         let displayName = '';
         if (chain.getNameForAddress) {
             displayName = await chain.getNameForAddress(address);
@@ -211,15 +208,18 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
             if (address.length <= 11) {
                 displayName = address;
             } else {
-                displayName = address.substring(0, 5) + '...' + address.substring(-5);
+                displayName = address.substring(0, 5) + '...' + address.substring(address.length - 5);
             }
         }
+
+        console.log("SETTING DISPLAYNAME TO", displayName);
 
         setDisplayNameAddress(displayName);
     }
 
     const challengeParamsAreValid = challengeParams && challengeParams.address && challengeParams.domain && challengeParams.statement && challengeParams.uri;
 
+    console.log("DISPLAY NAME", displayNameAddress, " --- ADDRESS", address);
 
     return <div className='blockin-global'>
         {
@@ -267,10 +267,11 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
         {/* Other sign-in information */}
         {
             connected && <>
-                {address && <p> <b><Blockies
-                    seed={address.toLowerCase()}
-                    size={40}
-                /> + Address - {displayNameAddress}</b></p>}
+                {address && <p> <b>
+                    <Blockies
+                        seed={address ? address.toLowerCase() : ''}
+                        size={40}
+                    /> + Address - {displayNameAddress}</b></p>}
                 {loggedInMessage && <p><b>Signed In - {loggedInMessage}</b></p>}
             </>
         }

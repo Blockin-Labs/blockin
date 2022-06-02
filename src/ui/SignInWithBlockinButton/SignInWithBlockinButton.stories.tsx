@@ -86,7 +86,7 @@ export const SuccessfulSignAndVerify = () => {
                 ]
             }
             loggedIn={!!signedIn}
-            address={'0x336asd67a'}
+            address={'0xe00dd9d317573f7b4868d8f2578c65544b153a27'}
             loggedInMessage={signedIn}
             signChallenge={async (challenge: string) => {
                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);

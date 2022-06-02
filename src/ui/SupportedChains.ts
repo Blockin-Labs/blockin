@@ -27,8 +27,7 @@ const SUPPORTED_CHAIN_MAP: any = {
         name: 'Ethereum',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
         getAddressExplorerUrl: (address: string) => ``,
-        getAssetExplorerUrl: (asset: string) => ``,
-        getNameForAddress: async (address: string) => 'trevormil.eth'
+        getAssetExplorerUrl: (asset: string) => ``
     },
     'Algorand Mainnet': {
         name: 'Algorand',

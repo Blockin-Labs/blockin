@@ -37,8 +37,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
 
     return <>
         <button className='blockin-button main-button' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
-            {/* Selected Chain: {getChain(chain ? chain : '').name} */}
-            Select
+            Select (Current : {getChain(chain ? chain : '').name})
         </button>
 
         {menuIsVisible && <div className='blockin-root blockin-chain-select' style={modalStyle}>
