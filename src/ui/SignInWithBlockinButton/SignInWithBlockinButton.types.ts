@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { ChallengeParams } from "../../types/verify.types.js";
 
 /**
@@ -207,7 +208,7 @@ export type SignInWithBlockinButtonProps = {
      * what assets or uris will be accepted, what permissions they will grant, etc. For example, here is where you may explain that 
      * 'if asset with metadata hash === X is added, then privilege X will be granted'
      */
-    customAddResourcesMessage?: string
+    customAddResourcesMessage?: string | ReactNode
     // canSetExpirationDate: boolean,
     // canSetNotBeforeDate: boolean,
 }
