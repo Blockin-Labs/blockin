@@ -35,24 +35,24 @@ export default {
         postcss(),
         json(),
         //If anything else is added to here, also confirm the postuirollup script in package.json handles it
-        copy({
-            targets: [
-                {
-                    src: 'src/ui/variables.scss',
-                    dest: 'dist/',
-                    rename: 'variables.scss',
-                },
-                {
-                    src: 'src/ui/typography.scss',
-                    dest: 'dist/',
-                    rename: 'typography.scss',
-                },
-                {
-                    src: 'src/ui/blockin.scss',
-                    dest: 'dist/',
-                    rename: 'blockin.scss',
-                },
-            ],
-        }),
+        // copy({
+        //     targets: [
+        //         {
+        //             src: 'src/ui/variables.scss',
+        //             dest: 'dist/',
+        //             rename: 'variables.scss',
+        //         },
+        //         {
+        //             src: 'src/ui/typography.scss',
+        //             dest: 'dist/',
+        //             rename: 'typography.scss',
+        //         },
+        //         {
+        //             src: 'src/ui/blockin.scss',
+        //             dest: 'dist/',
+        //             rename: 'blockin.scss',
+        //         },
+        //     ],
+        // }),
     ],
 };
