@@ -25,7 +25,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
 
     useEffect(() => {
         handleChainChange(selectedChain);
-    }, [selectedChain]);
+    }, [selectedChain.name]);
 
     const handleChainChange = (chain: SupportedChain) => {
         setChain(chain.name);

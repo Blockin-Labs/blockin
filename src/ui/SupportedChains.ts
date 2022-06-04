@@ -11,15 +11,19 @@ import { SupportedChain } from "./SignInWithBlockinButton/SignInWithBlockinButto
  * @returns SupportedChain object containing metadata about the chain.
  */
 export const getChain = (chainName: string, currentChainInfo?: SupportedChain): SupportedChain => {
+    // console.log("INITIAL CURRENTCHAININFO", currentChainInfo);
+    const safeCopyOfCurrentChainInfo = {
+        ...currentChainInfo
+    }
     let chainInfo: any = {};
     if (currentChainInfo && SUPPORTED_CHAIN_MAP[chainName]) {
         chainInfo = {
             ...SUPPORTED_CHAIN_MAP[chainName],
-            ...currentChainInfo
+            ...safeCopyOfCurrentChainInfo
         }
     }
     else if (currentChainInfo) {
-        chainInfo = currentChainInfo
+        chainInfo = safeCopyOfCurrentChainInfo
     }
     else if (SUPPORTED_CHAIN_MAP[chainName]) {
         chainInfo = SUPPORTED_CHAIN_MAP[chainName];
@@ -33,6 +37,10 @@ export const getChain = (chainName: string, currentChainInfo?: SupportedChain): 
         getNameForAddress: async (address: string) => undefined,
         ...chainInfo
     }
+
+    // console.log("FINAL RETURN  OF GETCHAIN", chainInfoWithDefaults);
+    // console.log("CURRENTCHAININFO", currentChainInfo);
+    // console.log("CHAININFO", chainInfo);
 
     return chainInfoWithDefaults;
 }

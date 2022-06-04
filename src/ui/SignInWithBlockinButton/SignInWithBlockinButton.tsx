@@ -104,12 +104,17 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
      * Upon chain change, update chain metadata and props
      */
     useEffect(() => {
-        setChain(getChain(currentChain, currentChainInfo));
-    }, [currentChain]);
-
-    useEffect(() => {
-        updateDisplayAddress(address);
-    }, [currentChain, chain, address]);
+        const chainInfo = getChain(currentChain, currentChainInfo);
+        // console.log("CURRENTCHAININFOBEFORE", currentChainInfo);
+        setChain(chainInfo);
+        if (address) {
+            updateDisplayAddress(address, chainInfo);
+        }
+        // console.log("CURRENTCHAININFOAFTER", currentChainInfo);
+    }, [
+        currentChain,
+        address
+    ]);
 
     useEffect(() => {
         updateDisplayAddress(address);
@@ -197,14 +202,21 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
         }
     }
 
-    const updateDisplayAddress = async (address: string) => {
+    const updateDisplayAddress = async (address: string, chainInfo?: SupportedChain) => {
+        const chainDetails = chainInfo ? chainInfo : chain;
+        // console.log(chainDetails);
         // if (displayNameAddress) return displayNameAddress;
         let displayName = '';
+        // console.log("CHECKING FOR GETNAMEFORADDRESS", "ADDRESS: ",);
+
         if (chain.getNameForAddress) {
-            displayName = await chain.getNameForAddress(address);
+            // console.log("GETNAMEFORADDRESS IS DEFINED");
+            displayName = await chainDetails.getNameForAddress(address);
+            // console.log("GETNAMEFORADDRESS RETURNED: ", displayName);
         }
 
         if (!displayName) {
+            // console.log("DISPLAYNAME IS !displayName: ", displayName);
             if (address.length <= 11) {
                 displayName = address;
             } else {
@@ -212,14 +224,15 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
             }
         }
 
-        console.log("SETTING DISPLAYNAME TO", displayName);
+        // console.log("SETTING DISPLAYNAME TO", displayName);
 
         setDisplayNameAddress(displayName);
     }
 
     const challengeParamsAreValid = challengeParams && challengeParams.address && challengeParams.domain && challengeParams.statement && challengeParams.uri;
 
-    console.log("DISPLAY NAME", displayNameAddress, " --- ADDRESS", address);
+    // console.log("DISPLAY NAME", displayNameAddress, " --- ADDRESS", address);
+    // console.log("CURRENT CHAIN INFO", currentChainInfo, " --- ADDRESS", address);
 
     return <div className='blockin-global'>
         {
