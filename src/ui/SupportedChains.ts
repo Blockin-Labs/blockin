@@ -11,23 +11,38 @@ import { SupportedChain } from "./SignInWithBlockinButton/SignInWithBlockinButto
  * @returns SupportedChain object containing metadata about the chain.
  */
 export const getChain = (chainName: string, currentChainInfo?: SupportedChain): SupportedChain => {
-    // console.log("CHAIN NAME", chainName)
-    if (currentChainInfo) return currentChainInfo;
-    else if (SUPPORTED_CHAIN_MAP[chainName]) return SUPPORTED_CHAIN_MAP[chainName];
-    else return {
+    let chainInfo: any = {};
+    if (currentChainInfo && SUPPORTED_CHAIN_MAP[chainName]) {
+        chainInfo = {
+            ...SUPPORTED_CHAIN_MAP[chainName],
+            ...currentChainInfo
+        }
+    }
+    else if (currentChainInfo) {
+        chainInfo = currentChainInfo
+    }
+    else if (SUPPORTED_CHAIN_MAP[chainName]) {
+        chainInfo = SUPPORTED_CHAIN_MAP[chainName];
+    }
+
+    let chainInfoWithDefaults = {
         name: chainName,
         logo: 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png',
         getAddressExplorerUrl: (address: string) => ``,
         getAssetExplorerUrl: (asset: string) => ``,
+        getNameForAddress: async (address: string) => undefined,
+        ...chainInfo
     }
+
+    return chainInfoWithDefaults;
 }
 
 const SUPPORTED_CHAIN_MAP: any = {
     'Ethereum': {
         name: 'Ethereum',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
-        getAddressExplorerUrl: (address: string) => ``,
-        getAssetExplorerUrl: (asset: string) => ``
+        getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
     },
     'Algorand Mainnet': {
         name: 'Algorand',

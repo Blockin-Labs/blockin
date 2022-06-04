@@ -66,7 +66,7 @@ export type VerifyChallengeOnBackendResponse = {
  * Defines metadata about a supported chain within SignInWithBlockinButton. Used for UI purposes
  */
 export type SupportedChain = {
-    name: string;
+    name?: string;
     logo?: string;
     getAddressExplorerUrl?: (address: string) => string;
     getAssetExplorerUrl?: (asset: string) => string;

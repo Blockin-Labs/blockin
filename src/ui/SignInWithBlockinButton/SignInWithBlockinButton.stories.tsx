@@ -58,7 +58,9 @@ const props = {
     //     frozen: false,
     //     defaultSelected: true,
     // }],
-    currentChainInfo: undefined,
+    currentChainInfo: {
+        // getNameForAddress: async (address: string) => 'trevormil.eth'
+    },
     // canAddCustomAssets: true,
     // canAddCustomUris: true,
     customAddResourcesMessage: 'Example explanation message'
