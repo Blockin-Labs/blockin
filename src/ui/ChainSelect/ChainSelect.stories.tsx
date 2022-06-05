@@ -1,8 +1,8 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
-import { SignInWithBlockinButton } from "..";
+import { BlockinUIDisplay } from "..";
 import { ChallengeParams } from "../../types/verify.types";
-import { ChainProps, SignChallengeResponse } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
+import { ChainProps, SignChallengeResponse } from "../BlockinUIDisplay/BlockinUIDisplay.types";
 import ChainSelect from "./ChainSelect";
 import { ChainSelectProps } from "./ChainSelect.types";
 
@@ -53,7 +53,7 @@ const chainOptions =
                 frozen: false,
                 defaultSelected: true,
             }],
-            currentChainInfo: undefined,
+            selectedChainInfo: undefined,
             signChallenge: async (challenge: string) => {
                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
@@ -81,7 +81,7 @@ const chainOptions =
                 frozen: false,
                 defaultSelected: true,
             }],
-            currentChainInfo: undefined,
+            selectedChainInfo: undefined,
             signChallenge: async (challenge: string) => {
                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
@@ -109,7 +109,7 @@ const chainOptions =
                 frozen: false,
                 defaultSelected: true,
             }],
-            currentChainInfo: undefined,
+            selectedChainInfo: undefined,
             signChallenge: async (challenge: string) => {
                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
                 return signChallengeResponse;
@@ -136,7 +136,7 @@ export const ChainSelectWithSignInButton = () => {
             updateChain={(newChainProps: ChainProps) => { setChainProps(newChainProps) }}
             chains={chainOptions}
         />
-        <SignInWithBlockinButton
+        <BlockinUIDisplay
             challengeParams={{
                 domain: 'https://blockin.com',
                 statement: 'Sign in to this website via Blockin. You will remain signed in until you terminate your browser session.',
@@ -144,7 +144,7 @@ export const ChainSelectWithSignInButton = () => {
                 uri: 'https://blockin.com/login',
                 nonce: 'abs123xtz'
             }}
-            currentChain={chainProps.name}
+            selectedChainName={chainProps.name}
             displayedAssets={chainProps.displayedAssets ? chainProps.displayedAssets : []}
             displayedUris={chainProps.displayedUris ? chainProps.displayedUris : []}
             signChallenge={async (challenge: string) => {

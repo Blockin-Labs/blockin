@@ -13,14 +13,10 @@ export type {
 } from './types/verify.types.js'
 
 export type {
-    SignChallengeResponse,
-    VerifyChallengeOnBackendResponse,
-    ChainProps,
-    PresetAsset,
-    PresetUri,
-    BlockinVerifyChallengeResponse,
-    SupportedChain
-} from './ui/SignInWithBlockinButton/SignInWithBlockinButton.types.js'
+    SignAndVerifyChallengeResponse,
+    PresetResource,
+    SupportedChainMetadata
+} from './ui/BlockinUIDisplay/BlockinUIDisplay.types.js'
 
 export {
     setChainDriver

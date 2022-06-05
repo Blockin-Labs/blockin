@@ -2,11 +2,11 @@
 import React from "react";
 import { render } from "@testing-library/react";
 
-import SignInWithBlockinButton from "./SignInWithBlockinButton";
-import { SignInWithBlockinButtonProps } from "./SignInWithBlockinButton.types";
+import BlockinUIDisplay from "./BlockinUIDisplay";
+import { BlockinUIDisplayProps } from "./BlockinUIDisplay.types";
 
 describe("Test Component", () => {
-    let props: SignInWithBlockinButtonProps;
+    let props: BlockinUIDisplayProps;
 
     beforeEach(() => {
         props = {
@@ -14,13 +14,13 @@ describe("Test Component", () => {
         };
     });
 
-    const renderComponent = () => render(<SignInWithBlockinButton {...props} />);
+    const renderComponent = () => render(<BlockinUIDisplay {...props} />);
 
     it("should render foo text correctly", () => {
         props.foo = "harvey was here";
         const { getByTestId } = renderComponent();
 
-        const component = getByTestId("SignInWithBlockinButton");
+        const component = getByTestId("BlockinUIDisplay");
 
         expect(component).toHaveTextContent("harvey was here");
     });

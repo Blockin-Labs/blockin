@@ -1,4 +1,4 @@
-import { ChainProps, SupportedChain } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
+import { SupportedChainMetadata } from "../BlockinUIDisplay/BlockinUIDisplay.types";
 
 // Generated with util/create-component.js
 export interface ChainSelectProps {
@@ -15,15 +15,15 @@ export interface ChainSelectProps {
     * this component will maintain an internal state with the default selected chain being the first chain
     * specified in chains. 
     */
-    selectedChain?: SupportedChain,
+    selectedChain?: SupportedChainMetadata,
     /**
-    *  Array of chain props inputted to SignInWithBlockinButton. See ChainProps type. Default selected chain will be chains[0].
+    *  Array of chain props inputted to BlockinUIDisplay. See ChainProps type. Default selected chain will be chains[0].
     */
-    chains: SupportedChain[],
+    chains: SupportedChainMetadata[],
     /**
      * Update function that is called when the user selects a new chain. This function should handle all the functionality
-     * such as updating all backend and dApp functionality for the new chain, updating props to SignInWithBlockinButton, or updating 
+     * such as updating all backend and dApp functionality for the new chain, updating props to BlockinUIDisplay, or updating 
      * anything else that needs to for a chain update.
      */
-    updateChain: (chainProps: SupportedChain) => void
+    updateChain: (chainProps: SupportedChainMetadata) => void
 }

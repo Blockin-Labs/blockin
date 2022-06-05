@@ -1,28 +1,27 @@
-import { SupportedChain } from "./SignInWithBlockinButton/SignInWithBlockinButton.types";
+import { SupportedChainMetadata } from "./BlockinUIDisplay/BlockinUIDisplay.types";
 
 /**
- * Gets metadata about the current chain. First, if currentChainInfo is passed, we just return that. 
+ * Gets metadata about the current chain. First, if selectedChainInfo is passed, we just return that. 
  * Next, we check the supported chains map and see if the name passed in matches. If nothing else was 
  * found, we return a default object.
  * @param chainName Name of the current blockchain you would like to get. See SUPPORTED_CHAIN_MAP for
  * the natively supported names.
- * @param currentChainInfo Optional chain info. Must be of type SupportedChain. If this is defined, we
+ * @param selectedChainInfo Optional chain info. Must be of type SupportedChainMetadata. If this is defined, we
  * just return this
- * @returns SupportedChain object containing metadata about the chain.
+ * @returns SupportedChainMetadata object containing metadata about the chain.
  */
-export const getChain = (chainName: string, currentChainInfo?: SupportedChain): SupportedChain => {
-    // console.log("INITIAL CURRENTCHAININFO", currentChainInfo);
+export const getChain = (chainName: string, selectedChainInfo?: SupportedChainMetadata): SupportedChainMetadata => {
     const safeCopyOfCurrentChainInfo = {
-        ...currentChainInfo
+        ...selectedChainInfo
     }
     let chainInfo: any = {};
-    if (currentChainInfo && SUPPORTED_CHAIN_MAP[chainName]) {
+    if (selectedChainInfo && SUPPORTED_CHAIN_MAP[chainName]) {
         chainInfo = {
             ...SUPPORTED_CHAIN_MAP[chainName],
             ...safeCopyOfCurrentChainInfo
         }
     }
-    else if (currentChainInfo) {
+    else if (selectedChainInfo) {
         chainInfo = safeCopyOfCurrentChainInfo
     }
     else if (SUPPORTED_CHAIN_MAP[chainName]) {
@@ -37,10 +36,6 @@ export const getChain = (chainName: string, currentChainInfo?: SupportedChain): 
         getNameForAddress: async (address: string) => undefined,
         ...chainInfo
     }
-
-    // console.log("FINAL RETURN  OF GETCHAIN", chainInfoWithDefaults);
-    // console.log("CURRENTCHAININFO", currentChainInfo);
-    // console.log("CHAININFO", chainInfo);
 
     return chainInfoWithDefaults;
 }

@@ -1,11 +1,11 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import { ChallengeParams } from "../../types/verify.types";
-import SignInWithBlockinButton from "./SignInWithBlockinButton";
-import { SignChallengeResponse, SupportedChain } from "./SignInWithBlockinButton.types";
+import BlockinUIDisplay./BlockinUIDisplay";
+import { SignAndVerifyChallengeResponse, SupportedChainMetadata } from "./BlockinUIDisplay.types";
 
 export default {
-    title: "SignInWithBlockinButton"
+    title: "BlockinUIDisplay"
 };
 
 const getVerifyChallengeSuccess = async () => {
@@ -58,7 +58,7 @@ const props = {
     //     frozen: false,
     //     defaultSelected: true,
     // }],
-    currentChainInfo: {
+    selectedChainInfo: {
         // getNameForAddress: async (address: string) => 'trevormil.eth'
     },
     // canAddCustomAssets: true,
@@ -75,10 +75,10 @@ export const SuccessfulSignAndVerify = () => {
         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
         <br />
         <br />
-        <SignInWithBlockinButton
+        <BlockinUIDisplay
             {...props}
-            currentChain={chain}
-            onChainUpdate={async (chain: SupportedChain) => {
+            selectedChainName={chain}
+            onChainUpdate={async (chain: SupportedChainMetadata) => {
                 setChain(chain.name);
             }}
             chainOptions={
@@ -121,7 +121,7 @@ export const SuccessfulSignAndVerify = () => {
 //         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
 //         <br />
 //         <br />
-//         <SignInWithBlockinButton
+//         <BlockinUIDisplay
 //             {...props}
 //             signChallenge={async (challenge: string) => {
 //                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeFailure(challenge);
@@ -146,7 +146,7 @@ export const SuccessfulSignAndVerify = () => {
 //         Signed In: {signedIn ? 'Signed In' : 'Not Signed In'}
 //         <br />
 //         <br />
-//         <SignInWithBlockinButton
+//         <BlockinUIDisplay
 //             {...props}
 //             signChallenge={async (challenge: string) => {
 //                 const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);

@@ -1,6 +1,6 @@
 {
   "name": "blockin",
-  "version": "1.1.35",
+  "version": "1.2.2",
   "description": "",
   "files": [
     "dist"
@@ -57,6 +57,7 @@
     "@types/jest": "^27.5.0",
     "@types/node": "^17.0.25",
     "@types/react": "^18.0.8",
+    "@types/react-blockies": "^1.4.1",
     "@types/react-dom": "^16.9.14",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",

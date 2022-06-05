@@ -1,8 +1,8 @@
 // Generated with util/create-component.js
 import React from "react";
-import { SignInWithBlockinButtonProps, PresetAsset, PresetUri, SignChallengeResponse, ChainProps, SupportedChain } from "./SignInWithBlockinButton.types";
-import "./SignInWithBlockinButton.scss";
-import { constructChallengeObjectFromString, createChallenge } from "../../verify";
+import { BlockinUIDisplayProps, PresetResource, SignAndVerifyChallengeResponse, SupportedChainMetadata } from "./BlockinUIDisplay.types";
+import "./BlockinUIDisplay.scss";
+import { createChallenge } from "../../verify";
 import { useEffect, useState } from 'react';
 import { getChain } from '../SupportedChains'
 import ChainSelect from '../ChainSelect';
@@ -10,21 +10,18 @@ import Blockies from 'react-blockies';
 
 /*
  * Gets the default selected resources from the passed-in props
- * @param assets Assets passed in as props
- * @param uris URIs passed in as props
+ * @param resources Resources passed in as props
  * @returns Array of formatted string[] resources
  */
-const getDefaultSelectedResources = (assets: PresetAsset[], uris: PresetUri[]) => {
+const getDefaultSelectedResources = (resources: PresetResource[]) => {
     const selectedResources = [];
-    for (const asset of assets) {
-        if (asset.defaultSelected) {
-            selectedResources.push(`Asset ID: ${asset.assetId}`)
-        }
-    }
-
-    for (const uri of uris) {
-        if (uri.defaultSelected) {
-            selectedResources.push(`${uri.uri}`)
+    for (const resource of resources) {
+        if (resource.defaultSelected) {
+            if (resource.isAsset) {
+                selectedResources.push(`Asset ID: ${resource.assetIdOrUriString}`)
+            } else {
+                selectedResources.push(`${resource.assetIdOrUriString}`)
+            }
         }
     }
 
@@ -40,21 +37,18 @@ const Link = ({ url, text }: { url: string, text?: string }) => {
 }
 
 /**
- * SignInWithBlockinButton - React Button that handles functionality of creating a Blockin challenge for a user.
+ * BlockinUIDisplay - React Button that handles functionality of creating a Blockin challenge for a user.
  * As props, you can pass in everything needed to generate, sign, and verify the challenge. See the documentation
  * for each prop for more information.
  */
-const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
+const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
     challengeParams,
     address,
-    loggedInMessage,
-    displayedAssets = [],
-    displayedUris = [],
-    signChallenge,
-    verifyChallengeOnBackend,
-    generateNonce,
-    currentChain,
-    currentChainInfo,
+    loggedInDetails,
+    displayedResources = [],
+    signAndVerifyChallenge,
+    selectedChainName,
+    selectedChainInfo,
     canAddCustomAssets = false,
     canAddCustomUris = false,
     customAddHelpDisplay = '',
@@ -72,9 +66,9 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 }) => {
     const [signInModalIsVisible, setSignInModalIsVisible] = useState(false);
 
-    const [selectedResources, setSelectedResources] = useState<string[]>(getDefaultSelectedResources(displayedAssets, displayedUris));
+    const [selectedResources, setSelectedResources] = useState<string[]>(getDefaultSelectedResources(displayedResources));
     const [displayMessage, setDisplayMessage] = useState('');
-    const [chain, setChain] = useState(getChain(currentChain, currentChainInfo));
+    const [chain, setChain] = useState(getChain(selectedChainName, selectedChainInfo));
     const [assetId, setAssetId] = useState('');
     const [uri, setUri] = useState('');
     const [displayNameAddress, setDisplayNameAddress] = useState('');
@@ -85,7 +79,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
      * This will be true when 1) there are no selectable resources passed in by provider and 2) user can not add custom
      * resources.
      */
-    const resourcesAreHidden = displayedAssets.length === 0 && displayedUris.length === 0 && !canAddCustomAssets && !canAddCustomUris;
+    const resourcesAreHidden = displayedResources.length === 0 && !canAddCustomAssets && !canAddCustomUris;
 
     /**
      * Adds a resource that was added by the user to selectedResources. Formats in correct Blockin format
@@ -104,15 +98,13 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
      * Upon chain change, update chain metadata and props
      */
     useEffect(() => {
-        const chainInfo = getChain(currentChain, currentChainInfo);
-        // console.log("CURRENTCHAININFOBEFORE", currentChainInfo);
+        const chainInfo = getChain(selectedChainName, selectedChainInfo);
         setChain(chainInfo);
         if (address) {
             updateDisplayAddress(address, chainInfo);
         }
-        // console.log("CURRENTCHAININFOAFTER", currentChainInfo);
     }, [
-        currentChain,
+        selectedChainName,
         address
     ]);
 
@@ -124,56 +116,30 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
      * Handles a user clicking the sign in button on the popup modal.
      */
     const handleSignIn = async () => {
-        if (!signChallenge || !verifyChallengeOnBackend) {
-            setDisplayMessage('Both signChallenge and verifyChallengeOnBackend need to be defined for signing in. If you did not want to include sign-in functionality, set hideLogin to true.');
-            throw 'Both signChallenge and verifyChallengeOnBackend need to be defined for signing in. If you did not want to include sign-in functionality, set hideLogin to true.'
-        }
-
-        if (!generateNonce && !challengeParams?.nonce) {
-            setDisplayMessage('One of generateNonce or challengeParams.nonce needs to be defined. Note that generateNonce will take priority.');
-            throw 'One of generateNonce or challengeParams.nonce needs to be defined. Note that generateNonce will take priority.'
+        if (!signAndVerifyChallenge) {
+            setDisplayMessage('signAndVerifyChallenge needs to be defined for signing in. If you did not want to include sign-in functionality, set hideLogin to true.');
+            throw 'signAndVerifyChallenge needs to be defined for signing in. If you did not want to include sign-in functionality, set hideLogin to true.'
         }
 
         /**
-         * Generate the challenge object by attempting to call generateNonce() and inputting
-         * the selectedResources
+         * Generate the challenge object by and input the selectedResources
          */
-        const nonce = generateNonce ? await generateNonce() : challengeParams.nonce;
         const challenge = {
             ...challengeParams,
-            resources: selectedResources,
-            nonce
+            resources: selectedResources
         };
 
         /**
          * Call Blockin to create the challenge string.
          */
-        const challengeString = await createChallenge(challenge, currentChain);
+        const challengeString = await createChallenge(challenge, selectedChainName);
 
         /**
-         * Sign the challenge using the passed in signChallenge() props function
-         * 
-         * Expects { originalBytes: Uint8Array, signatureBytes: Uint8Array }
-         */
-        const signChallengeResponse: SignChallengeResponse = await signChallenge(challengeString);
-
-        if (!signChallengeResponse.originalBytes || !signChallengeResponse.signatureBytes) {
-            setDisplayMessage(signChallengeResponse.message);
-            return;
-        }
-
-        /**
-         * Verify the challenge using the passed in verifyChallenge() props function. Note that this 
-         * isn't Blockin's verifyChallenge(). This should be called by your backend with an API key within
-         * this function.
+         * Sign and verify the challenge using the passed in signAndVerifyChallenge() props function.
          * 
          * Expects { success: boolean, message: string }
          */
-        const { success, message } = await verifyChallengeOnBackend(
-            signChallengeResponse.originalBytes,
-            signChallengeResponse.signatureBytes,
-            constructChallengeObjectFromString(challengeString)
-        );
+        const { success, message } = await signAndVerifyChallenge(challengeString);
 
         /**
          * Handle success / failure
@@ -182,7 +148,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
             setDisplayMessage(message);
         } else {
             setDisplayMessage('');
-            setSelectedResources(getDefaultSelectedResources(displayedAssets, displayedUris));
+            setSelectedResources(getDefaultSelectedResources(displayedResources));
             setSignInModalIsVisible(false);
         }
     }
@@ -202,21 +168,16 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
         }
     }
 
-    const updateDisplayAddress = async (address: string, chainInfo?: SupportedChain) => {
+    const updateDisplayAddress = async (address: string, chainInfo?: SupportedChainMetadata) => {
         const chainDetails = chainInfo ? chainInfo : chain;
-        // console.log(chainDetails);
-        // if (displayNameAddress) return displayNameAddress;
+
         let displayName = '';
-        // console.log("CHECKING FOR GETNAMEFORADDRESS", "ADDRESS: ",);
 
         if (chain.getNameForAddress) {
-            // console.log("GETNAMEFORADDRESS IS DEFINED");
             displayName = await chainDetails.getNameForAddress(address);
-            // console.log("GETNAMEFORADDRESS RETURNED: ", displayName);
         }
 
         if (!displayName) {
-            // console.log("DISPLAYNAME IS !displayName: ", displayName);
             if (address.length <= 11) {
                 displayName = address;
             } else {
@@ -224,20 +185,16 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
             }
         }
 
-        // console.log("SETTING DISPLAYNAME TO", displayName);
-
         setDisplayNameAddress(displayName);
     }
 
-    const challengeParamsAreValid = challengeParams && challengeParams.address && challengeParams.domain && challengeParams.statement && challengeParams.uri;
-
-    // console.log("DISPLAY NAME", displayNameAddress, " --- ADDRESS", address);
-    // console.log("CURRENT CHAIN INFO", currentChainInfo, " --- ADDRESS", address);
+    const challengeParamsAreValid = challengeParams && challengeParams.address && challengeParams.domain && challengeParams.statement && challengeParams.uri && challengeParams.nonce;
 
     return <div className='blockin-global'>
+        {/* Chain Select */}
         {
             chainOptions?.length > 1 &&
-            <ChainSelect selectedChain={chain} chains={chainOptions} updateChain={async (newChain: SupportedChain) => {
+            <ChainSelect selectedChain={chain} chains={chainOptions} updateChain={async (newChain: SupportedChainMetadata) => {
                 await onChainUpdate(newChain);
             }} />
         }
@@ -254,11 +211,12 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                     <button className='blockin-button main-button' style={buttonStyle} onClick={async () => {
                         await connect()
                     }}>
-                        {currentChain} Connect
+                        {selectedChainName} Connect
                     </button>
                 }
             </>
         }
+
         {/* Main Sign In Button */}
         {
             !hideLogin && <>
@@ -277,7 +235,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
             </>
         }
 
-        {/* Other sign-in information */}
+        {/* Address display */}
         {
             connected && <>
                 {address && <p> <b>
@@ -288,10 +246,11 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
 
             </>
         }
-        {/* Other sign-in information */}
+
+        {/* Log-In Details */}
         {
             loggedIn && <>
-                {loggedInMessage && <p><b>Signed In - {loggedInMessage}</b></p>}
+                {loggedInDetails && <p><b>Signed In - {loggedInDetails}</b></p>}
             </>
         }
 
@@ -367,7 +326,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                             {advancedIsVisible ? 'Hide' : 'Show'}
                                         </button>
                                         {advancedIsVisible && <div>
-                                            <p><b>Nonce: {generateNonce ? 'Nonce will be generated upon clicking sign-in.' : challengeParams.nonce}</b></p>
+                                            <p><b>Nonce: {challengeParams.nonce}</b></p>
                                             <p><b>Chain ID: {challengeParams.chainId ? challengeParams.chainId : '1 (Default)'}</b></p>
                                             <p><b>Version: {challengeParams.version ? challengeParams.version : '1 (Default)'}</b></p>
                                         </div>
@@ -379,13 +338,15 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                             {/* Challenge Resources Preset According to Props */}
                             <div className='blockin-preset-resources'>
                                 {!resourcesAreHidden && <>
-                                    {(displayedAssets.length !== 0 || displayedUris.length !== 0) && <>
+                                    {(displayedResources.length !== 0) && <>
                                         <hr />
                                         <h3>Select Resources</h3>
                                         {<p>Select the resources you would like to receive access to:</p>}
 
                                         {/* First display selectable assets */}
-                                        {displayedAssets.map(elem => {
+                                        {displayedResources.map(elem => {
+                                            if (!elem.isAsset) return;
+
                                             return <>
                                                 <hr />
                                                 <div className='blockin-listitem'>
@@ -401,8 +362,8 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                             <br />
                                                             Asset ID:{' '}
                                                             <Link
-                                                                url={`https://testnet.algoexplorer.io/asset/${elem.assetId}`}
-                                                                text={elem.assetId}
+                                                                url={chain.getAssetExplorerUrl ? chain.getAssetExplorerUrl(elem.assetIdOrUriString) : ''}
+                                                                text={elem.assetIdOrUriString}
                                                             /> - {elem.description}
                                                         </div>
                                                     </div>
@@ -410,11 +371,11 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                     {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
                                                     <div className='blockin-listitem-button'>
-                                                        {selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
+                                                        {selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`) ?
                                                             <button
                                                                 className='blockin-button'
                                                                 onClick={() => {
-                                                                    const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
+                                                                    const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetIdOrUriString}`)
                                                                     setSelectedResources(newArr);
                                                                 }}
                                                                 disabled={elem.frozen}
@@ -425,7 +386,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                                 className='blockin-button'
                                                                 disabled={elem.frozen}
                                                                 onClick={() => {
-                                                                    const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
+                                                                    const newArr = [...selectedResources, `Asset ID: ${elem.assetIdOrUriString}`]
                                                                     setSelectedResources(newArr);
                                                                 }}
                                                             >
@@ -438,7 +399,8 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                         })}
 
                                         {/* Display selectable URIs */}
-                                        {displayedUris.map(elem => {
+                                        {displayedResources.map(elem => {
+                                            if (elem.isAsset) return;
                                             return <>
                                                 <hr />
                                                 <div className='blockin-listitem'>
@@ -454,25 +416,25 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                             <br />
                                                             URI: {' '}
                                                             <a
-                                                                href={`${elem.uri}`}
+                                                                href={`${elem.assetIdOrUriString}`}
                                                                 target="_blank"
                                                                 rel="noreferrer">
-                                                                {elem.uri}
+                                                                {elem.assetIdOrUriString}
                                                             </a> - {elem.description}
                                                         </div>
                                                     </div>
                                                     {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
                                                     <div className='blockin-listitem-button'>
-                                                        {selectedResources.includes(elem.uri) ?
+                                                        {selectedResources.includes(elem.assetIdOrUriString) ?
                                                             <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                                const newArr = selectedResources.filter(resource => resource !== elem.uri)
+                                                                const newArr = selectedResources.filter(resource => resource !== elem.assetIdOrUriString)
                                                                 setSelectedResources(newArr);
                                                             }}>
                                                                 Selected {elem.frozen && <LockIcon />}
                                                             </button> :
                                                             <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                                const newArr = [...selectedResources, elem.uri]
+                                                                const newArr = [...selectedResources, elem.assetIdOrUriString]
                                                                 setSelectedResources(newArr);
                                                             }}>
                                                                 Not Selected {elem.frozen && <LockIcon />}
@@ -539,8 +501,8 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                 {/* {console.log(selectedResources)} */}
                                 {selectedResources?.length > 0 && <><hr /><h3>Summary of Selected Resources</h3><p>Please take a moment to review all your selected resources for this sign-in attempt.</p></>}
                                 {/* First display selectable assets */}
-                                {displayedAssets.map(elem => {
-                                    if (!selectedResources.includes(`Asset ID: ${elem.assetId}`)) return <></>;
+                                {displayedResources.map(elem => {
+                                    if (!elem.isAsset || !selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`)) return <></>;
                                     return <>
                                         <hr />
                                         <div className='blockin-listitem'>
@@ -556,8 +518,8 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                     <br />
                                                     Asset ID:{' '}
                                                     <Link
-                                                        url={`https://testnet.algoexplorer.io/asset/${elem.assetId}`}
-                                                        text={elem.assetId}
+                                                        url={chain.getAssetExplorerUrl ? chain.getAssetExplorerUrl(elem.assetIdOrUriString) : ''}
+                                                        text={elem.assetIdOrUriString}
                                                     /> - {elem.description}
                                                 </div>
                                             </div>
@@ -565,11 +527,11 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                             {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
                                             <div className='blockin-listitem-button'>
-                                                {selectedResources.includes(`Asset ID: ${elem.assetId}`) ?
+                                                {selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`) ?
                                                     <button
                                                         className='blockin-button'
                                                         onClick={() => {
-                                                            const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetId}`)
+                                                            const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetIdOrUriString}`)
                                                             setSelectedResources(newArr);
                                                         }}
                                                         disabled={elem.frozen}
@@ -580,7 +542,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                         className='blockin-button'
                                                         disabled={elem.frozen}
                                                         onClick={() => {
-                                                            const newArr = [...selectedResources, `Asset ID: ${elem.assetId}`]
+                                                            const newArr = [...selectedResources, `Asset ID: ${elem.assetIdOrUriString}`]
                                                             setSelectedResources(newArr);
                                                         }}
                                                     >
@@ -593,8 +555,8 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                 })}
 
                                 {/* Display selectable URIs */}
-                                {displayedUris.map(elem => {
-                                    if (!selectedResources.includes(`${elem.uri}`)) return <></>;
+                                {displayedResources.map(elem => {
+                                    if (elem.isAsset || !selectedResources.includes(`${elem.assetIdOrUriString}`)) return <></>;
                                     return <>
                                         <hr />
                                         <div className='blockin-listitem'>
@@ -610,25 +572,25 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                                     <br />
                                                     URI: {' '}
                                                     <a
-                                                        href={`${elem.uri}`}
+                                                        href={`${elem.assetIdOrUriString}`}
                                                         target="_blank"
                                                         rel="noreferrer">
-                                                        {elem.uri}
+                                                        {elem.assetIdOrUriString}
                                                     </a> - {elem.description}
                                                 </div>
                                             </div>
                                             {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
                                             <div className='blockin-listitem-button'>
-                                                {selectedResources.includes(elem.uri) ?
+                                                {selectedResources.includes(elem.assetIdOrUriString) ?
                                                     <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                        const newArr = selectedResources.filter(resource => resource !== elem.uri)
+                                                        const newArr = selectedResources.filter(resource => resource !== elem.assetIdOrUriString)
                                                         setSelectedResources(newArr);
                                                     }}>
                                                         Selected {elem.frozen && <LockIcon />}
                                                     </button> :
                                                     <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                        const newArr = [...selectedResources, elem.uri]
+                                                        const newArr = [...selectedResources, elem.assetIdOrUriString]
                                                         setSelectedResources(newArr);
                                                     }}>
                                                         Not Selected {elem.frozen && <LockIcon />}
@@ -640,7 +602,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                 })}
 
                                 {selectedResources.map(resource => {
-                                    if (displayedAssets.find(elem => `Asset ID: ${elem.assetId}` === resource) || displayedUris.find(elem => elem.uri === resource)) return <></>;
+                                    if (displayedResources.find(elem => `Asset ID: ${elem.assetIdOrUriString}` === resource) || displayedResources.find(elem => elem.assetIdOrUriString === resource)) return <></>;
                                     return <>
                                         <hr />
                                         <div className='blockin-listitem'>
@@ -685,7 +647,6 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                 </button>
 
                                 {displayMessage && <b><p>Oops! We ran into an error.</p><p>Error message: {displayMessage}</p></b>}
-
                             </div>
                         </div>
                     </div>
@@ -695,4 +656,4 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     </div >;
 }
 
-export default SignInWithBlockinButton
+export default BlockinUIDisplay

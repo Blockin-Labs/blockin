@@ -3,11 +3,11 @@ Welcome to the Blockin UI library.
 
 The UI components found here can be imported by 
 ```TSX
-import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/ui';
+import { ChainSelect, BlockinUIDisplay, ... } from 'blockin/ui';
 ```
 or
 ```TSX
-import { ChainSelect, SignInWithBlockinButton, ... } from 'blockin/dist/ui';
+import { ChainSelect, BlockinUIDisplay, ... } from 'blockin/dist/ui';
 ```
 
 Both imports are supported because TypeScript <4.7 gives an error for the former.

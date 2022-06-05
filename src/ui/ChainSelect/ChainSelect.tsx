@@ -4,7 +4,7 @@ import React from "react";
 import { ChainSelectProps } from "./ChainSelect.types";
 import { useEffect, useState } from "react";
 import "./ChainSelect.scss";
-import { ChainProps, SupportedChain } from "../SignInWithBlockinButton/SignInWithBlockinButton.types";
+import { SupportedChainMetadata } from "../BlockinUIDisplay/BlockinUIDisplay.types";
 import { getChain } from "../SupportedChains";
 
 /**
@@ -15,6 +15,9 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
     const [chain, setChain] = useState<string>();
     const [menuIsVisible, setMenuIsVisible] = useState<boolean>(false);
 
+    /**
+     * If selectedChain is not defined, default to first inputted chain.
+     */
     useEffect(() => {
         if (!selectedChain && chains[0]) {
             handleChainChange(chains[0]);
@@ -23,11 +26,14 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
         }
     }, []);
 
+    /**
+     * Update everytime the chain changes
+     */
     useEffect(() => {
         handleChainChange(selectedChain);
     }, [selectedChain.name]);
 
-    const handleChainChange = (chain: SupportedChain) => {
+    const handleChainChange = (chain: SupportedChainMetadata) => {
         setChain(chain.name);
         updateChain(chain);
         if (menuIsVisible) {
@@ -66,7 +72,9 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
                             </button>
                         </div>
                     </div>
+
                     <hr />
+
                     {
                         chains.map(chain => {
                             return <div key={chain.name}>

@@ -1,7 +1,7 @@
-import SignInWithBlockinButton from "./SignInWithBlockinButton";
+import BlockinUIDisplay from "./BlockinUIDisplay";
 // import ChainSelect from './ChainSelect';
 
 export {
-    SignInWithBlockinButton,
+    BlockinUIDisplay,
     // ChainSelect 
 };
