@@ -47,6 +47,30 @@ const SUPPORTED_CHAIN_MAP: any = {
         getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
     },
+    'Ethereum Rinkeby': {
+        name: 'Rinkeby',
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+        getAddressExplorerUrl: (address: string) => `https://rinkeby.etherscan.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://rinkeby.etherscan.io/token/${asset}`,
+    },
+    'Ethereum Localhost': {
+        name: 'Localhost',
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+        getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
+    },
+    'Ethereum Mainnet': {
+        name: 'Ethereum',
+        logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
+        getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
+    },
+    'Algorand': {
+        name: 'Algorand',
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
+        getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
+    },
     'Algorand Mainnet': {
         name: 'Algorand',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
@@ -55,6 +79,12 @@ const SUPPORTED_CHAIN_MAP: any = {
     },
     'Algorand Testnet': {
         name: 'Algorand Testnet',
+        logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
+        getAddressExplorerUrl: (address: string) => `https://testnet.algoexplorer.io/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://testnet.algoexplorer.io/asset/${asset}`,
+    },
+    'Algorand Localhost': {
+        name: 'Localhost',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
         getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,

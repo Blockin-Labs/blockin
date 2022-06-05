@@ -28,6 +28,7 @@ export type PresetResource = {
 export type SupportedChainMetadata = {
     name?: string;
     logo?: string;
+    chainIds?: string[];
     getAddressExplorerUrl?: (address: string) => string;
     getAssetExplorerUrl?: (asset: string) => string;
     getNameForAddress?: (address: string) => Promise<string | undefined>;
@@ -47,6 +48,15 @@ export type BlockinUIDisplayProps = {
      * This should be defined if selectedChainName is not in the preset supported chains. See the SupportedChainMetadata type.
      */
     selectedChainInfo?: SupportedChainMetadata,
+    /**
+     * If true, chain name display will be hidden.
+     */
+    hideChainName?: boolean;
+
+    /**
+     * Here, we offer a place for you to add a custom React Node to display any additional information.
+     */
+    customDisplay?: ReactNode;
 
     /**
      * Address of the connected wallet. See getNameForAddress in selectedChainInfo for name resolutions, such as ENS.

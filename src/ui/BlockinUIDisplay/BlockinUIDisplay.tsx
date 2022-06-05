@@ -62,6 +62,8 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
     hideConnect,
     hideLogin,
     loggedIn,
+    hideChainName,
+    customDisplay,
     logout,
 }) => {
     const [signInModalIsVisible, setSignInModalIsVisible] = useState(false);
@@ -223,7 +225,9 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                 </>
             }
 
-            <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{`${selectedChainName}`} {getDisplayAddressAndSignInDetails()}</b></div>
+            <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{`${hideChainName ? '' : selectedChainName}`} {getDisplayAddressAndSignInDetails()}</b></div>
+
+            <div className='main-display'>{customDisplay}</div>
 
             {/* Chain Select */}
             {

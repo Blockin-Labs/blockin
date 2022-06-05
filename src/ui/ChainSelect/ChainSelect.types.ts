@@ -17,6 +17,10 @@ export interface ChainSelectProps {
     */
     selectedChain?: SupportedChainMetadata,
     /**
+    * Current selected chain ID. If defined, this will be the selected chain ID.
+    */
+    selectedChainId?: string,
+    /**
     *  Array of chain props inputted to BlockinUIDisplay. See ChainProps type. Default selected chain will be chains[0].
     */
     chains: SupportedChainMetadata[],
@@ -25,5 +29,5 @@ export interface ChainSelectProps {
      * such as updating all backend and dApp functionality for the new chain, updating props to BlockinUIDisplay, or updating 
      * anything else that needs to for a chain update.
      */
-    updateChain: (chainProps: SupportedChainMetadata) => void
+    updateChain: (chainProps: SupportedChainMetadata, chainId?: string) => void
 }
