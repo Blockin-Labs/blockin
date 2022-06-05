@@ -27,7 +27,7 @@ export type CreateChallengeOptions = {
     //  * Gets the latest block timestamp and overrides the inputted nonce, if there is one.
     //  * 
     //  * Note that if you specify this, you can also verify the recency of the challenge using
-    //  * the verifyNonceWithBlockTimestamps and verificationTimeLimit in the verifyChallenge()
+    //  * the verifyNonceUsingBlockTimestamps and verificationTimeLimit in the verifyChallenge()
     //  * options.
     //  */
     // useBlockTimestampsForNonce?: boolean;
@@ -39,7 +39,7 @@ export type VerifyChallengeOptions = {
      * 
      * If asset ID is not specified in this map, falls back on default value (1 or defaultMinimum, if defined).
      */
-    assetMinimumBalancesMap?: any;
+    assetMinimumBalancesRequiredMap?: any;
     /**
      * Default minimum balance is 1.
      * 
@@ -51,7 +51,7 @@ export type VerifyChallengeOptions = {
      * 
      * Default is 60 seconds. Can customize this time limit with verificationTimeLimit.
      */
-    verifyNonceWithBlockTimestamps?: boolean;
+    verifyNonceUsingBlockTimestamps?: boolean;
     /**
      * Defines how recent a block timestamp nonce must be in order to not throw an error.
      * 

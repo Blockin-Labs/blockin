@@ -179,12 +179,11 @@ export type SignInWithBlockinButtonProps = {
      * Uris to be displayed as resource options to sign-in with. See PresetUri type.
      */
     displayedUris?: PresetUri[],
-
     /**
      * To generate a valid challenge, you must specify a nonce. This can either be done by specifying it in
      * challengeParams or via this function which returns a nonce string. This prop is optional, but if defined, we will 
      * use this for the nonce and override challengeParams. You may choose to implement your own custom nonce scheme, or Blockin
-     * natively suports using block timestamps for the nonces with the generateNonceWithLastBlockTimestamp() function (this must be
+     * natively suports using block timestamps for the nonces with the generateNonceUsingLastBlockTimestamp() function (this must be
      * called from a backend with a ChainDriver set). Any scheme must be checked and verified in verifyChallenge() (see the
      * VerifyChallenge options for natively checking this if block timestamps are used). If you use your own custom nonce generation
      * scheme here, you will also have to use and implement your own nonce verification scheme in verifyChallenge().
@@ -208,7 +207,7 @@ export type SignInWithBlockinButtonProps = {
      * what assets or uris will be accepted, what permissions they will grant, etc. For example, here is where you may explain that 
      * 'if asset with metadata hash === X is added, then privilege X will be granted'
      */
-    customAddResourcesMessage?: string | ReactNode
+    customAddHelpDisplay?: string | ReactNode
     // canSetExpirationDate: boolean,
     // canSetNotBeforeDate: boolean,
 }

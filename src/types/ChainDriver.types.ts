@@ -19,7 +19,7 @@ interface IGetAssetDetails { (txnId: string): Promise<any> }
 interface ILookupTransactionById { (txnId: string): Promise<any> }
 interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
-interface IVerifyOwnershipOfAssets { (address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number): Promise<any> }
+interface IVerifyOwnershipOfAssets { (address: string, resources: string[], assetMinimumBalancesRequiredMap?: any, defaultMinimum?: number): Promise<any> }
 
 /**
  * This interface attempts to define all the chain-specific functionality needed for this library.
@@ -43,7 +43,7 @@ export interface IChainDriver {
      * Parses the challenge string from the original signed bytes. Often used because chain's signature algorithms
      * add prefixes to strings before signing them. This reverses that.
      */
-    getChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
+    parseChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
     /**
      * Creates an authorization asset on-chain.
      */
@@ -98,12 +98,12 @@ export interface IChainDriver {
      * Verifies an address owns enough of all specified resources. Should ignore every resource that 
      * doesn't start with 'Asset ID: '. Defaults to succeeding if user has a balance of >= 1 for every asset.
      * 
-     * assetMinimumBalancesMap is optional, but here, one can define a JSON object mapping of 
-     * 'assetIDs' => minimumBalances. If assetMinimumBalancesMap[assetId] exists, it will check 
+     * assetMinimumBalancesRequiredMap is optional, but here, one can define a JSON object mapping of 
+     * 'assetIDs' => minimumBalances. If assetMinimumBalancesRequiredMap[assetId] exists, it will check 
      * that the user owns more than the specified minimum balance. If not defined, will use the default.
      * 
      * defaultMinimum is optional, but here, you can specify a new default minimum for all assets to 
-     * fallback on if not defined in assetMinimumBalancesMap. Default is normally set to check if 
+     * fallback on if not defined in assetMinimumBalancesRequiredMap. Default is normally set to check if 
      * user owns >= 1.
      */
     verifyOwnershipOfAssets: IVerifyOwnershipOfAssets,

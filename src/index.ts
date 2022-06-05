@@ -51,5 +51,5 @@ export {
     constructChallengeObjectFromString,
     constructChallengeStringFromChallengeObject,
     validateChallengeObjectIsWellFormed,
-    generateNonceWithLastBlockTimestamp
+    generateNonceUsingLastBlockTimestamp
 } from './verify.js';

@@ -57,7 +57,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
     currentChainInfo,
     canAddCustomAssets = false,
     canAddCustomUris = false,
-    customAddResourcesMessage = '',
+    customAddHelpDisplay = '',
     buttonStyle,
     modalStyle,
     chainOptions,
@@ -493,7 +493,7 @@ const SignInWithBlockinButton: React.FC<SignInWithBlockinButtonProps> = ({
                                         <hr />
                                         <h3>Add Custom Resources</h3>
                                         {<p><Link url={challengeParams.domain} /> is allowing you to add your own custom resources to this sign-in attempt below. </p>}
-                                        {<p>{customAddResourcesMessage}</p>}
+                                        {<p>{customAddHelpDisplay}</p>}
                                         <hr />
 
                                         {canAddCustomAssets && <>

@@ -97,7 +97,7 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
     console.log("Success: Signature matches address specified within the challenge.");
 
-    if (options?.verifyNonceWithBlockTimestamps) {
+    if (options?.verifyNonceUsingBlockTimestamps) {
         let blockTimestamp = await chainDriver.getTimestampForBlock(challenge.nonce);
         verificationData.nonceTimestamp = blockTimestamp;
         const currentTimestamp = Math.round((new Date()).getTime() / 1000);
@@ -117,7 +117,7 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     }
 
     if (challenge.resources) {
-        const assetLookupData = await verifyOwnershipOfAssets(challenge.address, challenge.resources, options?.assetMinimumBalancesMap, options?.defaultMinimum);
+        const assetLookupData = await verifyOwnershipOfAssets(challenge.address, challenge.resources, options?.assetMinimumBalancesRequiredMap, options?.defaultMinimum);
         verificationData.assetLookupData = assetLookupData
     }
 
@@ -129,12 +129,12 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
 /**
  * Generates a nonce using the most recent block index. Can be called directly
  * or by specifiying the useBlockTimestampsForNonce flag in the createChallenge
- * options. verifyChallenge also offers two flags: (verifyNonceWithBlockTimestamps?: boolean;
+ * options. verifyChallenge also offers two flags: (verifyNonceUsingBlockTimestamps?: boolean;
  * and verificationTimeLimit?: number;) that ensure timestamp of the block was recent when
  * verifying. 
  * @returns Last block index / timestamp / hash to be used as the nonce
  */
-export async function generateNonceWithLastBlockTimestamp() {
+export async function generateNonceUsingLastBlockTimestamp() {
     const nonce = await chainDriver.getLastBlockIndex()
     return nonce;
 }
@@ -230,7 +230,7 @@ export function constructChallengeStringFromChallengeObject(challenge: Challenge
  * @returns Parses out and returns the challenge string that was signed
  */
 async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string> {
-    return chainDriver.getChallengeStringFromBytesToSign(txnBytes);
+    return chainDriver.parseChallengeStringFromBytesToSign(txnBytes);
 }
 
 /**
@@ -312,15 +312,15 @@ async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Arra
  * @param address - Address to verify
  * @param resources - String array of URIs or Asset IDs. This function ignores every resource that doesn't start
  * with 'Asset ID: '
- * @param assetMinimumBalancesMap - Optional, but here, one can define a JSON object mapping of 
- * 'assetIDs' => minimumBalances. If assetMinimumBalancesMap[assetId] exists, it will check that the user owns 
+ * @param assetMinimumBalancesRequiredMap - Optional, but here, one can define a JSON object mapping of 
+ * 'assetIDs' => minimumBalances. If assetMinimumBalancesRequiredMap[assetId] exists, it will check that the user owns 
  * more than the specified minimum balance. If not defined, will use the default.
  * @param defaultMinimum - Optional. Default is normally set to check if user owns >= 1. Here, you can specify a
- * new default minimum for all assets to fallback on if not defined in assetMinimumBalancesMap.
+ * new default minimum for all assets to fallback on if not defined in assetMinimumBalancesRequiredMap.
  * @returns If successful, verification was successful. Looked up asset data is also returned for convenience. 
  * Throws error if invalid.
  */
-async function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesMap?: any, defaultMinimum?: number) {
-    const assetLookupData = await chainDriver.verifyOwnershipOfAssets(address, resources, assetMinimumBalancesMap, defaultMinimum);
+async function verifyOwnershipOfAssets(address: string, resources: string[], assetMinimumBalancesRequiredMap?: any, defaultMinimum?: number) {
+    const assetLookupData = await chainDriver.verifyOwnershipOfAssets(address, resources, assetMinimumBalancesRequiredMap, defaultMinimum);
     return assetLookupData;
 }
