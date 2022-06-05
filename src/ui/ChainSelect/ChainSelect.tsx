@@ -3,7 +3,6 @@ import React from "react";
 
 import { ChainSelectProps } from "./ChainSelect.types";
 import { useEffect, useState } from "react";
-import "./ChainSelect.scss";
 import { SupportedChainMetadata } from "../BlockinUIDisplay/BlockinUIDisplay.types";
 import { getChain } from "../SupportedChains";
 
@@ -42,13 +41,13 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
     }
 
     return <>
-        <button className='blockin-button main-button' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
-            Select (Current : {getChain(chain ? chain : '').name})
+        <button className='blockin-button main-button main-display' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
+            ⇋
         </button>
 
-        {menuIsVisible && <div className='blockin-root blockin-chain-select' style={modalStyle}>
-            <div className="blockin-popup-container">
-                <div className="blockin-popup">
+        {menuIsVisible && <div className='blockin-root blockin-chain-select'>
+            <div className="blockin-popup-container" style={modalStyle}>
+                <div className="blockin-popup" style={modalStyle}>
                     {/* Header with the Close Button */}
                     <div className='blockin-header'>
                         <div className="header-end">

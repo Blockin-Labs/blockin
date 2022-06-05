@@ -6,7 +6,7 @@
 
 
 .blockin-button {
-  background-color: rgb(176, 215, 252);
+  background: linear-gradient(#98d1fc, #1c8fe7);
   opacity: 0.85;
   color: black;
   padding: 12px 15px;
@@ -177,6 +177,13 @@
    
 }
 
+.blockin-copy-address {
+    height: 25px;
+    width: 25px;
+    vertical-align: text-bottom;
+    cursor: pointer;
+}
+
 .blockin-challenge-details {
     max-width: 500px;
     margin: 0px auto 0px;
@@ -219,5 +226,11 @@
 }
 
 .blockin-global .main-button {
-    height: 50px;
+    // height: 50px;
+   
+}
+
+.blockin-global .main-display {
+    margin-left: 3px;
+    margin-right: 3px;
 }

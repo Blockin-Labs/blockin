@@ -1,8 +1,8 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
 import { ChallengeParams } from "../../types/verify.types";
-import BlockinUIDisplay./BlockinUIDisplay";
 import { SignAndVerifyChallengeResponse, SupportedChainMetadata } from "./BlockinUIDisplay.types";
+import BlockinUIDisplay from './BlockinUIDisplay';
 
 export default {
     title: "BlockinUIDisplay"
@@ -89,12 +89,10 @@ export const SuccessfulSignAndVerify = () => {
             }
             loggedIn={!!signedIn}
             address={'0xe00dd9d317573f7b4868d8f2578c65544b153a27'}
-            loggedInMessage={signedIn}
-            signChallenge={async (challenge: string) => {
-                const signChallengeResponse: SignChallengeResponse = await handleSignChallengeSuccess(challenge);
-                return signChallengeResponse;
-            }}
-            verifyChallengeOnBackend={async (originalBytes: Uint8Array, signatureBytes: Uint8Array, challengeObject: ChallengeParams) => {
+            loggedInDetails={signedIn}
+            signAndVerifyChallenge={async (challenge: string) => {
+                const signChallengeResponse = await handleSignChallengeSuccess(challenge);
+
                 const verificationResponse = await getVerifyChallengeSuccess();
 
                 setSignedIn('Premium Plan');
@@ -109,6 +107,9 @@ export const SuccessfulSignAndVerify = () => {
             }}
             disconnect={async () => {
                 setConnected(false);
+            }}
+            modalStyle={{
+                color: 'black'
             }}
         />
     </>

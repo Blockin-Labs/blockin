@@ -188,78 +188,94 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
         setDisplayNameAddress(displayName);
     }
 
+    const getDisplayAddressAndSignInDetails = () => {
+        const displayAddress = connected && displayNameAddress;
+        const displayLoggedInDetails = loggedIn && loggedInDetails
+        if (!displayAddress && !displayLoggedInDetails) {
+            return '';
+        } else if (displayAddress && !displayLoggedInDetails) {
+            return <><Link text={`(${displayNameAddress})`} url={chain.getAddressExplorerUrl(address)} />
+                <img src="https://img.icons8.com/fluency/48/undefined/copy.png" className='blockin-copy-address' onClick={(e) => {
+                    navigator.clipboard.writeText(address);
+
+                    /* Alert the copied text */
+                    alert("Copied to clipboard: " + address);
+                }} /></>
+        } else if (!displayAddress && displayLoggedInDetails) {
+            return `(${loggedInDetails})`
+        } else {
+            return <>(<Link text={`${displayNameAddress}`} url={chain.getAddressExplorerUrl(address)} /> - {loggedInDetails})</>
+        }
+    }
+
     const challengeParamsAreValid = challengeParams && challengeParams.address && challengeParams.domain && challengeParams.statement && challengeParams.uri && challengeParams.nonce;
 
     return <div className='blockin-global'>
-        {/* Chain Select */}
-        {
-            chainOptions?.length > 1 &&
-            <ChainSelect selectedChain={chain} chains={chainOptions} updateChain={async (newChain: SupportedChainMetadata) => {
-                await onChainUpdate(newChain);
-            }} />
-        }
+        <div style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
+            {/* Address display */}
+            {
+                connected && <>
+                    {address && <div className='main-display'>
+                        <Blockies
+                            seed={address ? address.toLowerCase() : ''}
+                            size={10}
+                        /> </div>}
+                </>
+            }
 
-        {/* Connect Button */}
-        {
-            !hideConnect && <>
-                {connected ?
-                    <button className='blockin-button main-button' style={buttonStyle} onClick={async () => {
-                        await disconnect()
-                    }}>
-                        Disconnect
-                    </button> :
-                    <button className='blockin-button main-button' style={buttonStyle} onClick={async () => {
-                        await connect()
-                    }}>
-                        {selectedChainName} Connect
-                    </button>
-                }
-            </>
-        }
+            <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{`${selectedChainName}`} {getDisplayAddressAndSignInDetails()}</b></div>
 
-        {/* Main Sign In Button */}
-        {
-            !hideLogin && <>
-                {loggedIn ?
-                    <button className='blockin-button main-button' style={buttonStyle} onClick={async () => {
-                        await logout()
-                    }}>
-                        Sign Out
-                    </button> :
-                    <button className='blockin-button main-button' style={buttonStyle} onClick={
-                        () => setSignInModalIsVisible(!signInModalIsVisible)
-                    }>
-                        Sign In
-                    </button>
-                }
-            </>
-        }
+            {/* Chain Select */}
+            {
+                chainOptions?.length > 1 &&
+                <ChainSelect buttonStyle={buttonStyle} modalStyle={modalStyle} selectedChain={chain} chains={chainOptions} updateChain={async (newChain: SupportedChainMetadata) => {
+                    await onChainUpdate(newChain);
+                }} />
+            }
 
-        {/* Address display */}
-        {
-            connected && <>
-                {address && <p> <b>
-                    <Blockies
-                        seed={address ? address.toLowerCase() : ''}
-                        size={40}
-                    /> + Address - {displayNameAddress}</b></p>}
+            {/* Connect Button */}
+            {
+                !hideConnect && <>
+                    {connected ?
+                        <button className='blockin-button main-button main-display' style={buttonStyle} onClick={async () => {
+                            await disconnect()
+                        }}>
+                            Disconnect
+                        </button> :
+                        <button className='blockin-button main-button main-display' style={buttonStyle} onClick={async () => {
+                            await connect()
+                        }}>
+                            Connect
+                        </button>
+                    }
+                </>
+            }
 
-            </>
-        }
-
-        {/* Log-In Details */}
-        {
-            loggedIn && <>
-                {loggedInDetails && <p><b>Signed In - {loggedInDetails}</b></p>}
-            </>
-        }
+            {/* Main Sign In Button */}
+            {
+                !hideLogin && <>
+                    {loggedIn ?
+                        <button className='blockin-button main-button main-display' style={buttonStyle} onClick={async () => {
+                            await logout()
+                        }}>
+                            Sign Out
+                        </button> :
+                        <button className='blockin-button main-button main-display' style={buttonStyle} onClick={
+                            () => setSignInModalIsVisible(!signInModalIsVisible)
+                        }>
+                            Sign In
+                        </button>
+                    }
+                </>
+            }
+        </div>
 
         {/* Popup Modal Once Clicked */}
         {
             signInModalIsVisible && <>
-                <div className='blockin-root' style={modalStyle}>
-                    <div className="blockin-popup-container">
-                        <div className="blockin-popup">
+                <div className='blockin-root'>
+                    <div className="blockin-popup-container" style={modalStyle}>
+                        <div className="blockin-popup" style={modalStyle}>
                             {!connected && !hideConnect && <><b>Warning: Your wallet is not currently connected. You will not be able to sign the challenge message.  </b><hr /></>}
                             {/* Header with the Close Button */}
                             <div className='blockin-header'>
@@ -399,57 +415,59 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                                         })}
 
                                         {/* Display selectable URIs */}
-                                        {displayedResources.map(elem => {
-                                            if (elem.isAsset) return;
-                                            return <>
-                                                <hr />
-                                                <div className='blockin-listitem'>
-                                                    {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
+                                        {
+                                            displayedResources.map(elem => {
+                                                if (elem.isAsset) return;
+                                                return <>
+                                                    <hr />
+                                                    <div className='blockin-listitem'>
+                                                        {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
                                                 4) desccription of asset
                                              */}
-                                                    <div className='blockin-listitem-metadata'>
-                                                        <div className='blockin-listitem-logo'>
-                                                            <img src='https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png' height='auto' width='50px' />
+                                                        <div className='blockin-listitem-metadata'>
+                                                            <div className='blockin-listitem-logo'>
+                                                                <img src='https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png' height='auto' width='50px' />
+                                                            </div>
+                                                            <div>
+                                                                <b>{elem.name}</b>
+                                                                <br />
+                                                                URI: {' '}
+                                                                <a
+                                                                    href={`${elem.assetIdOrUriString}`}
+                                                                    target="_blank"
+                                                                    rel="noreferrer">
+                                                                    {elem.assetIdOrUriString}
+                                                                </a> - {elem.description}
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <b>{elem.name}</b>
-                                                            <br />
-                                                            URI: {' '}
-                                                            <a
-                                                                href={`${elem.assetIdOrUriString}`}
-                                                                target="_blank"
-                                                                rel="noreferrer">
-                                                                {elem.assetIdOrUriString}
-                                                            </a> - {elem.description}
-                                                        </div>
-                                                    </div>
-                                                    {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
+                                                        {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
-                                                    <div className='blockin-listitem-button'>
-                                                        {selectedResources.includes(elem.assetIdOrUriString) ?
-                                                            <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                                const newArr = selectedResources.filter(resource => resource !== elem.assetIdOrUriString)
-                                                                setSelectedResources(newArr);
-                                                            }}>
-                                                                Selected {elem.frozen && <LockIcon />}
-                                                            </button> :
-                                                            <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                                const newArr = [...selectedResources, elem.assetIdOrUriString]
-                                                                setSelectedResources(newArr);
-                                                            }}>
-                                                                Not Selected {elem.frozen && <LockIcon />}
-                                                            </button>
-                                                        }
+                                                        <div className='blockin-listitem-button'>
+                                                            {selectedResources.includes(elem.assetIdOrUriString) ?
+                                                                <button className='blockin-button' disabled={elem.frozen} onClick={() => {
+                                                                    const newArr = selectedResources.filter(resource => resource !== elem.assetIdOrUriString)
+                                                                    setSelectedResources(newArr);
+                                                                }}>
+                                                                    Selected {elem.frozen && <LockIcon />}
+                                                                </button> :
+                                                                <button className='blockin-button' disabled={elem.frozen} onClick={() => {
+                                                                    const newArr = [...selectedResources, elem.assetIdOrUriString]
+                                                                    setSelectedResources(newArr);
+                                                                }}>
+                                                                    Not Selected {elem.frozen && <LockIcon />}
+                                                                </button>
+                                                            }
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </>
-                                        })}
+                                                </>
+                                            })
+                                        }
                                     </>}
                                 </>}
-                            </div>
+                            </div >
 
                             {/* Section where user can add custom resources to challenge, if allowed */}
-                            <div className='blockin-custom-add-resources'>
+                            < div className='blockin-custom-add-resources' >
                                 {(canAddCustomAssets || canAddCustomUris) &&
                                     <>
                                         <hr />
@@ -493,152 +511,158 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                                         </>}
                                     </>
                                 }
-                            </div>
+                            </div >
 
                             {/* Here, we display a complete list of all the selected resources for the challenge */}
-                            <div className='blockin-selected-resources-summary'>
+                            < div className='blockin-selected-resources-summary' >
 
                                 {/* {console.log(selectedResources)} */}
                                 {selectedResources?.length > 0 && <><hr /><h3>Summary of Selected Resources</h3><p>Please take a moment to review all your selected resources for this sign-in attempt.</p></>}
                                 {/* First display selectable assets */}
-                                {displayedResources.map(elem => {
-                                    if (!elem.isAsset || !selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`)) return <></>;
-                                    return <>
-                                        <hr />
-                                        <div className='blockin-listitem'>
-                                            {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
+                                {
+                                    displayedResources.map(elem => {
+                                        if (!elem.isAsset || !selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`)) return <></>;
+                                        return <>
+                                            <hr />
+                                            <div className='blockin-listitem'>
+                                                {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
                                                 4) desccription of asset
                                              */}
-                                            <div className='blockin-listitem-metadata'>
-                                                <div className='blockin-listitem-logo'>
-                                                    <img src={chain.logo} height='50px' width='auto' />
+                                                <div className='blockin-listitem-metadata'>
+                                                    <div className='blockin-listitem-logo'>
+                                                        <img src={chain.logo} height='50px' width='auto' />
+                                                    </div>
+                                                    <div>
+                                                        <b>{elem.name}</b>
+                                                        <br />
+                                                        Asset ID:{' '}
+                                                        <Link
+                                                            url={chain.getAssetExplorerUrl ? chain.getAssetExplorerUrl(elem.assetIdOrUriString) : ''}
+                                                            text={elem.assetIdOrUriString}
+                                                        /> - {elem.description}
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <b>{elem.name}</b>
-                                                    <br />
-                                                    Asset ID:{' '}
-                                                    <Link
-                                                        url={chain.getAssetExplorerUrl ? chain.getAssetExplorerUrl(elem.assetIdOrUriString) : ''}
-                                                        text={elem.assetIdOrUriString}
-                                                    /> - {elem.description}
-                                                </div>
-                                            </div>
 
-                                            {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
+                                                {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
-                                            <div className='blockin-listitem-button'>
-                                                {selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`) ?
-                                                    <button
-                                                        className='blockin-button'
-                                                        onClick={() => {
-                                                            const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetIdOrUriString}`)
-                                                            setSelectedResources(newArr);
-                                                        }}
-                                                        disabled={elem.frozen}
-                                                    >
-                                                        Selected {elem.frozen && <LockIcon />}
-                                                    </button> :
-                                                    <button
-                                                        className='blockin-button'
-                                                        disabled={elem.frozen}
-                                                        onClick={() => {
-                                                            const newArr = [...selectedResources, `Asset ID: ${elem.assetIdOrUriString}`]
-                                                            setSelectedResources(newArr);
-                                                        }}
-                                                    >
-                                                        Not Selected {elem.frozen && <LockIcon />}
-                                                    </button>
-                                                }
+                                                <div className='blockin-listitem-button'>
+                                                    {selectedResources.includes(`Asset ID: ${elem.assetIdOrUriString}`) ?
+                                                        <button
+                                                            className='blockin-button'
+                                                            onClick={() => {
+                                                                const newArr = selectedResources.filter(resource => resource !== `Asset ID: ${elem.assetIdOrUriString}`)
+                                                                setSelectedResources(newArr);
+                                                            }}
+                                                            disabled={elem.frozen}
+                                                        >
+                                                            Selected {elem.frozen && <LockIcon />}
+                                                        </button> :
+                                                        <button
+                                                            className='blockin-button'
+                                                            disabled={elem.frozen}
+                                                            onClick={() => {
+                                                                const newArr = [...selectedResources, `Asset ID: ${elem.assetIdOrUriString}`]
+                                                                setSelectedResources(newArr);
+                                                            }}
+                                                        >
+                                                            Not Selected {elem.frozen && <LockIcon />}
+                                                        </button>
+                                                    }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </>
-                                })}
+                                        </>
+                                    })
+                                }
 
                                 {/* Display selectable URIs */}
-                                {displayedResources.map(elem => {
-                                    if (elem.isAsset || !selectedResources.includes(`${elem.assetIdOrUriString}`)) return <></>;
-                                    return <>
-                                        <hr />
-                                        <div className='blockin-listitem'>
-                                            {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
+                                {
+                                    displayedResources.map(elem => {
+                                        if (elem.isAsset || !selectedResources.includes(`${elem.assetIdOrUriString}`)) return <></>;
+                                        return <>
+                                            <hr />
+                                            <div className='blockin-listitem'>
+                                                {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
                                                 4) desccription of asset
                                              */}
-                                            <div className='blockin-listitem-metadata'>
-                                                <div className='blockin-listitem-logo'>
-                                                    <img src='https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png' height='auto' width='50px' />
+                                                <div className='blockin-listitem-metadata'>
+                                                    <div className='blockin-listitem-logo'>
+                                                        <img src='https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png' height='auto' width='50px' />
+                                                    </div>
+                                                    <div>
+                                                        <b>{elem.name}</b>
+                                                        <br />
+                                                        URI: {' '}
+                                                        <a
+                                                            href={`${elem.assetIdOrUriString}`}
+                                                            target="_blank"
+                                                            rel="noreferrer">
+                                                            {elem.assetIdOrUriString}
+                                                        </a> - {elem.description}
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <b>{elem.name}</b>
-                                                    <br />
-                                                    URI: {' '}
-                                                    <a
-                                                        href={`${elem.assetIdOrUriString}`}
-                                                        target="_blank"
-                                                        rel="noreferrer">
-                                                        {elem.assetIdOrUriString}
-                                                    </a> - {elem.description}
-                                                </div>
-                                            </div>
-                                            {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
+                                                {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
-                                            <div className='blockin-listitem-button'>
-                                                {selectedResources.includes(elem.assetIdOrUriString) ?
-                                                    <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                        const newArr = selectedResources.filter(resource => resource !== elem.assetIdOrUriString)
-                                                        setSelectedResources(newArr);
-                                                    }}>
-                                                        Selected {elem.frozen && <LockIcon />}
-                                                    </button> :
-                                                    <button className='blockin-button' disabled={elem.frozen} onClick={() => {
-                                                        const newArr = [...selectedResources, elem.assetIdOrUriString]
-                                                        setSelectedResources(newArr);
-                                                    }}>
-                                                        Not Selected {elem.frozen && <LockIcon />}
-                                                    </button>
-                                                }
+                                                <div className='blockin-listitem-button'>
+                                                    {selectedResources.includes(elem.assetIdOrUriString) ?
+                                                        <button className='blockin-button' disabled={elem.frozen} onClick={() => {
+                                                            const newArr = selectedResources.filter(resource => resource !== elem.assetIdOrUriString)
+                                                            setSelectedResources(newArr);
+                                                        }}>
+                                                            Selected {elem.frozen && <LockIcon />}
+                                                        </button> :
+                                                        <button className='blockin-button' disabled={elem.frozen} onClick={() => {
+                                                            const newArr = [...selectedResources, elem.assetIdOrUriString]
+                                                            setSelectedResources(newArr);
+                                                        }}>
+                                                            Not Selected {elem.frozen && <LockIcon />}
+                                                        </button>
+                                                    }
+                                                </div>
                                             </div>
-                                        </div>
-                                    </>
-                                })}
+                                        </>
+                                    })
+                                }
 
-                                {selectedResources.map(resource => {
-                                    if (displayedResources.find(elem => `Asset ID: ${elem.assetIdOrUriString}` === resource) || displayedResources.find(elem => elem.assetIdOrUriString === resource)) return <></>;
-                                    return <>
-                                        <hr />
-                                        <div className='blockin-listitem'>
-                                            {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
+                                {
+                                    selectedResources.map(resource => {
+                                        if (displayedResources.find(elem => `Asset ID: ${elem.assetIdOrUriString}` === resource) || displayedResources.find(elem => elem.assetIdOrUriString === resource)) return <></>;
+                                        return <>
+                                            <hr />
+                                            <div className='blockin-listitem'>
+                                                {/* Metadata includes 1) chain logo, 2) asset name, 3) link to asset, and 
                                                 4) desccription of asset
                                              */}
-                                            <div className='blockin-listitem-metadata'>
-                                                <div className='blockin-listitem-logo'>
-                                                    <img src='https://cdn4.iconfinder.com/data/icons/meBaze-Freebies/512/add-user.png' height='auto' width='50px' />
+                                                <div className='blockin-listitem-metadata'>
+                                                    <div className='blockin-listitem-logo'>
+                                                        <img src='https://cdn4.iconfinder.com/data/icons/meBaze-Freebies/512/add-user.png' height='auto' width='50px' />
+                                                    </div>
+                                                    <div>
+                                                        <b>User Added: {resource}</b>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <b>User Added: {resource}</b>
-                                                </div>
-                                            </div>
-                                            {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
+                                                {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
                                                 fields to allow / disable selecting. */}
-                                            <div className='blockin-listitem-button'>
-                                                <button
-                                                    className='blockin-button'
-                                                    onClick={() => {
-                                                        const newArr = selectedResources.filter(elem => resource !== elem)
-                                                        setSelectedResources(newArr);
-                                                    }}>
-                                                    Remove
-                                                </button>
+                                                <div className='blockin-listitem-button'>
+                                                    <button
+                                                        className='blockin-button'
+                                                        onClick={() => {
+                                                            const newArr = selectedResources.filter(elem => resource !== elem)
+                                                            setSelectedResources(newArr);
+                                                        }}>
+                                                        Remove
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </>
-                                })}
-                            </div>
+                                        </>
+                                    })
+                                }
+                            </div >
 
 
 
 
                             {/* Final Sign Challenge Button. Calls signChallenge() and verifyChallenge(). */}
-                            <div className='blockin-sign-challenge-button'>
+                            < div className='blockin-sign-challenge-button' >
                                 <hr />
                                 <h3>Sign Challenge and Submit</h3>
                                 <p>The last step is for you to sign the message. Once you click the button below, this site will send a signature request to your {chain.name} wallet.</p>
@@ -647,10 +671,10 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                                 </button>
 
                                 {displayMessage && <b><p>Oops! We ran into an error.</p><p>Error message: {displayMessage}</p></b>}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            </div >
+                        </div >
+                    </div >
+                </div >
             </>
         }
     </div >;
