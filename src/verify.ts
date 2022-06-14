@@ -97,17 +97,6 @@ export async function verifyChallenge(originalChallenge: Uint8Array, signedChall
     await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
     console.log("Success: Signature matches address specified within the challenge.");
 
-    if (options?.verifyNonceUsingBlockTimestamps) {
-        let blockTimestamp = await chainDriver.getTimestampForBlock(challenge.nonce);
-        verificationData.nonceTimestamp = blockTimestamp;
-        const currentTimestamp = Math.round((new Date()).getTime() / 1000);
-        const timeLimit = options?.verificationTimeLimit ? options?.verificationTimeLimit : 60;
-
-        if (blockTimestamp <= currentTimestamp - timeLimit) {
-            throw `Error: This challenge uses recent block timestamps for the nonce. The challenge must be verified within ${timeLimit} seconds of creating the challenge`
-        }
-    }
-
     if (options?.expectedDomain && challenge.domain !== options?.expectedDomain) {
         throw `Error: Domain !== ${options?.expectedDomain}`;
     }

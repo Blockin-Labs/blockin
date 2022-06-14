@@ -47,21 +47,6 @@ export type VerifyChallengeOptions = {
      */
     defaultMinimum?: number;
     /**
-     * If true, it will check to ensure that the nonce in the challenge is still within the valid time range.
-     * 
-     * Default is 60 seconds. Can customize this time limit with verificationTimeLimit.
-     */
-    verifyNonceUsingBlockTimestamps?: boolean;
-    /**
-     * Defines how recent a block timestamp nonce must be in order to not throw an error.
-     * 
-     * If this is not defined, default is 60 seconds. If defined, it will check if block timestamp
-     * is within past verificationTimeLimit seconds. 
-     * 
-     * Uses seconds as the unit.
-     */
-    verificationTimeLimit?: number;
-    /**
      * If specified, will assert that expectedDomain matches domain that was in the challenge.
      */
     expectedDomain?: string;
