@@ -48,7 +48,7 @@ const SUPPORTED_CHAIN_MAP: any = {
         getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
     },
     'Polygon': {
-        name: 'Ethereum',
+        name: 'Polygon',
         logo: 'https://polygonscan.com/images/svg/brands/polygon.svg',
         getAddressExplorerUrl: (address: string) => `https://polygonscan.com/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://polygonscan.com/token/${asset}`,
@@ -60,6 +60,12 @@ const SUPPORTED_CHAIN_MAP: any = {
         getAssetExplorerUrl: (asset: string) => `https://snowtrace.io/token/${asset}`,
     },
     'BSC': {
+        name: 'Binance Smart Chain',
+        logo: 'https://bscxplorer.com/static/favicon/BSC/logo.svg',
+        getAddressExplorerUrl: (address: string) => `https://bscscan.com/address/${address}`,
+        getAssetExplorerUrl: (asset: string) => `https://bscscan.com/token/${asset}`,
+    },
+    'Binance Smart Chain': {
         name: 'Binance Smart Chain',
         logo: 'https://bscxplorer.com/static/favicon/BSC/logo.svg',
         getAddressExplorerUrl: (address: string) => `https://bscscan.com/address/${address}`,
