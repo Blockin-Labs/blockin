@@ -1,9 +1,9 @@
 # Chain Drivers
 The Chain Driver interface is where everything that is chain-specific is implemented. 
 
-We provide a few already implemented ChainDrivers as NPM packages for convenience. For an example, visit the Blockin Demo site. (We are currently working on more convenient methods to import these files).
+The Blockin team and Blockin community provide a few already implemented ChainDrivers as NPM packages for convenience. For an example, visit the Blockin Demo site.
 
-You can also choose to implement the ChainDriver interface on your own. If you do this, it would be greatly appreciated if it is published or shared with us, so we can add it to a library!
+You can also choose to implement the ChainDriver interface on your own. If you do this, it would be greatly appreciated if it is published or shared with us, so we can add it to this list!
 
 # Current Supported Chains
 These are the chains that are natively supported by this library.
