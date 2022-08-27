@@ -1,6 +1,6 @@
 {
   "name": "blockin",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "",
   "files": [
     "dist"
@@ -61,13 +61,14 @@
     "@types/react-dom": "^16.9.14",
     "babel-loader": "^8.2.2",
     "babel-preset-react-app": "^10.0.0",
+    "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.6.3",
     "local-package-publisher": "^1.0.4",
     "node-sass": "^5.0.0",
     "postcss": "^8.4.13",
-    "react": "^18.0.0",
-    "react-dom": "^17.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "rollup": "^2.72.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-dts": "^4.2.1",

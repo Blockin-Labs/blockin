@@ -19,7 +19,9 @@ interface IGetAssetDetails { (txnId: string): Promise<any> }
 interface ILookupTransactionById { (txnId: string): Promise<any> }
 interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
-interface IVerifyOwnershipOfAssets { (address: string, resources: string[], assetMinimumBalancesRequiredMap?: any, defaultMinimum?: number): Promise<any> }
+interface IVerifyOwnershipOfAssets {
+    (address: string, resources: string[], assetMinimumBalancesRequiredMap?: any, defaultMinimum?: number): Promise<any>
+}
 
 /**
  * This interface attempts to define all the chain-specific functionality needed for this library.

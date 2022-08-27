@@ -120,7 +120,7 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
             {/* Address display */}
             {
                 connected && <>
-                    {address && <div className='main-display'>
+                    {address && !hideChainName && <div className='main-display'>
                         <Blockies
                             seed={address ? address.toLowerCase() : ''}
                             size={10}
@@ -128,7 +128,7 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                 </>
             }
 
-            <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{`${hideChainName ? '' : selectedChainName}`} {getDisplayAddressAndSignInDetails()}</b></div>
+            <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{!hideChainName && <>{`${selectedChainName}`} {getDisplayAddressAndSignInDetails()}</>}</b></div>
 
             <div className='main-display'>{customDisplay}</div>
 
