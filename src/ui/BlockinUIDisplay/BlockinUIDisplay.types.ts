@@ -28,6 +28,7 @@ export type PresetResource = {
 export type SupportedChainMetadata = {
     name?: string;
     logo?: string;
+    abbreviation?: string;
     chainIds?: string[];
     getAddressExplorerUrl?: (address: string) => string;
     getAssetExplorerUrl?: (asset: string) => string;

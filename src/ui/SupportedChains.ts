@@ -30,6 +30,7 @@ export const getChain = (chainName: string, selectedChainInfo?: SupportedChainMe
 
     let chainInfoWithDefaults = {
         name: chainName,
+        abbreviation: 'DEF',
         logo: 'https://cdn-icons-png.flaticon.com/512/2091/2091665.png',
         getAddressExplorerUrl: (address: string) => ``,
         getAssetExplorerUrl: (asset: string) => ``,
@@ -43,24 +44,28 @@ export const getChain = (chainName: string, selectedChainInfo?: SupportedChainMe
 const SUPPORTED_CHAIN_MAP: any = {
     'Ethereum': {
         name: 'Ethereum',
+        abbreviation: 'ETH',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
         getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
     },
     'Polygon': {
         name: 'Polygon',
+        abbreviation: 'POLY',
         logo: 'https://polygonscan.com/images/svg/brands/polygon.svg',
         getAddressExplorerUrl: (address: string) => `https://polygonscan.com/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://polygonscan.com/token/${asset}`,
     },
     'Avalanche': {
         name: 'Avalanche',
+        abbreviation: 'AVAX',
         logo: 'https://assets-global.website-files.com/6059b554e81c705f9dd2dd32/60ec6a944b52e3e96e16af68_Avalanche_Square_Red_Circle.png',
         getAddressExplorerUrl: (address: string) => `https://snowtrace.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://snowtrace.io/token/${asset}`,
     },
     'BSC': {
         name: 'Binance Smart Chain',
+        abbreviation: 'BSC',
         logo: 'https://bscxplorer.com/static/favicon/BSC/logo.svg',
         getAddressExplorerUrl: (address: string) => `https://bscscan.com/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://bscscan.com/token/${asset}`,
@@ -73,42 +78,49 @@ const SUPPORTED_CHAIN_MAP: any = {
     },
     'Ethereum Rinkeby': {
         name: 'Rinkeby',
+        abbreviation: 'ETH',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
         getAddressExplorerUrl: (address: string) => `https://rinkeby.etherscan.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://rinkeby.etherscan.io/token/${asset}`,
     },
     'Ethereum Localhost': {
         name: 'Localhost',
+        abbreviation: 'ETH',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
         getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
     },
     'Ethereum Mainnet': {
         name: 'Ethereum',
+        abbreviation: 'ETH',
         logo: 'https://cloudfront-us-east-1.images.arcpublishing.com/coindesk/ZJZZK5B2ZNF25LYQHMUTBTOMLU.png',
         getAddressExplorerUrl: (address: string) => `https://etherscan.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://etherscan.io/token/${asset}`,
     },
     'Algorand': {
         name: 'Algorand',
+        abbreviation: 'ALGO',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
         getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
     },
     'Algorand Mainnet': {
         name: 'Algorand',
+        abbreviation: 'ALGO',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
         getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
     },
     'Algorand Testnet': {
         name: 'Algorand Testnet',
+        abbreviation: 'ALGO',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
         getAddressExplorerUrl: (address: string) => `https://testnet.algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://testnet.algoexplorer.io/asset/${asset}`,
     },
     'Algorand Localhost': {
         name: 'Localhost',
+        abbreviation: 'ALGO',
         logo: 'https://res.cloudinary.com/startup-grind/image/upload/c_fill,f_auto,g_center,q_auto:good/v1/gcs/platform-data-algorand/contentbuilder/C_Algorand-Event-Thumbnail-400x400_EjNd7dj.png',
         getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,

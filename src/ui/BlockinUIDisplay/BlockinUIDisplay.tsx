@@ -164,14 +164,18 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                     {loggedIn ?
                         <button className='blockin-button main-button main-display' style={buttonStyle} onClick={async () => {
                             if (logout) await logout()
-                        }}>
+                        }}
+
+                        >
                             Sign Out
                         </button> :
-                        <button className='blockin-button main-button main-display' style={buttonStyle} onClick={
-                            () => setSignInModalIsVisible(!signInModalIsVisible)
-                        }>
-                            Sign In
-                        </button>
+                        <>{connected &&
+                            <button className='blockin-button main-button main-display' style={buttonStyle} onClick={
+                                () => setSignInModalIsVisible(!signInModalIsVisible)
+                            }>
+                                Sign In
+                            </button>
+                        }</>
                     }
                 </>
             }

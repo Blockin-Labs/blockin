@@ -7,7 +7,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
-// import postcss from 'rollup-plugin-postcss';
+import postcss from 'rollup-plugin-postcss';
 import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 
@@ -32,7 +32,7 @@ export default {
         resolve({ browser: true }),
         commonjs(),
         typescript({ tsconfig: './ui-tsconfig.json' }),
-        // postcss(),
+        postcss(),
         json(),
         //If anything else is added to here, also confirm the postuirollup script in package.json handles it
         // copy({

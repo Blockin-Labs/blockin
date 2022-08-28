@@ -223,12 +223,23 @@
     margin: 5px;
 }
 
-.blockin-chain-select-logo {
-    margin-left: 5px;
+.blockin-chain-select-logo-left {
+    padding-left: 5px;
+
+}
+
+.blockin-chain-select-logo-right {
+    padding-right: 5px;
+
 }
 
 .blockin-global .main-button {
-    // height: 50px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
    
 }
 
