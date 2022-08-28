@@ -127,10 +127,13 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps> = ({
                         /> </div>}
                 </>
             }
+            {!hideChainName &&
+                <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{!hideChainName && <>{`${selectedChainName}`} {getDisplayAddressAndSignInDetails()}</>}</b></div>
+            }
 
-            <div className='main-display' style={{ alignItems: 'center', fontSize: 20 }}><b>{!hideChainName && <>{`${selectedChainName}`} {getDisplayAddressAndSignInDetails()}</>}</b></div>
-
-            <div className='main-display'>{customDisplay}</div>
+            {customDisplay &&
+                <div className='main-display'>{customDisplay}</div>
+            }
 
             {/* Chain Select */}
             {
