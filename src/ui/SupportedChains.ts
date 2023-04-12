@@ -125,4 +125,9 @@ const SUPPORTED_CHAIN_MAP: any = {
         getAddressExplorerUrl: (address: string) => `https://algoexplorer.io/address/${address}`,
         getAssetExplorerUrl: (asset: string) => `https://algoexplorer.io/asset/${asset}`,
     },
-}
+    'Cosmos': {
+        name: 'Cosmos',
+        abbreviation: 'COSM',
+        logo: 'https://cryptologos.cc/logos/cosmos-atom-logo.png'
+    }
+};

@@ -79,7 +79,7 @@ export const SuccessfulSignAndVerify = () => {
             {...props}
             selectedChainName={chain}
             onChainUpdate={async (chain: SupportedChainMetadata) => {
-                setChain(chain.name);
+                if (chain?.name) setChain(chain.name);
             }}
             chainOptions={
                 [

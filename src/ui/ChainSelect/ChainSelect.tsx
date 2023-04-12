@@ -87,7 +87,8 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
                         chains.map(chain => {
                             return <div key={chain.name}>
                                 <button style={buttonStyle} className='blockin-button' onClick={() => handleChainChange(chain)}>
-                                    Select {chain.name} <img className='blockin-chain-select-logo-left' height='20px' width='20px' src={getChain(chain.name).logo} />
+                                    Select {chain.name}
+                                    <img className='blockin-chain-select-logo-left' height='20px' width='20px' src={chain?.logo} />
                                 </button>
                             </div>
                         })
