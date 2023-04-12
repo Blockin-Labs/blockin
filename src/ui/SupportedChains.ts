@@ -128,6 +128,8 @@ const SUPPORTED_CHAIN_MAP: any = {
     'Cosmos': {
         name: 'Cosmos',
         abbreviation: 'COSM',
-        logo: 'https://cryptologos.cc/logos/cosmos-atom-logo.png'
+        logo: 'https://cryptologos.cc/logos/cosmos-atom-logo.png',
+        getAddressExplorerUrl: (address: string) => `https://mintscan.io/cosmos/account/${address}`,
+        // getAssetExplorerUrl: (asset: string) => `https://mintscan.io/asset/${asset}`,
     }
 };
