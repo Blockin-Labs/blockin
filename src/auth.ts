@@ -1,11 +1,12 @@
 // This file handles creating, opting in to, and transfering an auth asset from resource to owner
+import { NumberType } from 'bitbadgesjs-utils';
 import { IChainDriver, UniversalTxn } from './types/ChainDriver.types.js'
 import { CreateAssetParams, CreateTransferAssetParams } from "./types/auth.types.js";
 
-var chainDriver: IChainDriver
+var chainDriver: any
 
-export function initializeAuth(driver: IChainDriver) {
-    chainDriver = driver
+export function initializeAuth<T extends NumberType>(driver: IChainDriver<T>) {
+  chainDriver = driver
 }
 
 /**
@@ -19,33 +20,33 @@ export function initializeAuth(driver: IChainDriver) {
  * to create a valid asset creation transaction. Throws upon error.
  */
 export async function createAssetTxn(createAssetParams: CreateAssetParams): Promise<UniversalTxn> {
-    const {
-        from,
-        to = 'Blockin',
-        assetName = 'Blockin Access Token',
-        assetURL = '',
-        note = 'This is an access token created with Blockin',
-        amount = 1,
-        unitName = '',
-        decimals = 0,
-        total = 1,
-        assetMetadata = '',
-        extras = undefined
-    } = createAssetParams
+  const {
+    from,
+    to = 'Blockin',
+    assetName = 'Blockin Access Token',
+    assetURL = '',
+    note = 'This is an access token created with Blockin',
+    amount = 1,
+    unitName = '',
+    decimals = 0,
+    total = 1,
+    assetMetadata = '',
+    extras = undefined
+  } = createAssetParams
 
-    return await chainDriver.makeAssetTxn({
-        from,
-        to,
-        assetName,
-        assetURL,
-        note,
-        amount,
-        unitName,
-        decimals,
-        total,
-        assetMetadata,
-        ...extras
-    });
+  return await chainDriver.makeAssetTxn({
+    from,
+    to,
+    assetName,
+    assetURL,
+    note,
+    amount,
+    unitName,
+    decimals,
+    total,
+    assetMetadata,
+    ...extras
+  });
 }
 
 // /**
@@ -87,19 +88,19 @@ export async function createAssetTxn(createAssetParams: CreateAssetParams): Prom
  * to create a valid asset transfer transaction. Throws upon error.
  */
 export async function createAssetTransferTxn(transferAssetParams: CreateTransferAssetParams): Promise<UniversalTxn> {
-    const {
-        to,
-        from,
-        assetIndex,
-        extras = undefined
-    } = transferAssetParams
+  const {
+    to,
+    from,
+    assetIndex,
+    extras = undefined
+  } = transferAssetParams
 
-    return await chainDriver.makeAssetTransferTxn({
-        to,
-        from,
-        assetIndex,
-        ...extras
-    });
+  return await chainDriver.makeAssetTransferTxn({
+    to,
+    from,
+    assetIndex,
+    ...extras
+  });
 }
 
 /**
@@ -111,7 +112,7 @@ export async function createAssetTransferTxn(transferAssetParams: CreateTransfer
  * driver implementation.
  */
 export async function sendTxn(signedTxnBytes: Uint8Array | Uint8Array[], txnId: string) {
-    return await chainDriver.sendTxn(signedTxnBytes, txnId)
+  return await chainDriver.sendTxn(signedTxnBytes, txnId)
 }
 
 // export async function createContractOptInTxn(contractOptInParams: CreateContractOptInParams) {

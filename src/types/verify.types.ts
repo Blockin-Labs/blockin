@@ -1,57 +1,77 @@
+import { NumberType } from "bitbadgesjs-utils";
+import { UintRange } from "bitbadgesjs-proto";
+
+export interface StringRange {
+  start: string,
+  end: string,
+}
+export interface Asset<T extends NumberType> {
+  chain: string,
+  collectionId: string | NumberType,
+  assetIds: (string | UintRange<T>)[],
+  ownershipTimes?: UintRange<T>[],
+  mustOwnAmounts: UintRange<T>,
+  additionalCriteria?: string,
+}
+
 /**
  * Interface for EIP-4361 Challenge - Sign in With Ethereum
  * 
  * For more information and documentation, view the EIP proposal.
  * 
- * Note that we support prefixing resources with 'Asset ID: ' as well.
+ * We extend it to support assets.
  */
-export type ChallengeParams = {
-    domain: string,
-    statement: string,
-    address: string,
-    uri: string,
-    nonce: string,
-    version?: string,
-    chainId?: string,
-    issuedAt?: string,
-    expirationDate?: string,
-    notBefore?: string,
-    resources?: any
+export interface ChallengeParams<T extends NumberType> {
+  domain: string,
+  statement: string,
+  address: string,
+  uri: string,
+  nonce: string,
+  version?: string,
+  chainId?: string,
+  issuedAt?: string,
+  expirationDate?: string,
+  notBefore?: string,
+  resources?: string[],
+  assets?: Asset<T>[],
 }
 
 /**
  * Options that can be specified when calling createChallenge()
  */
 export type CreateChallengeOptions = {
-    // /**
-    //  * Gets the latest block timestamp and overrides the inputted nonce, if there is one.
-    //  * 
-    //  * Note that if you specify this, you can also verify the recency of the challenge using
-    //  * the verifyNonceUsingBlockTimestamps and verificationTimeLimit in the verifyChallenge()
-    //  * options.
-    //  */
-    // useBlockTimestampsForNonce?: boolean;
+  // /**
+  //  * Gets the latest block timestamp and overrides the inputted nonce, if there is one.
+  //  * 
+  //  * Note that if you specify this, you can also verify the recency of the challenge using
+  //  * the verifyNonceUsingBlockTimestamps and verificationTimeLimit in the verifyChallenge()
+  //  * options.
+  //  */
+  // useBlockTimestampsForNonce?: boolean;
 }
 
 export type VerifyChallengeOptions = {
-    /**
-     * Map of asset IDs => number which specify the minimum balance required for a user to own to not throw an error.
-     * 
-     * If asset ID is not specified in this map, falls back on default value (1 or defaultMinimum, if defined).
-     */
-    assetMinimumBalancesRequiredMap?: any;
-    /**
-     * Default minimum balance is 1.
-     * 
-     * If this is defined, it sets the default minimum requirement for all asset IDs.
-     */
-    defaultMinimum?: number;
-    /**
-     * If specified, will assert that expectedDomain matches domain that was in the challenge.
-     */
-    expectedDomain?: string;
-    /**
-     * If specified, will assert that expectedUri matches uri that was in the challenge.
-     */
-    expectedUri?: string;
+  /**
+   * Optionally define the expected details to check. If the challenge was edited and the details
+   * do not match, the challenge will fail verification.
+   */
+  expectedChallengeParams?: Partial<ChallengeParams<NumberType>>;
+
+  /**
+   * Optional function to call before verification. This is useful to verify the challenge is
+   * valid before proceeding with verification.
+   * 
+   * Note you can use expectedChallengeParams to verify values equal as expected. 
+   * 
+   * This function is useful if you need to implement custom logic other than strict equality).
+   * For example, assert that only one of assets A, B, or C are defined and not all three.
+   */
+  beforeVerification?: (params: ChallengeParams<NumberType>) => Promise<void>;
+
+  /**
+   * For verification of assets, instead of dynamically fetching the assets, you can specify a snapshot of the assets.
+   * 
+   * This is useful if you have a snapshot, balances will not change, or you are verifying in an offline manner.
+   */
+  balancesSnapshot?: object
 }

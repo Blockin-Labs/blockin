@@ -1,25 +1,26 @@
 export type {
-    IChainDriver,
-    UniversalTxn
+  IChainDriver,
+  UniversalTxn
 } from './types/ChainDriver.types.js'
 
 export type {
-    CreateAssetParams,
-    CreateTransferAssetParams,
+  CreateAssetParams,
+  CreateTransferAssetParams,
 } from './types/auth.types.js'
 
 export type {
-    ChallengeParams
+  ChallengeParams
 } from './types/verify.types.js'
 
 export type {
-    SignAndVerifyChallengeResponse,
-    PresetResource,
-    SupportedChainMetadata
+  SignAndVerifyChallengeResponse,
+  PresetUri,
+  PresetAsset,
+  SupportedChainMetadata
 } from './ui/BlockinUIDisplay/BlockinUIDisplay.types.js'
 
 export {
-    setChainDriver
+  setChainDriver
 } from './blockin.js'
 
 /**
@@ -36,16 +37,16 @@ export {
 // } from './ChainDrivers/AlgoDriver.js'
 
 export {
-    createAssetTxn,
-    createAssetTransferTxn,
-    sendTxn
+  createAssetTxn,
+  createAssetTransferTxn,
+  sendTxn
 } from './auth.js'
 
 export {
-    createChallenge,
-    verifyChallenge,
-    constructChallengeObjectFromString,
-    constructChallengeStringFromChallengeObject,
-    validateChallengeObjectIsWellFormed,
-    generateNonceUsingLastBlockTimestamp
+  createChallenge,
+  verifyChallenge,
+  constructChallengeObjectFromString,
+  constructChallengeStringFromChallengeObject,
+  validateChallengeObjectIsWellFormed,
+  generateNonceUsingLastBlockTimestamp
 } from './verify.js';

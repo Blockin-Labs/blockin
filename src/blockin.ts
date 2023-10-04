@@ -1,6 +1,7 @@
 import { IChainDriver } from "./types/ChainDriver.types.js";
 import { initializeAuth } from "./auth.js";
 import { initializeVerify } from "./verify.js";
+import { NumberType } from "bitbadgesjs-utils";
 
 /**
  * Sets the chain driver for the whole library. All chain-specific functions
@@ -14,7 +15,7 @@ import { initializeVerify } from "./verify.js";
  * in AlgoDriver
  * @param driver - Instantiated ChainDriver object. See IChainDriver for the interface details
  */
-export function setChainDriver(driver: IChainDriver) {
-    initializeVerify(driver)
-    initializeAuth(driver)
+export function setChainDriver<T extends NumberType>(driver: IChainDriver<T>) {
+  initializeVerify(driver)
+  initializeAuth(driver)
 }

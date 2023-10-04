@@ -2,6 +2,7 @@
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
         Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     box-sizing: content-box;
+    word-wrap: break-word;
 }
 
 
@@ -13,6 +14,7 @@
   font-weight: 600;
   border-radius: 10px;
   cursor: pointer;
+  // border: 1px solid black;
 }
 
 .blockin-button:hover {
@@ -20,6 +22,58 @@
 }
 
 .blockin-button:disabled {
+    cursor:not-allowed;
+}
+
+
+.blockin-button {
+  width: 135px;
+  height: 50px;
+  padding: 4px 8px;
+  justify-content: center;
+  border: 1px solid black;
+  align-items: center;
+  gap: 8px;
+  border-radius: 39px;
+  background: #1890ff;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  opacity: 1;
+}
+
+.blockin-button:disabled {
+  background-color: lightgray;
+  color: white;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.blockin-button:hover {
+  border: 1px solid black;
+  opacity: 1;
+  background: inherit;
+  border: 1px solid #1890ff;
+  color: #1890ff;
+}
+
+.blockin-button-secondary {
+  background: inherit;
+  color: inherit;
+  opacity: 1;
+  padding: 5px 8px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 2px solid gray;
+}
+
+.blockin-button-secondary:hover {
+    opacity: 1;
+    border: 2px solid black;
+}
+
+.blockin-button-secondary:disabled {
     cursor:not-allowed;
 }
 
@@ -47,7 +101,6 @@
 }
 
 .blockin-root {
-    text-align: center;
     padding: 100px 0px;
     position: fixed;
     background: rgba(0, 0, 0, 0.7);
@@ -59,24 +112,36 @@
     min-width: 100vw;
     display: flex;
     justify-content: center;
+
 }
 
 .blockin-popup-container {
+    //media query
+
     word-wrap: break-word;
-    background-color: white;
+    background-color: #121212;
     opacity: 100%;
     max-width: 600px;
+    display: flex;
     max-height: 600px;
+    
     margin: 0px 10px 0px;
     padding: 30px;
     border-radius: 25px;
     justify-content: center;
     box-sizing: content-box;
+    color:white;
+
+    @media (max-width: 600px) {
+      width: 90%;
+      padding: 5px;
+      margin: 20px;
+  }
 }
 
 .blockin-popup {
     word-wrap: break-word;
-    background-color: white;
+    background-color: #121212;
     opacity: 100%;
     max-width: 600px;
     max-height: 600px;
@@ -84,6 +149,12 @@
     overflow-y: auto;
     padding-right: 10px;
     box-sizing: content-box;
+
+    @media (max-width: 600px) {
+      width: 90%;
+      padding: 5px;
+      margin: 20px;
+  }
 }
 
 
@@ -116,17 +187,13 @@
 }
 
 .blockin-listitem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+    max-width: 100%;
 }
 
 .blockin-listitem-metadata {
-    display: flex;
     text-align: left;
-    align-items: center;
     height: 100%;
+    max-width: 100%;
 }
 
 .blockin-listitem-button {
@@ -134,8 +201,8 @@
     text-align: right;
     align-items: center;
     height: 100%;
-    min-width: 125px;
-    margin-left: 10px;
+    min-width: 80px;
+    margin-top: 16px;
 }
 
 .blockin-listitem-button button {
@@ -165,7 +232,8 @@
 }
 
 .blockin-header .header-middle {
-    width: 80%
+    width: 80%;
+    text-align: center;
 }
 
 .blockin-header h1 {
@@ -174,6 +242,16 @@
     font-size: 24px;
 }
 
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
 
 .blockin-challenge {
    
@@ -187,9 +265,6 @@
 }
 
 .blockin-challenge-details {
-    max-width: 500px;
-    margin: 0px auto 0px;
-    justify-content: center;
 }
 
 .blockin-challenge-item {
@@ -225,7 +300,6 @@
 
 .blockin-chain-select-logo-left {
     margin-left: 5px;
-
 }
 
 .blockin-chain-select-logo-right {
@@ -242,6 +316,15 @@
 }
 
 .blockin-global .main-display {
-    margin-left: 3px;
-    margin-right: 3px;
+    margin: 3px;
+}
+
+.blockin-link {
+    color: #1890ff;
+    text-decoration: none;
+}
+
+.blockin-link:hover {
+    color: #40a9ff;
+    text-decoration: underline;
 }

@@ -63,7 +63,6 @@ const props = {
     },
     // canAddCustomAssets: true,
     // canAddCustomUris: true,
-    customAddHelpDisplay: 'Example explanation message'
 }
 
 export const SuccessfulSignAndVerify = () => {
