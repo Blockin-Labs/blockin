@@ -44,7 +44,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
 
   return <>
     <button disabled={disabled} className='blockin-button main-button main-display blockin-button-semi-disabled button-style-override' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
-      <img className='blockin-chain-select-logo-right' height='20px' width='20px' src={selectedChain?.logo} /> {selectedChain?.name}
+      <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={selectedChain?.logo} /> {selectedChain?.name}
     </button>
 
 
@@ -90,7 +90,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
 
               return <div key={chain.name}>
                 <button style={buttonStyle} className='blockin-button main-button main-display button-style-override' onClick={() => handleChainChange(chain)}>
-                  <img className='blockin-chain-select-logo-right' height='20px' width='20px' src={chain?.logo} />
+                  <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={chain?.logo} />
                   {chain.name}
 
                 </button>

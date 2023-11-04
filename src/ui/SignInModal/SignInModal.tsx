@@ -219,7 +219,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                   <h1>Sign In with Blockin!</h1>
                   <div className='blockin-header-chain-info'>
                     <div>
-                      <img src={chain.logo} height='100px' width='auto' />
+                      <img src={chain.logo} height='100px' width='auto' style={{ height: 100, width: 'auto' }} />
                       <br />
                       <b style={{ fontSize: 18 }}>{chain.name}</b>
                     </div>
@@ -228,7 +228,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                     <div>
 
                       <a href="https://blockin.gitbook.io/blockin/" target="_blank" rel="noreferrer" className="blockin-link">
-                        <img src={"https://bafybeibepriagbzr64w6ouvbctaxtixryf5trcubowgz7eihvs5b3dqh6y.ipfs.dweb.link/"} height='100px' width='auto' />
+                        <img src={"https://bafybeibepriagbzr64w6ouvbctaxtixryf5trcubowgz7eihvs5b3dqh6y.ipfs.dweb.link/"} height='100px' width='auto' style={{ height: 100, width: 'auto' }} />
                         <br />
                         <b style={{ fontSize: 18 }}>Blockin</b>
                       </a>
@@ -328,17 +328,17 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                                 <div style={{ display: 'flex', }}>
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'normal' }}>
                                     <div className='blockin-listitem-logo'>
-                                      <img src={elem.image ? elem.image : getChain(elem.chain).logo} height='50px' width='auto' />
+                                      <img src={elem.image ? elem.image : getChain(elem.chain).logo} height='50px' width='auto' style={{ height: 50, width: 'auto' }} />
                                     </div>
                                     {elem.chain === 'BitBadges' &&
                                       <div className='blockin-listitem-logo'>
-                                        <img src={getChain('Ethereum').logo} height='25px' width='auto' />
-                                        <img src={getChain('Cosmos').logo} height='25px' width='auto' />
+                                        <img src={getChain('Ethereum').logo} height='25px' width='auto' style={{ height: 25, width: 'auto' }} />
+                                        <img src={getChain('Cosmos').logo} height='25px' width='auto' style={{ height: 25, width: 'auto' }} />
                                       </div>}
 
                                     {elem.image &&
                                       <div className='blockin-listitem-logo'>
-                                        <img src={getChain(elem.chain).logo} height='50px' width='auto' />
+                                        <img src={getChain(elem.chain).logo} height='50px' width='auto' style={{ height: 100, width: 'auto' }} />
                                       </div>}
 
 
@@ -350,8 +350,8 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                                 <div className='blockin-listitem-button' style={{ alignItems: 'normal' }}>
                                   {
                                     <Switch
-                                      checkedChildren="✅"
-                                      unCheckedChildren="❌"
+                                      checkedChildren=""
+                                      unCheckedChildren=""
                                       checked={selectedAssets.includes(`${elem.name}`)}
                                       disabled={elem.frozen}
                                       onClick={() => {
@@ -438,11 +438,11 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                             <div className='blockin-listitem-metadata' style={{ alignItems: 'normal', width: '100%' }}>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'normal' }}>
                                 <div className='blockin-listitem-logo'>
-                                  <img src={elem.image ? elem.image : "https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png"} height='50px' width='auto' />
+                                  <img src={elem.image ? elem.image : "https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png"} height='50px' width='auto' style={{ height: 100, width: 'auto' }} />
                                 </div>
                                 {elem.image &&
                                   <div className='blockin-listitem-logo'>
-                                    <img src={"https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png"} height='50px' width='auto' />
+                                    <img src={"https://cdn1.iconfinder.com/data/icons/color-bold-style/21/43-512.png"} height='50px' width='auto' style={{ height: 100, width: 'auto' }} />
                                   </div>}
                               </div>
                               <div style={{ width: '100%' }}>
@@ -453,8 +453,8 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                                   <div className='blockin-listitem-button' style={{ alignItems: 'normal' }}>
                                     {
                                       <Switch
-                                        checkedChildren="✅"
-                                        unCheckedChildren="❌"
+                                        checkedChildren=""
+                                        unCheckedChildren=""
                                         checked={selectedUris.includes(`${elem.uri}`)}
                                         disabled={elem.frozen}
                                         onClick={() => {
