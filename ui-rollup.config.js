@@ -10,6 +10,7 @@ import typescript from 'rollup-plugin-typescript2';
 import postcss from 'rollup-plugin-postcss';
 import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
+import sass from 'postcss-node-sass';
 
 export default {
     input: 'src/ui/index.ts',
@@ -31,6 +32,7 @@ export default {
         peerDepsExternal(),
         resolve({ browser: true }),
         commonjs(),
+        sass(),
         typescript({ tsconfig: './ui-tsconfig.json' }),
         postcss(),
         json(),
