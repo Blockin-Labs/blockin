@@ -140,5 +140,11 @@ const SUPPORTED_CHAIN_MAP: any = {
     logo: 'https://cryptologos.cc/logos/cosmos-atom-logo.png',
     getAddressExplorerUrl: (address: string) => `https://mintscan.io/cosmos/account/${address}`,
     // getCollectionExplorerUrl: (asset: string) => `https://mintscan.io/asset/${asset}`,
+  },
+  'Solana': {
+    name: 'Solana',
+    logo: 'https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png',
+    abbreviation: 'SOL',
+    getAddressExplorerUrl: (address: string) => `https://explorer.solana.com/address/${address}`,
   }
 };

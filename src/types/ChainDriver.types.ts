@@ -9,19 +9,19 @@ export type UniversalTxn = {
   nativeTxn: any
 }
 
-interface IMakeAssetTxn { (assetParams: CreateAssetParams): Promise<UniversalTxn> }
-interface IMakeAssetTransferTxn { (assetParams: CreateTransferAssetParams): Promise<UniversalTxn> }
-interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
-interface IGetAssets { (address: string): Promise<any> }
-interface IGetLastBlockIndex { (): Promise<any> }
-interface IGetTimestampForBlock { (blockIndex: string): Promise<any> }
-interface IIsValidAddress { (address: string): boolean }
-interface IGetPublicKey { (address: string): Uint8Array }
-interface IGetAssetDetails { (txnId: string): Promise<any> }
-interface ILookupTransactionById { (txnId: string): Promise<any> }
-interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
-interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
-interface IVerifyAssets<T extends NumberType> {
+export interface IMakeAssetTxn { (assetParams: CreateAssetParams): Promise<UniversalTxn> }
+export interface IMakeAssetTransferTxn { (assetParams: CreateTransferAssetParams): Promise<UniversalTxn> }
+export interface ISendTx { (stx: Uint8Array | Uint8Array[], txnId: string): Promise<any> }
+export interface IGetAssets { (address: string): Promise<any> }
+export interface IGetLastBlockIndex { (): Promise<any> }
+export interface IGetTimestampForBlock { (blockIndex: string): Promise<any> }
+export interface IIsValidAddress { (address: string): boolean }
+export interface IGetPublicKey { (address: string): Uint8Array }
+export interface IGetAssetDetails { (txnId: string): Promise<any> }
+export interface ILookupTransactionById { (txnId: string): Promise<any> }
+export interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
+export interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
+export interface IVerifyAssets<T extends NumberType> {
   (address: string, resources: string[], assets: Asset<T>[], balancesSnapshot?: object): Promise<any>
 }
 

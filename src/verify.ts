@@ -103,7 +103,6 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
 
   const originalAddress = challenge.address;
   await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
-  // console.log("Success: Signature matches address specified within the challenge.");
 
   if (options?.expectedChallengeParams) {
     for (const key of Object.keys(options?.expectedChallengeParams ?? {})) {
@@ -112,8 +111,6 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
       }
     }
   }
-
-
   if (challenge.resources || challenge.assets) {
     const assetLookupData = await verifyAssets(challenge.address, (challenge.resources ?? []), (challenge.assets ?? []), options?.balancesSnapshot);
     verificationData.assetLookupData = assetLookupData
@@ -386,10 +383,8 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
       if (!asset.ownershipTimes) {
         message += `    - Sign-In Time\n`;
       }
+      
       if (asset.ownershipTimes) {
-
-
-
         for (const time of asset.ownershipTimes) {
           if (typeof time === "string") {
             message += `    - Time: ${new Date(time).toISOString}\n`;
@@ -408,7 +403,6 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
         }
       }
 
-
       if (asset.additionalCriteria) {
         message += `  Additional Criteria: ${asset.additionalCriteria}\n`;
       }
@@ -416,7 +410,6 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
       message += `\n`;
     }
   }
-
 
   return message;
 }
@@ -440,7 +433,6 @@ async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string
  * @returns JSON challenge object with all specified EIP-4361 fields
  */
 export function constructChallengeObjectFromString<T extends NumberType, U extends NumberType>(challenge: string, convertFunction: (item: U) => T): ChallengeParams<T> {
-
   const messageArray = challenge.split("\n");
   const domain = messageArray[0].split(' ')[0];
   const address = messageArray[1];
@@ -454,72 +446,31 @@ export function constructChallengeObjectFromString<T extends NumberType, U exten
   let expirationDate;
   let notBefore;
   let resources = [];
-  let assets = [];
-  if (messageArray[10]) {
-    if (messageArray[10].indexOf('Expiration Time:') != -1) {
-      expirationDate = messageArray[10].split(':').slice(1).join(':').trim();
-    } else if (messageArray[10].indexOf('Not Before:') != -1) {
-      notBefore = messageArray[10].split(':').slice(1).join(':').trim();
-    } else if (messageArray[10].indexOf('Resources:') != -1) {
+  let assets: Asset<T>[] = [];
+
+  for (let i = 10; i < messageArray.length; i++) {
+    if (messageArray[i].indexOf('Expiration Time:') !== -1) {
+      expirationDate = messageArray[i].split(':').slice(1).join(':').trim();
+    } else if (messageArray[i].indexOf('Not Before:') !== -1) {
+      notBefore = messageArray[i].split(':').slice(1).join(':').trim();
+    } else if (messageArray[i].indexOf('Resources:') !== -1) {
       resources = [];
-      for (let i = 11; i < messageArray.length; i++) {
-        if (messageArray[i].indexOf('Assets:') != -1) {
+      for (let j = i + 1; j < messageArray.length; j++) {
+        if (messageArray[j].indexOf('Assets:') !== -1) {
           break;
         }
-        const resource = messageArray[i].split(' ').slice(1).join(' ').trim();
+        const resource = messageArray[j].split(' ').slice(1).join(' ').trim();
         resources.push(resource);
       }
-    } else if (messageArray[10].indexOf('Assets:') != -1) {
-      assets = [];
-      for (let i = 11; i < messageArray.length; i++) {
-        const asset = messageArray[i].split(' ').slice(1).join(' ').trim();
-        assets.push(JSON.parse(asset));
-      }
-    }
-  }
-
-  if (messageArray[11]) {
-    if (messageArray[11].indexOf('Not Before:') != -1) {
-      notBefore = messageArray[11].split(':').slice(1).join(':').trim();
-    } else if (messageArray[11].indexOf('Resources:') != -1) {
-      resources = [];
-      for (let i = 12; i < messageArray.length; i++) {
-        if (messageArray[i].indexOf('Assets:') != -1) {
-          break;
-        }
-        const resource = messageArray[i].split(' ').slice(1).join(' ').trim();
-        resources.push(resource);
-      }
-    } else if (messageArray[11].indexOf('Assets:') != -1) {
+    } else if (messageArray[i].indexOf('Assets:') !== -1) {
       assets = parseChallengeAssets(challenge, convertFunction);
+      break;
     }
   }
-
-  if (messageArray[12]) {
-    if (messageArray[12].indexOf('Resources:') != -1) {
-      resources = [];
-      for (let i = 13; i < messageArray.length; i++) {
-        if (messageArray[i].indexOf('Assets:') != -1) {
-          break;
-        }
-        const resource = messageArray[i].split(' ').slice(1).join(' ').trim();
-        resources.push(resource);
-      }
-    } else if (messageArray[12].indexOf('Assets:') != -1) {
-      assets = parseChallengeAssets(challenge, convertFunction);
-    }
-  }
-
-  if (messageArray[13]) {
-    if (messageArray[13].indexOf('Assets:') != -1) {
-      assets = parseChallengeAssets(challenge, convertFunction);
-    }
-  }
-
 
   return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce, assets };
-
 }
+
 
 /**
  * Verifies a challenge is signed by the given addresses. Throws error if invalid. Specific to 

@@ -1,6 +1,21 @@
 export type {
   IChainDriver,
-  UniversalTxn
+  UniversalTxn,
+  IChainDriverWithHelpers,
+  IGetAssetDetails,
+  ILookupTransactionById,
+  IGetChallengeStringFromBytesToSign,
+  IVerifySignature,
+  IVerifyAssets,
+  IMakeAssetTxn,
+  IMakeAssetTransferTxn,
+  ISendTx,
+  IGetAssets,
+  IGetLastBlockIndex,
+  IGetTimestampForBlock,
+  IIsValidAddress,
+  IGetPublicKey,
+  
 } from './types/ChainDriver.types.js'
 
 export type {
@@ -9,7 +24,10 @@ export type {
 } from './types/auth.types.js'
 
 export type {
-  ChallengeParams
+  ChallengeParams,
+  VerifyChallengeOptions,
+  CreateChallengeOptions,
+  Asset
 } from './types/verify.types.js'
 
 export type {
