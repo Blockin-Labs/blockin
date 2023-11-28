@@ -74,4 +74,19 @@ export type VerifyChallengeOptions = {
    * This is useful if you have a snapshot, balances will not change, or you are verifying in an offline manner.
    */
   balancesSnapshot?: object
+
+  /**
+   * If true, we will return the .qrCodeText property in the response. This is the text to be used to generate a QR code for verification.
+   */
+  qrCode?: boolean,
+
+  /**
+   * If true, we do not check timestamps (expirationDate / notBefore). This is useful if you are verifying a challenge that is expected to be verified at a future time.
+   */
+  skipTimestampVerification?: boolean,
+
+  /**
+   * If true, we do not check asset ownership. This is useful if you are verifying a challenge that is expected to be verified at a future time.
+   */
+  skipAssetVerification?: boolean,
 }

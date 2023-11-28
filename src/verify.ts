@@ -25,7 +25,7 @@ export function initializeVerify<T extends NumberType>(driver: IChainDriver<T>) 
  * @returns Well-formed challenge string to be signed by the user, if successsful. Error string is returned
  * upon failure.
  */
-export async function createChallenge<T extends NumberType>(challengeParams: ChallengeParams<T>, chainName?: string, options?: CreateChallengeOptions): Promise<string> {
+export function createChallenge<T extends NumberType>(challengeParams: ChallengeParams<T>, chainName?: string, options?: CreateChallengeOptions): string {
   /**
    *  This function should remain completely ChainDriver free. ChainDriver dependencies tend to mess up the
    * React component generation in the browser.
@@ -93,12 +93,16 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
 
   const currDate = new Date();
   verificationData.verificationTime = currDate;
-  if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
-    throw `Error: Challenge expired: ${challenge.expirationDate}`
-  }
 
-  if (challenge.notBefore && currDate <= new Date(challenge.notBefore)) {
-    throw `Error: Challenge invalid until: ${challenge.notBefore}`
+  const skipTimestampVerification = options?.skipTimestampVerification ?? false;
+  if (!skipTimestampVerification) {
+    if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
+      throw `Error: Challenge expired: ${challenge.expirationDate}`
+    }
+
+    if (challenge.notBefore && currDate <= new Date(challenge.notBefore)) {
+      throw `Error: Challenge invalid until: ${challenge.notBefore}`
+    }
   }
 
   const originalAddress = challenge.address;
@@ -111,13 +115,18 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
       }
     }
   }
+  const toSkipAssetVerification = options?.skipAssetVerification ?? false;
   if (challenge.resources || challenge.assets) {
-    const assetLookupData = await verifyAssets(challenge.address, (challenge.resources ?? []), (challenge.assets ?? []), options?.balancesSnapshot);
-    verificationData.assetLookupData = assetLookupData
+    if (!toSkipAssetVerification) {
+      const assetLookupData = await verifyAssets(challenge.address, (challenge.resources ?? []), (challenge.assets ?? []), options?.balancesSnapshot);
+      verificationData.assetLookupData = assetLookupData
+    }
   }
 
+  const qrCodeText = `${originalChallenge.toString()}\n${signedChallenge.toString()}\n${originalAddress}`;
+
   return {
-    message: `Successfully granted access via Blockin`, success: true, verificationData
+    message: `Successfully granted access via Blockin`, success: true, verificationData, qrCodeText: options?.qrCode ? qrCodeText : undefined
   }
 }
 
@@ -383,7 +392,7 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
       if (!asset.ownershipTimes) {
         message += `    - Sign-In Time\n`;
       }
-      
+
       if (asset.ownershipTimes) {
         for (const time of asset.ownershipTimes) {
           if (typeof time === "string") {
