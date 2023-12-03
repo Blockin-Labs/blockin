@@ -1,7 +1,7 @@
 import { IChainDriver } from "./types/ChainDriver.types.js";
 import { initializeAuth } from "./auth.js";
 import { initializeVerify } from "./verify.js";
-import { NumberType } from "bitbadgesjs-utils";
+import { NumberType } from "./types/verify.types.js";
 
 /**
  * Sets the chain driver for the whole library. All chain-specific functions

@@ -4,12 +4,11 @@ import { BlockinUIDisplayProps, SupportedChainMetadata } from "./BlockinUIDispla
 import { useEffect, useState } from 'react';
 import { getChain } from '../SupportedChains'
 import ChainSelect from '../ChainSelect';
-import Blockies from 'react-blockies';
 import SignInModal from "../SignInModal";
 import { CopyOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Typography, Tooltip } from "antd";
-import { NumberType } from "bitbadgesjs-utils";
 import "./BlockinUIDisplay.scss";
+import { NumberType } from "../../types/verify.types";
 
 const Link = ({ url, text }: { url: string, text?: string }) => {
   return <a className="blockin-link" href={url} target='_blank' rel="noreferrer">{text ? text : url}</a>

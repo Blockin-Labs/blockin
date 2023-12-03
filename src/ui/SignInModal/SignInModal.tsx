@@ -1,12 +1,12 @@
 // Generated with util/create-component.js
-import { Col, Divider, InputNumber, Spin, Switch, Typography } from "antd";
-import { NumberType } from "bitbadgesjs-utils";
+import { Col, InputNumber, Spin, Switch, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { createChallenge } from "../../verify";
 import { getChain } from '../SupportedChains';
 import { PresetAsset, PresetUri, SignInModalProps } from "./SignInModal.types";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import "./SignInModal.scss";
+import { NumberType } from "../../types/verify.types";
 
 /*
  * Gets the default selected resources from the passed-in props
@@ -57,7 +57,8 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
   modalIsVisible,
   setModalIsVisible,
   allowTimeSelect = false,
-  maxTimeInFuture
+  maxTimeInFuture,
+  preSignature = false
 }) => {
   const [selectedUris, setSelectedUris] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
   const [selectedAssets, setSelectedAssets] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
@@ -287,7 +288,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                     <button className="blockin-button-secondary" onClick={() => setAdvancedIsVisible(!advancedIsVisible)}>
                       {advancedIsVisible ? 'Hide' : 'Show Advanced'}
                     </button>
-                    {advancedIsVisible && <div>
+                    {advancedIsVisible && <div style={{ marginTop: 16 }}>
                       <p><b>Nonce: {challengeParams.nonce}</b></p>
                       <p><b>Chain ID: {challengeParams.chainId ? challengeParams.chainId : '1 (Default)'}</b></p>
                       <p><b>Version: {challengeParams.version ? challengeParams.version : '1 (Default)'}</b></p>
@@ -328,20 +329,15 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                                 <div style={{ display: 'flex', }}>
                                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'normal' }}>
                                     <div className='blockin-listitem-logo'>
-                                      <img src={elem.image ? elem.image : getChain(elem.chain).logo} height='50px' width='auto' style={{ height: 50, width: 'auto' }} />
+                                      <img src={elem.image ? elem.image : getChain(elem.chain).logo} height='51px' width='auto' style={{ height: 51, width: 'auto' }} />
                                     </div>
+
                                     {elem.chain === 'BitBadges' &&
                                       <div className='blockin-listitem-logo'>
-                                        <img src={getChain('Ethereum').logo} height='25px' width='auto' style={{ height: 25, width: 'auto' }} />
-                                        <img src={getChain('Cosmos').logo} height='25px' width='auto' style={{ height: 25, width: 'auto' }} />
+                                        <img src={getChain('Ethereum').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
+                                        <img src={getChain('Cosmos').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
+                                        <img src={getChain('Solana').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
                                       </div>}
-
-                                    {elem.image &&
-                                      <div className='blockin-listitem-logo'>
-                                        <img src={getChain(elem.chain).logo} height='50px' width='auto' style={{ height: 100, width: 'auto' }} />
-                                      </div>}
-
-
                                   </div>
                                   <div style={{ marginTop: 16 }}><b style={{ fontSize: 22 }}>{elem.name}</b></div>
                                 </div>
@@ -510,6 +506,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                 <br /><Typography.Text strong style={{ color: 'inherit', fontSize: 22 }} >Sign Challenge and Submit</Typography.Text>
                 <p>Once you click the button below, this site will send a signature request to your connected {chain.name} wallet.
                   This is a simple message signature. It is not a transaction and is free of charge.
+                  Only sign this message if you trust this site and all of the information above is correct.
                 </p>
                 {/* <br /> */}
                 {/* Loading Spinner */}
@@ -518,7 +515,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                 <br />
                 <div className='flex-center'>
                   <button className='blockin-button' onClick={handleSignIn} disabled={loading ? true : false}>
-                    Sign In
+                    {preSignature ? 'Sign' : 'Sign In'}
                   </button>
                 </div>
 

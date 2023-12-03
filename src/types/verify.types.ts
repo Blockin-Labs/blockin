@@ -1,5 +1,8 @@
-import { NumberType } from "bitbadgesjs-utils";
-import { UintRange } from "bitbadgesjs-proto";
+export type NumberType = string | bigint | number | boolean;
+export interface UintRange<T extends NumberType> {
+  start: T,
+  end: T,
+}
 
 export interface StringRange {
   start: string,
@@ -7,7 +10,7 @@ export interface StringRange {
 }
 export interface Asset<T extends NumberType> {
   chain: string,
-  collectionId: string | NumberType,
+  collectionId: T | string,
   assetIds: (string | UintRange<T>)[],
   ownershipTimes?: UintRange<T>[],
   mustOwnAmounts: UintRange<T>,
@@ -35,6 +38,54 @@ export interface ChallengeParams<T extends NumberType> {
   resources?: string[],
   assets?: Asset<T>[],
 }
+
+export function convertAsset<T extends NumberType, U extends NumberType>(
+  item: Asset<T>,
+  convertFunction: (item: T) => U
+): Asset<U> {
+  const { collectionId, assetIds, ownershipTimes, mustOwnAmounts, ...rest } = item;
+  let isCollectionIdNumeric = false;
+  try {
+    BigInt(collectionId as any);
+    isCollectionIdNumeric = true;
+  } catch (e) {
+    isCollectionIdNumeric = false;
+  }
+
+  return {
+    ...rest,
+    collectionId: isCollectionIdNumeric ? convertFunction(collectionId as any) : collectionId as string,
+    assetIds: assetIds.map(id => {
+      if (typeof id === 'string') {
+        return id;
+      }
+      return {
+        start: convertFunction(id.start),
+        end: convertFunction(id.end),
+      }
+    }),
+    ownershipTimes: ownershipTimes?.map(time => ({
+      start: convertFunction(time.start),
+      end: convertFunction(time.end),
+    })),
+    mustOwnAmounts: {
+      start: convertFunction(mustOwnAmounts.start),
+      end: convertFunction(mustOwnAmounts.end),
+    },
+  }
+}
+
+export function convertChallengeParams<T extends NumberType, U extends NumberType>(
+  item: ChallengeParams<T>,
+  convertFunction: (item: T) => U
+): ChallengeParams<U> {
+  const { assets, ...rest } = item;
+  return {
+    ...rest,
+    assets: assets?.map(asset => convertAsset(asset, convertFunction)),
+  }
+}
+
 
 /**
  * Options that can be specified when calling createChallenge()
@@ -74,11 +125,6 @@ export type VerifyChallengeOptions = {
    * This is useful if you have a snapshot, balances will not change, or you are verifying in an offline manner.
    */
   balancesSnapshot?: object
-
-  /**
-   * If true, we will return the .qrCodeText property in the response. This is the text to be used to generate a QR code for verification.
-   */
-  qrCode?: boolean,
 
   /**
    * If true, we do not check timestamps (expirationDate / notBefore). This is useful if you are verifying a challenge that is expected to be verified at a future time.

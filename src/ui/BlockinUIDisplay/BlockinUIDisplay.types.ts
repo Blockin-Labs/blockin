@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
-import { Asset, ChallengeParams } from "../../types/verify.types.js";
-import { NumberType } from "bitbadgesjs-utils";
-
+import { Asset, ChallengeParams, NumberType, convertAsset } from "../../types/verify.types.js";
 
 /**
  * Defines schema for displaying a resource within the pop-up modal.
@@ -10,24 +8,28 @@ export type PresetUri = {
   uri: string;
   name: string;
   description?: string
-  image?: string;
   frozen: boolean;
   defaultSelected: boolean;
-
   additionalDisplay?: ReactNode;
-  // isAsset: boolean;
-  // requirements?: string[];
 }
 
-export interface PresetAsset<T extends NumberType> extends Asset<T> {
+export interface AssetWithUIDetails<T extends NumberType> extends Asset<T> {
   name: string;
   description?: string | ReactNode;
-  image?: string;
   frozen: boolean;
   defaultSelected: boolean;
-
   additionalDisplay?: ReactNode;
-  // isAsset: boolean;
+}
+
+export function convertAssetWithUIDetails<T extends NumberType, U extends NumberType>(
+  item: AssetWithUIDetails<T>,
+  convertFunction: (item: T) => U
+): AssetWithUIDetails<U> {
+  const { collectionId, assetIds, ownershipTimes, mustOwnAmounts, ...rest } = item;
+  return {
+    ...rest,
+    ...convertAsset(item, convertFunction),
+  }
 }
 
 
@@ -173,7 +175,7 @@ export type BlockinUIDisplayProps<T extends NumberType> = {
   /**
    * Assets to be displayed to sign-in with.
    */
-  displayedAssets?: PresetAsset<T>[],
+  displayedAssets?: AssetWithUIDetails<T>[],
   // To do in the future:
   // canSetExpirationDate: boolean,
   // canSetNotBeforeDate: boolean,

@@ -35,4 +35,10 @@ export default {
         //If anything else is added to here, also confirm the postrollup script in package.json handles it
         copy(),
     ],
+    globals: {
+        react: 'React',
+    },
+
+    //use external react
+    external: ['react', 'react-dom'],
 };

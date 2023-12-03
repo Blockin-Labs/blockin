@@ -1,12 +1,14 @@
-import { UintRange } from "bitbadgesjs-proto";
-import { NumberType } from 'bitbadgesjs-utils';
 import { IChainDriver } from './types/ChainDriver.types.js';
-import { Asset, ChallengeParams, CreateChallengeOptions, VerifyChallengeOptions } from './types/verify.types.js';
+import { Asset, ChallengeParams, CreateChallengeOptions, NumberType, UintRange, VerifyChallengeOptions } from './types/verify.types.js';
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
 var chainDriver: any;
+
+const BigIntify = (item: NumberType) => {
+  return BigInt(item);
+}
 
 export function initializeVerify<T extends NumberType>(driver: IChainDriver<T>) {
   chainDriver = driver
@@ -74,15 +76,17 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
  * verifyChallenge always checks three things: 1) originalChallenge was signed correctly by the user, 2) the
  * challenge is still well-formed and valid at the present time, and 3) the user owns all requested assets
  * in their wallet upon verification.
- * @param originalChallenge - The bytes (Uint8 Array) that were signed that represent the original challenge.
- * @param signedChallenge - The result of signing the bytes as a Uint8Array
+ * @param message - The string that represent the original challenge.
+ * @param signature - The result of signing the message, formatted to the chain's specifications
  * @param options - Additional checks to perform when verifying the challenge.
  * @returns Returns { message: 'success' } object upon success. Throws an error if challenge is invalid.
  */
-export async function verifyChallenge<T extends NumberType, U extends NumberType>(originalChallenge: Uint8Array, signedChallenge: Uint8Array, convertFunction: (item: U) => T, options?: VerifyChallengeOptions) {
+export async function verifyChallenge<T extends NumberType, U extends NumberType>(message: string, signature: string, options?: VerifyChallengeOptions) {
   const verificationData: any = {};
-  const generatedEIP4361ChallengeStr: string = await getChallengeStringFromBytes(originalChallenge);
-  const challenge: ChallengeParams<T> = constructChallengeObjectFromString(generatedEIP4361ChallengeStr, convertFunction);
+  const generatedEIP4361ChallengeStr: string = message;
+
+  const convertFunction = BigIntify;
+  const challenge: ChallengeParams<bigint> = constructChallengeObjectFromString(generatedEIP4361ChallengeStr, convertFunction);
 
   if (options?.beforeVerification) {
     await options.beforeVerification(challenge);
@@ -105,8 +109,7 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
     }
   }
 
-  const originalAddress = challenge.address;
-  await verifyChallengeSignature(originalChallenge, signedChallenge, originalAddress)
+  await verifyChallengeSignature(message, signature)
 
   if (options?.expectedChallengeParams) {
     for (const key of Object.keys(options?.expectedChallengeParams ?? {})) {
@@ -123,10 +126,8 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
     }
   }
 
-  const qrCodeText = `${originalChallenge.toString()}\n${signedChallenge.toString()}\n${originalAddress}`;
-
   return {
-    message: `Successfully granted access via Blockin`, success: true, verificationData, qrCodeText: options?.qrCode ? qrCodeText : undefined
+    message: `Successfully granted access via Blockin`, success: true, verificationData
   }
 }
 
@@ -212,7 +213,7 @@ export function parseChallengeAssets<T extends NumberType, U extends NumberType>
       currentAsset = { chain: trimmedLine.substring(9).trim() };
     } else if (trimmedLine.startsWith("Collection ID:")) {
       if (currentAsset) {
-        currentAsset.collectionId = trimmedLine.substring(15).trim();
+        currentAsset.collectionId = convertFunction(trimmedLine.substring(15).trim() as U);
       }
     } else if (trimmedLine.startsWith("- ID Range:")) {
       if (currentAsset) {
@@ -446,7 +447,7 @@ export function constructChallengeObjectFromString<T extends NumberType, U exten
   const domain = messageArray[0].split(' ')[0];
   const address = messageArray[1];
   const statement = messageArray[3];
-  const uri = messageArray[5].split(' ')[1];
+  const uri = messageArray[5].split(':').slice(1).join(':').trim();
   const version = messageArray[6].split(':')[1].trim();
   const chainId = messageArray[7].split(':')[1].trim();
   const nonce = messageArray[8].split(':')[1].trim();
@@ -484,12 +485,11 @@ export function constructChallengeObjectFromString<T extends NumberType, U exten
 /**
  * Verifies a challenge is signed by the given addresses. Throws error if invalid. Specific to 
  * specified chain driver.
- * @param originalChallengeToUint8Array - Uint8Array of the original bytes that were signed
- * @param signedChallenge - Uint8Array of the signature bytes
- * @param originalAddress - string that specifies the address who signed these bytes
+ * @param message - The string that represent the original challenge.
+ * @param signature - The result of signing the message, formatted to the chain's specifications
  */
-async function verifyChallengeSignature(originalChallengeToUint8Array: Uint8Array, signedChallenge: Uint8Array, originalAddress: string) {
-  await chainDriver.verifySignature(originalChallengeToUint8Array, signedChallenge, originalAddress);
+async function verifyChallengeSignature(message: string, signature: string) {
+  await chainDriver.verifySignature(message, signature);
 }
 
 /**

@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { Asset, ChallengeParams } from "../../types/verify.types.js";
-import { NumberType } from "bitbadgesjs-utils";
+import { Asset, ChallengeParams, NumberType } from "../../types/verify.types.js";
 
 /**
  * Expected return trype for signAndVerifyChallenge()
@@ -139,4 +138,10 @@ export type SignInModalProps<T extends NumberType> = {
    * 
    */
   maxTimeInFuture?: number,
+
+  /**
+   * Enabled if this is to be a pre-signature. 
+   * Will adjust UI details accordingly ("Sign In" button will be "Sign" instead).
+   */
+  preSignature?: boolean,
 }

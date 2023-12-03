@@ -1,6 +1,5 @@
-import { NumberType } from "bitbadgesjs-utils";
 import { CreateAssetParams, CreateTransferAssetParams } from "./auth.types.js";
-import { Asset } from "./verify.types.js";
+import { Asset, NumberType } from "./verify.types.js";
 
 export type UniversalTxn = {
   txn: Uint8Array;
@@ -20,7 +19,7 @@ export interface IGetPublicKey { (address: string): Uint8Array }
 export interface IGetAssetDetails { (txnId: string): Promise<any> }
 export interface ILookupTransactionById { (txnId: string): Promise<any> }
 export interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
-export interface IVerifySignature { (bytesToSign: Uint8Array, signedBytes: Uint8Array, address: string): Promise<void> }
+export interface IVerifySignature { (message: string, signature: string): Promise<void> }
 export interface IVerifyAssets<T extends NumberType> {
   (address: string, resources: string[], assets: Asset<T>[], balancesSnapshot?: object): Promise<any>
 }
@@ -83,18 +82,6 @@ export interface IChainDriverWithHelpers<T extends NumberType> extends IChainDri
  */
 export interface IChainDriver<T extends NumberType> {
   /**
-   * Prepares the challenge string to be signed. Often used to prefix before signing. To reverse this
-   * prefix and just get the challenge string during verification, use getChallengeStringFromBytesToSign().
-   */
-  // prepareChallengeStringToSign: IPrepareBytesToSign,
-
-  /**
-   * Parses the challenge string from the original signed bytes. Often used because chain's signature algorithms
-   * add prefixes to strings before signing them. This reverses that.
-   */
-  parseChallengeStringFromBytesToSign: IGetChallengeStringFromBytesToSign,
-
-  /**
    * Checks if an address is well-formed.
    */
   isValidAddress: IIsValidAddress,
@@ -104,6 +91,7 @@ export interface IChainDriver<T extends NumberType> {
    * Verifies a signature is signed correctly by an address
    */
   verifySignature: IVerifySignature,
+
   /**
    * Verifies user owns enough of certain assets by querying the public blockchain.
    * 
