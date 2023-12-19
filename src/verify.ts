@@ -1,17 +1,11 @@
-import { IChainDriver } from './types/ChainDriver.types.js';
+import { IChainDriver, IChainDriverWithHelpers } from './index.js';
 import { Asset, ChallengeParams, CreateChallengeOptions, NumberType, UintRange, VerifyChallengeOptions } from './types/verify.types.js';
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
 
-var chainDriver: any;
-
 const BigIntify = (item: NumberType) => {
   return BigInt(item);
-}
-
-export function initializeVerify<T extends NumberType>(driver: IChainDriver<T>) {
-  chainDriver = driver
 }
 
 /**
@@ -19,7 +13,6 @@ export function initializeVerify<T extends NumberType>(driver: IChainDriver<T>) 
  * slight modifications to EIP-4361 for our library include 1) any blockchain's native address, signature,
  * and verification schemes are supported and 2) in resources, one may prefix an asset with 'Asset ID: '
  * to specify micro-authorizations or role-based access using an on-chain asset.
- * 
  * 
  * @param challengeParams - JSON object with the challenge details such as domain, uri, statement, address, etc.
  * @param chainName - Name of the blockchain to include in the statement - "Sign in with your ____ account"
@@ -81,12 +74,16 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
  * @param options - Additional checks to perform when verifying the challenge.
  * @returns Returns { message: 'success' } object upon success. Throws an error if challenge is invalid.
  */
-export async function verifyChallenge<T extends NumberType, U extends NumberType>(message: string, signature: string, options?: VerifyChallengeOptions) {
+export async function verifyChallenge<T extends NumberType>(
+  chainDriver: IChainDriver<T>,
+  message: string, signature: string,
+  convertFunction: (item: NumberType) => T,
+  options?: VerifyChallengeOptions
+) {
   const verificationData: any = {};
   const generatedEIP4361ChallengeStr: string = message;
 
-  const convertFunction = BigIntify;
-  const challenge: ChallengeParams<bigint> = constructChallengeObjectFromString(generatedEIP4361ChallengeStr, convertFunction);
+  const challenge: ChallengeParams<T> = constructChallengeObjectFromString(generatedEIP4361ChallengeStr, convertFunction);
 
   if (options?.beforeVerification) {
     await options.beforeVerification(challenge);
@@ -109,7 +106,7 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
     }
   }
 
-  await verifyChallengeSignature(message, signature)
+  await verifyChallengeSignature(chainDriver, message, signature)
 
   if (options?.expectedChallengeParams) {
     for (const key of Object.keys(options?.expectedChallengeParams ?? {})) {
@@ -121,7 +118,7 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
   const toSkipAssetVerification = options?.skipAssetVerification ?? false;
   if (challenge.resources || challenge.assets) {
     if (!toSkipAssetVerification) {
-      const assetLookupData = await verifyAssets(challenge.address, (challenge.resources ?? []), (challenge.assets ?? []), options?.balancesSnapshot);
+      const assetLookupData = await verifyAssets(chainDriver, challenge.address, (challenge.resources ?? []), (challenge.assets ?? []), options?.balancesSnapshot);
       verificationData.assetLookupData = assetLookupData
     }
   }
@@ -139,7 +136,7 @@ export async function verifyChallenge<T extends NumberType, U extends NumberType
  * verifying. 
  * @returns Last block index / timestamp / hash to be used as the nonce
  */
-export async function generateNonceUsingLastBlockTimestamp() {
+export async function generateNonceUsingLastBlockTimestamp(chainDriver: IChainDriverWithHelpers<NumberType>) {
   const nonce = await chainDriver.getLastBlockIndex()
   return nonce;
 }
@@ -148,10 +145,11 @@ export async function generateNonceUsingLastBlockTimestamp() {
 function assertAssetType<T extends NumberType>(asset: Asset<T>): void {
   if (typeof asset.chain !== "string") throw new Error("Invalid chain type");
   if (
-    typeof asset.collectionId !== "string" &&
-    typeof asset.collectionId !== "number"
-  )
-    throw new Error("Invalid collectionId type");
+    typeof asset.collectionId !== "string"
+  ) {
+    BigInt(asset.collectionId); // will throw if not number type
+  }
+
   if (!Array.isArray(asset.assetIds)) throw new Error("Invalid assetIds type");
   if (
     !asset.assetIds.every(
@@ -425,17 +423,6 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
 }
 
 /**
- * This function is called in order to parse the challenge string from the bytes that were signed.
- * It is specific to the specified chain driver. This function is needed because most signing
- * algorithms add a prefix to the string before signing, so this function attempts to undo that.
- * @param txnBytes - Original bytes that were signed as a Uint8Array
- * @returns Parses out and returns the challenge string that was signed
- */
-async function getChallengeStringFromBytes(txnBytes: Uint8Array): Promise<string> {
-  return chainDriver.parseChallengeStringFromBytesToSign(txnBytes);
-}
-
-/**
  * Constructs a valid JSON challenge object from a valid well-formed EIP-4361 string. Note this
  * doesn't check for validity at all. See the EIP-4361 proposal for more details about exact formatting
  * requirements of the string.
@@ -488,7 +475,7 @@ export function constructChallengeObjectFromString<T extends NumberType, U exten
  * @param message - The string that represent the original challenge.
  * @param signature - The result of signing the message, formatted to the chain's specifications
  */
-async function verifyChallengeSignature(message: string, signature: string) {
+async function verifyChallengeSignature<T extends NumberType>(chainDriver: IChainDriver<T>, message: string, signature: string) {
   await chainDriver.verifySignature(message, signature);
 }
 
@@ -506,7 +493,7 @@ async function verifyChallengeSignature(message: string, signature: string) {
  * @returns If successful, verification was successful. Looked up asset data is also returned for convenience. 
  * Throws error if invalid.
  */
-async function verifyAssets<T extends NumberType>(address: string, resources: string[], assets: Asset<T>[], balancesSnapshot?: object) {
+async function verifyAssets<T extends NumberType>(chainDriver: IChainDriver<T>, address: string, resources: string[], assets: Asset<T>[], balancesSnapshot?: object) {
   const assetLookupData = await chainDriver.verifyAssets(address, resources, assets, balancesSnapshot);
   return assetLookupData;
 }

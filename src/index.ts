@@ -15,7 +15,7 @@ export type {
   IGetTimestampForBlock,
   IIsValidAddress,
   IGetPublicKey,
-  
+
 } from './types/ChainDriver.types.js'
 
 export type {
@@ -27,19 +27,25 @@ export type {
   ChallengeParams,
   VerifyChallengeOptions,
   CreateChallengeOptions,
-  Asset
+  Asset,
 } from './types/verify.types.js'
+
+export {
+  convertAsset,
+  convertChallengeParams,
+} from './types/verify.types.js'
+
+export {
+  convertAssetWithUIDetails,
+} from './ui/BlockinUIDisplay/BlockinUIDisplay.types.js'
 
 export type {
   SignAndVerifyChallengeResponse,
   PresetUri,
-  PresetAsset,
+  AssetWithUIDetails,
+
   SupportedChainMetadata
 } from './ui/BlockinUIDisplay/BlockinUIDisplay.types.js'
-
-export {
-  setChainDriver
-} from './blockin.js'
 
 /**
  * We have removed ChainDrivers from being exported for a few reasons. 
@@ -53,12 +59,6 @@ export {
 // export {
 //     AlgoDriver
 // } from './ChainDrivers/AlgoDriver.js'
-
-export {
-  createAssetTxn,
-  createAssetTransferTxn,
-  sendTxn
-} from './auth.js'
 
 export {
   createChallenge,

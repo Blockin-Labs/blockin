@@ -229,7 +229,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                     <div>
 
                       <a href="https://blockin.gitbook.io/blockin/" target="_blank" rel="noreferrer" className="blockin-link">
-                        <img src={"https://bafybeibepriagbzr64w6ouvbctaxtixryf5trcubowgz7eihvs5b3dqh6y.ipfs.dweb.link/"} height='100px' width='auto' style={{ height: 100, width: 'auto' }} />
+                        <img src={"https://github.com/Blockin-Labs/blockin/blob/main/images/blockin.png?raw=true"} height='100px' width='auto' style={{ height: 100, width: 'auto' }} />
                         <br />
                         <b style={{ fontSize: 18 }}>Blockin</b>
                       </a>
