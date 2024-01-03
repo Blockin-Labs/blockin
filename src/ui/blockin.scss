@@ -330,3 +330,9 @@
     color: #40a9ff;
     text-decoration: underline;
 }
+
+.non-mobile-only {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
