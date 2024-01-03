@@ -54,7 +54,7 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
 
     <div className="mobile-only">
       <button disabled={disabled} className='blockin-button main-button main-display button-style-override' style={{ ...buttonStyle, width: 50 }} onClick={() => setMenuIsVisible(!menuIsVisible)}>
-        <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={selectedChain?.logo} />
+        <img className='' style={{ height: 25, width: 25 }} src={selectedChain?.logo} />
       </button>
     </div>
 
