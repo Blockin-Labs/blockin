@@ -332,12 +332,12 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                                       <img src={elem.image ? elem.image : getChain(elem.chain).logo} height='51px' width='auto' style={{ height: 51, width: 'auto' }} />
                                     </div>
 
-                                    {elem.chain === 'BitBadges' &&
+                                    {/* {elem.chain === 'BitBadges' &&
                                       <div className='blockin-listitem-logo'>
                                         <img src={getChain('Ethereum').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
                                         <img src={getChain('Cosmos').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
                                         <img src={getChain('Solana').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
-                                      </div>}
+                                      </div>} */}
                                   </div>
                                   <div style={{ marginTop: 16 }}><b style={{ fontSize: 22 }}>{elem.name}</b></div>
                                 </div>
