@@ -43,9 +43,20 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
   }
 
   return <>
-    <button disabled={disabled} className='blockin-button main-button main-display blockin-button-semi-disabled button-style-override' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
-      <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={selectedChain?.logo} /> {selectedChain?.name}
-    </button>
+    <div className="non-mobile-only">
+      <button disabled={disabled} className='blockin-button main-button main-display blockin-button-semi-disabled button-style-override' style={buttonStyle} onClick={() => setMenuIsVisible(!menuIsVisible)}>
+        <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={selectedChain?.logo} />
+        <span className='non-mobile-only'>
+          {selectedChain?.name}
+        </span>
+      </button>
+    </div>
+
+    <div className="mobile-only">
+      <button disabled={disabled} className='blockin-button main-button main-display button-style-override' style={{ ...buttonStyle, width: 50 }} onClick={() => setMenuIsVisible(!menuIsVisible)}>
+        <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={selectedChain?.logo} />
+      </button>
+    </div>
 
 
     {menuIsVisible && <div className='blockin-root blockin-chain-select' onClick={(e) => {
@@ -91,9 +102,8 @@ const ChainSelect: React.FC<ChainSelectProps> = ({ chains, updateChain, selected
               return <div key={chain.name}>
                 <button style={buttonStyle} className='blockin-button main-button main-display button-style-override' onClick={() => handleChainChange(chain)}>
                   <img className='blockin-chain-select-logo-right' style={{ height: 20, width: 20 }} src={chain?.logo} />
-                  <span className='non-mobile-only'>
-                    {chain.name}
-                  </span>
+
+                  {chain.name}
                 </button>
               </div>
             })
