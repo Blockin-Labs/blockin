@@ -369,16 +369,7 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                               <br />
                               <div style={{ width: '100%' }}>
                                 <b>Ownership Requirements</b><br />
-                                You must own {[elem.mustOwnAmounts].map(amount => {
-                                  if (typeof amount !== 'object') {
-                                    return 'x' + BigInt(amount).toString();
-                                  } else {
-                                    if (amount.start === amount.end) {
-                                      return `x${BigInt(amount.start).toString()}`
-                                    }
-                                    return `x${BigInt(amount.start).toString()}-${BigInt(amount.end).toString()}`
-                                  }
-                                }).join(', ')} of {elem.assetIds.map((assetId, index) => {
+                                For {elem.mustSatisfyForAllAssets ? 'all' : 'one'} of the specified assets ({elem.assetIds.map((assetId, index) => {
                                   if (typeof assetId !== 'object') {
                                     return <><LinkComponent
                                       url={chain.getTokenExplorerUrl ? chain.getTokenExplorerUrl(elem.collectionId.toString(), assetId.toString()) : ''}
@@ -390,7 +381,16 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                                     }
                                     return <>IDs {BigInt(assetId.start).toString()}-{BigInt(assetId.end).toString()}{index !== elem.assetIds.length - 1 ? ', ' : ''}</>
                                   }
-                                })} from <LinkComponent
+                                })}), you must own {[elem.mustOwnAmounts].map(amount => {
+                                  if (typeof amount !== 'object') {
+                                    return 'x' + BigInt(amount).toString();
+                                  } else {
+                                    if (amount.start === amount.end) {
+                                      return `x${BigInt(amount.start).toString()}`
+                                    }
+                                    return `x${BigInt(amount.start).toString()}-${BigInt(amount.end).toString()}`
+                                  }
+                                }).join(', ')} from <LinkComponent
                                   url={chain.getCollectionExplorerUrl ? chain.getCollectionExplorerUrl(elem.collectionId.toString()) : ''}
                                   text={chain.name + " Collection: " + elem.collectionId.toString()}
                                 /> {elem.ownershipTimes ? 'from ' +

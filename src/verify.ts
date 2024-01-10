@@ -276,6 +276,14 @@ export function parseChallengeAssets<T extends NumberType, U extends NumberType>
         const range = trimmedLine.substring(2).trim();
         currentAsset.assetIds.push(range);
       }
+    } else if (trimmedLine.startsWith("Must meet ownership requirements for all assets")) {
+      if (currentAsset) {
+        currentAsset.mustSatisfyForAllAssets = true;
+      }
+    } else if (trimmedLine.startsWith("Must meet ownership requirements for one of the assets")) {
+      if (currentAsset) {
+        currentAsset.mustSatisfyForAllAssets = false;
+      }
     }
   }
 
@@ -378,6 +386,8 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
       message += `- Chain: ${asset.chain}\n`;
       message += `  Collection ID: ${asset.collectionId}\n`;
 
+      message += `  ${asset.mustSatisfyForAllAssets ? "Must meet ownership requirements for all assets" : "Must meet ownership requirements for one of the assets"}\n`;
+
       message += `  Asset IDs:\n`;
       for (const assetId of asset.assetIds) {
         if (typeof assetId === "string") {
@@ -386,6 +396,7 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
           message += `    - ID Range: ${assetId.start} to ${assetId.end}\n`;
         }
       }
+
 
       message += `  Ownership Times:\n`;
       if (!asset.ownershipTimes) {
@@ -409,7 +420,9 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
         } else {
           message += `    - Range: x${asset.mustOwnAmounts.start} (min) to x${asset.mustOwnAmounts.end} (max)\n`;
         }
+
       }
+
 
       if (asset.additionalCriteria) {
         message += `  Additional Criteria: ${asset.additionalCriteria}\n`;

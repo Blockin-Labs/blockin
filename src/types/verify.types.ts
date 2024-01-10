@@ -14,7 +14,10 @@ export interface Asset<T extends NumberType> {
   assetIds: (string | UintRange<T>)[],
   ownershipTimes?: UintRange<T>[],
   mustOwnAmounts: UintRange<T>,
+  mustSatisfyForAllAssets: boolean,
+
   additionalCriteria?: string,
+
 }
 
 /**
