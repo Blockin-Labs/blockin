@@ -62,15 +62,19 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
 }) => {
   const [selectedUris, setSelectedUris] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
   const [selectedAssets, setSelectedAssets] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
+
   const [displayMessage, setDisplayMessage] = useState('');
   const [chain, setChain] = useState(getChain(selectedChainName, selectedChainInfo));
-  const [assetId, setAssetId] = useState('');
-  const [uri, setUri] = useState('');
   const [loading, setLoading] = useState('');
 
   const [advancedIsVisible, setAdvancedIsVisible] = useState(false);
 
   const [hours, setHours] = useState(24);
+
+  useEffect(() => {
+    setSelectedUris(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
+    setSelectedAssets(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
+  }, [displayedAssets, displayedResources])
 
   /**
    * This will be true when 1) there are no selectable resources passed in by provider and 2) user can not add custom
@@ -125,6 +129,11 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
     setDisplayMessage('');
 
     const assetsToVerify: PresetAsset<NumberType>[] = selectedAssets.map(asset => displayedAssets.find(elem => `${elem.name}` === asset) as PresetAsset<NumberType>);
+    if (assetsToVerify.some(x => !x)) {
+      setDisplayMessage('Error: Asset not found.');
+      throw 'Error: Asset not found.'
+    }
+
     /**
      * Generate the challenge object by and input the selectedUris
      */

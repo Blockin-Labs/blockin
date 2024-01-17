@@ -1,6 +1,6 @@
 {
   "name": "blockin",
-  "version": "1.2.79",
+  "version": "1.2.83",
   "description": "",
   "files": [
     "dist"
@@ -45,6 +45,7 @@
   },
   "prepublishOnly": "npm run build",
   "devDependencies": {
+    "@ant-design/icons": "^5.2.5",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
@@ -53,6 +54,7 @@
     "@types/react": "^18.0.8",
     "@types/react-blockies": "^1.4.1",
     "@types/react-dom": "^16.9.14",
+    "antd": "^5.8.4",
     "babel-loader": "^8.2.2",
     "node-sass": "^8.0.0",
     "postcss": "^8.4.31",
@@ -63,8 +65,7 @@
     "rollup-plugin-typescript2": "^0.31.2",
     "sass-loader": "^10.4.1",
     "typedoc": "^0.25.4",
-    "typescript": "^4.5.5",
-    "antd": "^5.8.4",
-    "@ant-design/icons": "^5.2.5"
-  }
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {}
 }

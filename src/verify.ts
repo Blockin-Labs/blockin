@@ -1,5 +1,6 @@
 import { IChainDriver, IChainDriverWithHelpers } from './index.js';
 import { Asset, ChallengeParams, CreateChallengeOptions, NumberType, UintRange, VerifyChallengeOptions } from './types/verify.types.js';
+import { compareObjects } from './utils.js';
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
@@ -8,6 +9,22 @@ const BigIntify = (item: NumberType) => {
   return BigInt(item);
 }
 
+function getChainForAddress(address: string) {
+  let addr: string = address;
+  if (addr.startsWith('0x')) {
+    return 'Ethereum';
+  } else if (addr.startsWith('cosmos')) {
+    return 'Cosmos';
+  } else if (address.length == 44) {
+    return 'Solana';
+  } else if (address.startsWith('bc')) {
+    return 'Bitcoin';
+  }
+
+  return 'Web3'
+}
+
+
 /**
  * Creates a challenge that is well-formed according to EIP-4361 - Sign in With Ethereum. Some
  * slight modifications to EIP-4361 for our library include 1) any blockchain's native address, signature,
@@ -15,12 +32,11 @@ const BigIntify = (item: NumberType) => {
  * to specify micro-authorizations or role-based access using an on-chain asset.
  * 
  * @param challengeParams - JSON object with the challenge details such as domain, uri, statement, address, etc.
- * @param chainName - Name of the blockchain to include in the statement - "Sign in with your ____ account"
  * @param options - JSON object speicfying any additional options when creating the challenge
  * @returns Well-formed challenge string to be signed by the user, if successsful. Error string is returned
  * upon failure.
  */
-export function createChallenge<T extends NumberType>(challengeParams: ChallengeParams<T>, chainName?: string, options?: CreateChallengeOptions): string {
+export function createChallenge<T extends NumberType>(challengeParams: ChallengeParams<T>, options?: CreateChallengeOptions): string {
   /**
    *  This function should remain completely ChainDriver free. ChainDriver dependencies tend to mess up the
    * React component generation in the browser.
@@ -59,7 +75,7 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
 
     validateChallengeObjectIsWellFormed(challenge); // will throw error if invalid
 
-    return constructChallengeStringFromChallengeObject(challenge, chainName);
+    return constructChallengeStringFromChallengeObject(challenge);
   } catch (error: unknown) {
     throw `Error: ${error} - ${challengeParams.toString()}`;
   }
@@ -109,11 +125,17 @@ export async function verifyChallenge<T extends NumberType>(
   await verifyChallengeSignature(chainDriver, message, signature)
 
   if (options?.expectedChallengeParams) {
+
+
     for (const key of Object.keys(options?.expectedChallengeParams ?? {})) {
-      if (challenge[key as keyof ChallengeParams<T>] !== options?.expectedChallengeParams[key as keyof VerifyChallengeOptions['expectedChallengeParams']]) {
-        throw `Error: unexpected value for ${key}: ${challenge[key as keyof ChallengeParams<T>]}. Expected ${options?.expectedChallengeParams[key as keyof VerifyChallengeOptions['expectedChallengeParams']]}`
+      const expected = JSON.parse(JSON.stringify(options?.expectedChallengeParams[key as keyof ChallengeParams<bigint>]));
+      const actual = JSON.parse(JSON.stringify(challenge[key as keyof ChallengeParams<bigint>]));
+      if (compareObjects(expected, actual) !== true) {
+        throw `Error: unexpected value for ${key}: ${JSON.stringify(challenge[key as keyof ChallengeParams<bigint>])} !== ${JSON.stringify(options?.expectedChallengeParams[key as keyof ChallengeParams<bigint>] ?? 'undefined')}`;
       }
+
     }
+
   }
   const toSkipAssetVerification = options?.skipAssetVerification ?? false;
   if (challenge.resources || challenge.assets) {
@@ -354,9 +376,11 @@ export function validateChallengeObjectIsWellFormed<T extends NumberType>(challe
  * @param chainName - Name of the blockchain to include in the statement - "Sign in with your ____ account"
  * @returns - Well-formatted EIP-4361 challenge string to be signed.
  */
-export function constructChallengeStringFromChallengeObject<T extends NumberType>(challenge: ChallengeParams<T>, chainName?: string): string {
+export function constructChallengeStringFromChallengeObject<T extends NumberType>(challenge: ChallengeParams<T>): string {
+  const chain = getChainForAddress(challenge.address);
+
   let message = "";
-  message += `${challenge.domain} wants you to sign in with your ${chainName ? chainName : 'Web3'} account:\n`
+  message += `${challenge.domain} wants you to sign in with your ${chain} account:\n`
   message += `${challenge.address}\n\n`;
   if (challenge.statement) {
     message += `${challenge.statement}\n`;
