@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Asset, ChallengeParams, NumberType } from "../../types/verify.types.js";
+import { AssetConditionGroup, ChallengeParams, NumberType } from "../../types/verify.types.js";
 
 /**
  * Expected return trype for signAndVerifyChallenge()
@@ -25,15 +25,15 @@ export type PresetUri = {
   additionalDisplay?: ReactNode;
 }
 
-export interface PresetAsset<T extends NumberType> extends Asset<T> {
+export interface AssetConditionGroupWithUIDetails<T extends NumberType> {
   name: string;
   description?: string | ReactNode;
-  image?: string;
+  image: string;
   frozen: boolean;
   defaultSelected: boolean;
-  // isAsset: boolean;
-
   additionalDisplay?: ReactNode;
+
+  assetConditionGroup: AssetConditionGroup<T>;
 }
 
 
@@ -118,7 +118,7 @@ export type SignInModalProps<T extends NumberType> = {
   /**
    * Resources to be displayed to sign-in with. See PresetResource type.
    */
-  displayedAssets?: PresetAsset<T>[],
+  displayedAssetGroups?: AssetConditionGroupWithUIDetails<T>[],
 
   /**
    * Resources to be displayed to sign-in with. See PresetResource type.
@@ -144,4 +144,9 @@ export type SignInModalProps<T extends NumberType> = {
    * Will adjust UI details accordingly ("Sign In" button will be "Sign" instead).
    */
   preSignature?: boolean,
+
+  /**
+   * Provide a warning, such as other sites that the signature / authentication code will be given to (i.e. other sites that are to be trusted).
+   */
+  customBeforeSigningWarning?: string
 }

@@ -24,7 +24,7 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps<NumberType>> = ({
   address,
   loggedInDetails,
   displayedResources = [],
-  displayedAssets = [],
+  displayedAssetGroups = [],
   signAndVerifyChallenge,
   selectedChainName,
   selectedChainInfo,
@@ -43,7 +43,8 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps<NumberType>> = ({
   logout,
   hideConnectVsSignInHelper,
   allowTimeSelect,
-  maxTimeInFuture
+  maxTimeInFuture,
+  customBeforeSigningWarning
 
 }) => {
   const [signInModalIsVisible, setSignInModalIsVisible] = useState(false);
@@ -59,10 +60,7 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps<NumberType>> = ({
     if (address) {
       updateDisplayAddress(address, chainInfo);
     }
-  }, [
-    selectedChainName,
-    address
-  ]);
+  }, [selectedChainName, address]);
 
   useEffect(() => {
     updateDisplayAddress(address);
@@ -213,10 +211,11 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps<NumberType>> = ({
       signAndVerifyChallenge={signAndVerifyChallenge}
       displayNotConnnectedWarning={!connected && !hideConnect}
       displayedResources={displayedResources}
-      displayedAssets={displayedAssets}
+      displayedAssetGroups={displayedAssetGroups}
       modalStyle={modalStyle}
       allowTimeSelect={allowTimeSelect}
       maxTimeInFuture={maxTimeInFuture}
+      customBeforeSigningWarning={customBeforeSigningWarning}
     // hideConnectVsSignInHelper={hideConnectVsSignInHelper}
     />
   </div >;

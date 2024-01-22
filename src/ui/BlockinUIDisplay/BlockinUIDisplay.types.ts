@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { Asset, ChallengeParams, NumberType, convertAsset } from "../../types/verify.types.js";
-
+import { AssetConditionGroup, ChallengeParams, NumberType, convertAssetConditionGroup } from "../../types/verify.types";
+import { AssetConditionGroupWithUIDetails } from "../SignInModal/SignInModal.types";
 /**
  * Defines schema for displaying a resource within the pop-up modal.
  */
@@ -13,7 +13,7 @@ export type PresetUri = {
   additionalDisplay?: ReactNode;
 }
 
-export interface AssetWithUIDetails<T extends NumberType> extends Asset<T> {
+export interface AssetUIDetails<T extends NumberType> {
   name: string;
   description?: string | ReactNode;
   frozen: boolean;
@@ -21,16 +21,18 @@ export interface AssetWithUIDetails<T extends NumberType> extends Asset<T> {
   additionalDisplay?: ReactNode;
 }
 
-export function convertAssetWithUIDetails<T extends NumberType, U extends NumberType>(
-  item: AssetWithUIDetails<T>,
-  convertFunction: (item: T) => U
-): AssetWithUIDetails<U> {
-  const { collectionId, assetIds, ownershipTimes, mustOwnAmounts, ...rest } = item;
-  return {
-    ...rest,
-    ...convertAsset(item, convertFunction),
-  }
-}
+// export interface AssetWithUIDetails<T extends NumberType> extends Asset<T>, AssetUIDetails<T> { }
+
+// export function convertAssetWithUIDetails<T extends NumberType, U extends NumberType>(
+//   item: AssetWithUIDetails<T>,
+//   convertFunction: (item: T) => U
+// ): AssetWithUIDetails<U> {
+//   const { collectionId, assetIds, ownershipTimes, mustOwnAmounts, ...rest } = item;
+//   return {
+//     ...rest,
+//     ...convertAsset(item, convertFunction),
+//   }
+// }
 
 
 /**
@@ -175,7 +177,7 @@ export type BlockinUIDisplayProps<T extends NumberType> = {
   /**
    * Assets to be displayed to sign-in with.
    */
-  displayedAssets?: AssetWithUIDetails<T>[],
+  displayedAssetGroups?: AssetConditionGroupWithUIDetails<T>[],
   // To do in the future:
   // canSetExpirationDate: boolean,
   // canSetNotBeforeDate: boolean,
@@ -196,4 +198,10 @@ export type BlockinUIDisplayProps<T extends NumberType> = {
    * 
    */
   maxTimeInFuture?: number,
+
+
+  /**
+    * Provide a warning, such as other sites that the signature / authentication code will be given to (i.e. other sites that are to be trusted).
+    */
+  customBeforeSigningWarning?: string
 }

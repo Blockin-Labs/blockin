@@ -2,8 +2,10 @@ const path = require('path');
 
 module.exports = {
     stories: ['../src/ui/**/*.stories.tsx'],
+
     // Add any Storybook addons you want here: https://storybook.js.org/addons/
     addons: [],
+
     webpackFinal: async (config) => {
         config.module.rules.push({
             test: /\.scss$/,
@@ -22,4 +24,13 @@ module.exports = {
 
         return config;
     },
+
+    framework: {
+        name: '@storybook/react-webpack5',
+        options: {}
+    },
+
+    docs: {
+        autodocs: true
+    }
 };

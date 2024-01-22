@@ -4,21 +4,31 @@ export interface UintRange<T extends NumberType> {
   end: T,
 }
 
-export interface StringRange {
-  start: string,
-  end: string,
+export interface AndGroup<T extends NumberType> {
+  $and: AssetConditionGroup<T>[];
 }
-export interface Asset<T extends NumberType> {
+
+export interface OrGroup<T extends NumberType> {
+  $or: AssetConditionGroup<T>[];
+}
+
+export interface AssetDetails<T extends NumberType> {
   chain: string,
   collectionId: T | string,
   assetIds: (string | UintRange<T>)[],
-  ownershipTimes?: UintRange<T>[],
+  ownershipTimes: UintRange<T>[],
   mustOwnAmounts: UintRange<T>,
-  mustSatisfyForAllAssets: boolean,
-
   additionalCriteria?: string,
-
 }
+
+export interface OwnershipRequirements<T extends NumberType> {
+  assets: AssetDetails<T>[],
+  options?: {
+    numMatchesForVerification?: T, //0 or undefined = must satisfy all
+  }
+}
+
+export type AssetConditionGroup<T extends NumberType> = AndGroup<T> | OrGroup<T> | OwnershipRequirements<T>;
 
 /**
  * Interface for EIP-4361 Challenge - Sign in With Ethereum
@@ -39,42 +49,67 @@ export interface ChallengeParams<T extends NumberType> {
   expirationDate?: string,
   notBefore?: string,
   resources?: string[],
-  assets?: Asset<T>[],
+  assetOwnershipRequirements?: AssetConditionGroup<T>,
 }
 
-export function convertAsset<T extends NumberType, U extends NumberType>(
-  item: Asset<T>,
-  convertFunction: (item: T) => U
-): Asset<U> {
-  const { collectionId, assetIds, ownershipTimes, mustOwnAmounts, ...rest } = item;
-  let isCollectionIdNumeric = false;
-  try {
-    BigInt(collectionId as any);
-    isCollectionIdNumeric = true;
-  } catch (e) {
-    isCollectionIdNumeric = false;
-  }
+export function convertAssetConditionGroup<T extends NumberType, U extends NumberType>(
+  item: AssetConditionGroup<T>,
+  convertFunction: (item: T) => U,
+  populateDefaults?: boolean
+): AssetConditionGroup<U> {
+  const andItem = item as AndGroup<T>;
+  const orItem = item as OrGroup<T>;
+  const ownershipRequirements = item as OwnershipRequirements<T>;
 
-  return {
-    ...rest,
-    collectionId: isCollectionIdNumeric ? convertFunction(collectionId as any) : collectionId as string,
-    assetIds: assetIds.map(id => {
-      if (typeof id === 'string') {
-        return id;
-      }
-      return {
-        start: convertFunction(id.start),
-        end: convertFunction(id.end),
-      }
-    }),
-    ownershipTimes: ownershipTimes?.map(time => ({
-      start: convertFunction(time.start),
-      end: convertFunction(time.end),
-    })),
-    mustOwnAmounts: {
-      start: convertFunction(mustOwnAmounts.start),
-      end: convertFunction(mustOwnAmounts.end),
-    },
+  if (andItem['$and'] !== undefined) {
+    return {
+      $and: andItem.$and.map(group => convertAssetConditionGroup(group, convertFunction))
+    }
+  } else if (orItem['$or'] !== undefined) {
+    return {
+      $or: orItem.$or.map(group => convertAssetConditionGroup(group, convertFunction))
+    }
+  } else {
+    return {
+      assets: ownershipRequirements.assets.map(asset => {
+        let isCollectionIdNumeric = false;
+        try {
+          BigInt(asset.collectionId as any);
+          isCollectionIdNumeric = true;
+        } catch (e) {
+          isCollectionIdNumeric = false;
+        }
+
+        return {
+          ...asset,
+          collectionId: isCollectionIdNumeric ? convertFunction(asset.collectionId as any) : asset.collectionId as string,
+          assetIds: asset.assetIds.map(id => {
+            if (typeof id === 'string') {
+              return id;
+            }
+            return {
+              start: convertFunction(id.start),
+              end: convertFunction(id.end),
+            }
+          }),
+          ownershipTimes: asset.ownershipTimes.map(time => ({
+            start: convertFunction(time.start),
+            end: convertFunction(time.end),
+          })),
+          mustOwnAmounts: {
+            start: convertFunction(asset.mustOwnAmounts.start),
+            end: convertFunction(asset.mustOwnAmounts.end),
+          },
+        }
+      }),
+
+      options: ownershipRequirements.options ? {
+        numMatchesForVerification: ownershipRequirements.options.numMatchesForVerification ? convertFunction(ownershipRequirements.options.numMatchesForVerification) :
+          populateDefaults ? 0 as U : undefined
+      } : populateDefaults ? {
+        numMatchesForVerification: 0 as U
+      } : undefined
+    }
   }
 }
 
@@ -82,10 +117,12 @@ export function convertChallengeParams<T extends NumberType, U extends NumberTyp
   item: ChallengeParams<T>,
   convertFunction: (item: T) => U
 ): ChallengeParams<U> {
-  const { assets, ...rest } = item;
+  const { assetOwnershipRequirements, ...rest } = item;
   return {
     ...rest,
-    assets: assets?.map(asset => convertAsset(asset, convertFunction)),
+    assetOwnershipRequirements: assetOwnershipRequirements ?
+      convertAssetConditionGroup(assetOwnershipRequirements, convertFunction)
+      : undefined
   }
 }
 
@@ -138,4 +175,19 @@ export type VerifyChallengeOptions = {
    * If true, we do not check asset ownership. This is useful if you are verifying a challenge that is expected to be verified at a future time.
    */
   skipAssetVerification?: boolean,
+
+  /**
+   * The earliest issued At ISO date string that is valid. For example, if you want to verify a challenge that was issued within the last minute, you can specify this to be 1 minute ago.
+   */
+  earliestIssuedAt?: string,
+
+  /**
+   * If set, we will verify the issuedAt is within this amount of ms ago (i.e. issuedAt >= Date.now() - issuedAtTimeWindowMs)
+   */
+  issuedAtTimeWindowMs?: number,
+
+  /**
+   * If true, we do not check the signature. You can pass in an undefined ChainDriver
+   */
+  skipSignatureVerification?: boolean,
 }

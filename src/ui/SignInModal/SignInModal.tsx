@@ -1,19 +1,19 @@
 // Generated with util/create-component.js
 import { Col, InputNumber, Spin, Switch, Typography } from "antd";
-import React, { useEffect, useState } from "react";
-import { createChallenge } from "../../verify";
+import React, { ReactNode, useEffect, useState } from "react";
+import { createChallenge, generateAssetConditionGroupString, parseChallengeAssets } from "../../verify";
 import { getChain } from '../SupportedChains';
-import { PresetAsset, PresetUri, SignInModalProps } from "./SignInModal.types";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { AssetConditionGroupWithUIDetails, PresetUri, SignInModalProps } from "./SignInModal.types";
+import { InfoCircleOutlined, WarningOutlined } from "@ant-design/icons";
 import "./SignInModal.scss";
-import { NumberType } from "../../types/verify.types";
+import { AndGroup, ChallengeParams, NumberType, OrGroup, OwnershipRequirements } from "../../types/verify.types";
 
 /*
  * Gets the default selected resources from the passed-in props
  * @param resources Resources passed in as props
  * @returns Array of formatted string[] resources
  */
-const getDefaultSelectedResources = (resources: PresetUri[], assets: PresetAsset<NumberType>[]) => {
+const getDefaultSelectedResources = (resources: PresetUri[], assets: AssetConditionGroupWithUIDetails<NumberType>[]) => {
   const selectedUris: string[] = [];
   const selectedAssets: string[] = [];
   for (const resource of resources) {
@@ -44,11 +44,11 @@ const LinkComponent = ({ url, text }: { url: string, text?: string }) => {
  * As props, you can pass in everything needed to generate, sign, and verify the challenge. See the documentation
  * for each prop for more information.
  */
-const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
+const SignInModal: React.FC<SignInModalProps<NumberType>> = ({
   challengeParams,
   address,
-  displayedResources = [],
-  displayedAssets = [],
+  displayedResources,
+  displayedAssetGroups,
   signAndVerifyChallenge,
   selectedChainName,
   selectedChainInfo,
@@ -58,10 +58,11 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
   setModalIsVisible,
   allowTimeSelect = false,
   maxTimeInFuture,
-  preSignature = false
+  preSignature = false,
+  customBeforeSigningWarning
 }) => {
-  const [selectedUris, setSelectedUris] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
-  const [selectedAssets, setSelectedAssets] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
+  displayedResources = displayedResources ?? [];
+  displayedAssetGroups = displayedAssetGroups ?? [];
 
   const [displayMessage, setDisplayMessage] = useState('');
   const [chain, setChain] = useState(getChain(selectedChainName, selectedChainInfo));
@@ -69,18 +70,34 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
 
   const [advancedIsVisible, setAdvancedIsVisible] = useState(false);
 
-  const [hours, setHours] = useState(24);
+  const [currSiteOrigin, setCurrSiteOrigin] = useState('');
+
+  const trustedDomains = ['http://localhost:3000', 'https://bitbadges.io'];
+  const domainDifferentFromOrigin = !challengeParams?.domain || challengeParams.domain !== currSiteOrigin;
+  const onTrustedOrigin = !domainDifferentFromOrigin || trustedDomains.includes(challengeParams?.domain ?? '');
 
   useEffect(() => {
-    setSelectedUris(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
-    setSelectedAssets(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
-  }, [displayedAssets, displayedResources])
+    setCurrSiteOrigin(window.location.origin);
+  }, [])
+
+  const [hours, setHours] = useState(24);
+
+
+  const [selectedUris, setSelectedUris] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssetGroups).selectedUris);
+  const [selectedAssets, setSelectedAssets] = useState<string[]>(getDefaultSelectedResources(displayedResources, displayedAssetGroups).selectedAssets);
+
+  useEffect(() => {
+    const res = getDefaultSelectedResources(displayedResources, displayedAssetGroups);
+    setSelectedUris(res.selectedUris);
+    setSelectedAssets(res.selectedAssets);
+    setDisplayMessage('');
+  }, [displayedResources.length, displayedAssetGroups.length])
 
   /**
    * This will be true when 1) there are no selectable resources passed in by provider and 2) user can not add custom
    * resources.
    */
-  const resourcesAreHidden = displayedAssets.length === 0 && displayedResources.length === 0;
+  const resourcesAreHidden = displayedAssetGroups.length === 0 && displayedResources.length === 0;
 
   /**
    * Adds a resource that was added by the user to selectedUris. Formats in correct Blockin format
@@ -128,19 +145,22 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
     setLoading('Creating challenge...');
     setDisplayMessage('');
 
-    const assetsToVerify: PresetAsset<NumberType>[] = selectedAssets.map(asset => displayedAssets.find(elem => `${elem.name}` === asset) as PresetAsset<NumberType>);
+    const assetsToVerify: AssetConditionGroupWithUIDetails<NumberType>[] = selectedAssets.map(asset => displayedAssetGroups.find(elem => `${elem.name}` === asset) as AssetConditionGroupWithUIDetails<NumberType>);
     if (assetsToVerify.some(x => !x)) {
-      setDisplayMessage('Error: Asset not found.');
-      throw 'Error: Asset not found.'
+      setDisplayMessage('Error: Assets not found.');
+      setLoading('');
+      return;
     }
+
+    const assetConditionGroups = assetsToVerify.map(x => x.assetConditionGroup);
 
     /**
      * Generate the challenge object by and input the selectedUris
      */
-    const challenge = {
+    const challenge: ChallengeParams<NumberType> = {
       ...challengeParams,
       resources: selectedUris,
-      assets: assetsToVerify,
+      assetOwnershipRequirements: assetConditionGroups.length > 1 ? { $and: assetConditionGroups } : assetConditionGroups[0],
       expirationDate: allowTimeSelect ? new Date(Date.now() + hours * 60 * 60 * 1000).toISOString() : challengeParams.expirationDate
     };
 
@@ -149,9 +169,9 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
       /**
        * Call Blockin to create the challenge string.
        */
-      const challengeString = await createChallenge(challenge, selectedChainName);
+      const challengeString = createChallenge(challenge, selectedChainName);
 
-      setLoading('Awaiting signature and verifying...');
+      setLoading('Awaiting signature and verification...');
       /**
        * Sign and verify the challenge using the passed in signAndVerifyChallenge() props function.
        * 
@@ -169,8 +189,8 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
         setLoading('');
       } else {
         setDisplayMessage('');
-        setSelectedUris(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
-        setSelectedAssets(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
+        setSelectedUris(getDefaultSelectedResources(displayedResources, displayedAssetGroups).selectedUris);
+        setSelectedAssets(getDefaultSelectedResources(displayedResources, displayedAssetGroups).selectedAssets);
         setModalIsVisible(false);
         setLoading('');
 
@@ -184,16 +204,16 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
 
   const generateHumanReadableTimeDetails = (notBefore?: string, expirationDate?: string) => {
     if (!notBefore && !expirationDate) {
-      return 'This sign-in attempt has no expiration date.';
-    }
-    else if (notBefore && !expirationDate) {
-      return `This sign-in attempt has no expiration date but is not valid until ${notBefore}.`
+      return 'This sign-in will always be valid (no expiration date).';
+    } else if (notBefore && !expirationDate) {
+      return `This sign-in will have no expiration date but will not be valid until ${new Date(notBefore).toLocaleString()}.`
     }
     else if (!notBefore && expirationDate) {
-      return `This sign-in attempt expires at ${expirationDate}.`
-    }
-    else {
-      return `This sign-in attempt expires at ${expirationDate} and is not valid until ${notBefore}.`
+      return `This sign-in will expire at ${new Date(expirationDate).toLocaleString()}.`
+    } else if (notBefore && expirationDate) {
+      return `This sign-in will expire at ${new Date(expirationDate).toLocaleString()} and will not be valid until ${new Date(notBefore).toLocaleString()}.`
+    } else {
+      throw 'Error: Invalid time details.'
     }
   }
 
@@ -205,8 +225,8 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
           if (!(e.target as any).closest('.blockin-popup-container')) { //HACK: TS Hack
             setModalIsVisible(false); // Close the modal
             setDisplayMessage('');
-            setSelectedUris(getDefaultSelectedResources(displayedResources, displayedAssets).selectedUris);
-            setSelectedAssets(getDefaultSelectedResources(displayedResources, displayedAssets).selectedAssets);
+            setSelectedUris(getDefaultSelectedResources(displayedResources, displayedAssetGroups).selectedUris);
+            setSelectedAssets(getDefaultSelectedResources(displayedResources, displayedAssetGroups).selectedAssets);
           }
           // setModalIsVisible(!modalIsVisible);
           // e.stopPropagation();
@@ -217,7 +237,13 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
             // e.preventDefault();
           }}>
             <div className="blockin-popup modal-style-override" style={modalStyle}>
-              {displayNotConnnectedWarning && <><b>Warning: Your wallet is not currently connected. You will not be able to sign the challenge message.  </b></>}
+              {displayNotConnnectedWarning && <>
+                <div className="flex-center"><b style={{ color: 'orange', textAlign: 'center' }}>
+                  Warning: Your wallet is not currently connected.</b></div>
+
+                <br />
+
+              </>}
               {/* Header with the Close Button */}
               <div className='blockin-header'>
                 <div className="header-end">
@@ -258,15 +284,16 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                 <br /><Typography.Text strong style={{ color: 'inherit', fontSize: 22 }} >Sign-In Details</Typography.Text>
                 {challengeParamsAreValid ? <>
                   <div className='blockin-challenge-details'>
-
-                    <p><b>
-                      <LinkComponent url={challengeParams.uri} />
-                    </b></p>
+                    {challengeParams.uri !== challengeParams.domain && <>
+                      <p><b>
+                        <LinkComponent url={challengeParams.uri} />
+                      </b></p>
+                    </>}
                     <p><b>
                       <LinkComponent url={challengeParams.domain} /> wants you to sign in with your {chain.name} account: {<LinkComponent text={challengeParams.address} url={chain.getAddressExplorerUrl ? chain.getAddressExplorerUrl(challengeParams.address) : ''} />}
                     </b></p>
                     <p><b>{challengeParams.statement}</b></p>
-                    {challengeParams.issuedAt && <><p><b>This sign-in attempt was issued at {challengeParams.issuedAt}</b></p></>}
+                    {challengeParams.issuedAt && <><p><b>This sign-in request was issued at {new Date(challengeParams.issuedAt).toLocaleString()}</b></p></>}
 
                     {allowTimeSelect ?
                       <>
@@ -313,18 +340,113 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
 
 
 
-                  {(displayedResources.length !== 0 || displayedAssets.length !== 0) && <>
+                  {(displayedResources.length !== 0 || displayedAssetGroups.length !== 0) && <>
 
                     <br />
-                    <Typography.Text strong style={{ color: 'inherit', fontSize: 22 }} >Select Privileges</Typography.Text>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
-                      <InfoCircleOutlined rev={''} style={{ marginRight: 4 }} /> Select the privileges you meet the criteria for and would like to receive.
-                    </div>
+
+                    <Typography.Text strong style={{ color: 'inherit', fontSize: 22 }} >Privileges</Typography.Text>
+                    {(displayedResources.some(x => !x.frozen) || displayedAssetGroups.some(x => !x.frozen)) &&
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+                        <InfoCircleOutlined rev={''} style={{ marginRight: 4 }} /> Select the privileges you meet the criteria for and would like to receive.
+                      </div>}
                     <br />
                     <br />
 
-                    {displayedAssets.map(elem => {
-                      const chain = getChain(elem.chain);
+                    {displayedAssetGroups.map(elem => {
+
+                      const ownershipString = generateAssetConditionGroupString(elem.assetConditionGroup, 0, 1, 1);
+                      
+
+                      const lines = ownershipString.split('\n');
+                      let currChain = 'Ethereum';
+                      let currCollectionId: string | NumberType = '';
+                      const convertedLines: ReactNode[] = [];
+                      const chains: string[] = [];
+                      console.log(elem.assetConditionGroup);
+                      console.log(ownershipString);
+
+                      for (const line of lines) {
+                        const trimmedLine = line.trim();
+
+                        if (trimmedLine.startsWith('Chain')) {
+                          currChain = trimmedLine.split(': ')[1].trim();
+                          chains.push(currChain);
+                          continue
+                        } else if (trimmedLine.startsWith('Asset IDs')) {
+                          const chain = getChain(currChain, selectedChainInfo);
+                          const ids = trimmedLine.split(': ')[1].trim();
+                          const [start, end] = ids.split(' to ').map(x => x.trim()).map(x => BigInt(x));
+                          if (start === end) {
+                            const Link = <LinkComponent
+                              url={chain.getTokenExplorerUrl ? chain.getTokenExplorerUrl(currCollectionId.toString(), start.toString()) : ''}
+                              text={start.toString()}
+                            />
+                            convertedLines.push(<>
+                              {line.split(': ')[0]}: {Link}
+                            </>)
+                          } else {
+                            convertedLines.push(line)
+                          }
+                        } else if (trimmedLine.startsWith('Asset ID')) {
+                          //string or a number
+                          const chain = getChain(currChain, selectedChainInfo);
+                          const assetId = trimmedLine.split(': ')[1].trim();
+                          const Link = <LinkComponent
+                            url={chain.getTokenExplorerUrl ? chain.getTokenExplorerUrl(currCollectionId.toString(), assetId.toString()) : ''}
+                            text={assetId.toString()}
+                          />
+                          convertedLines.push(<>
+                            {line.split(': ')[0]}: {Link}
+                          </>)
+                        } else if (trimmedLine.startsWith('Ownership Times')) {
+                          const ownershipTimes = trimmedLine.split(': ')[1].trim();
+                          const timeRange = ownershipTimes.split('to');
+                          if (timeRange.length == 1) {
+                            console.log(ownershipTimes);
+                            const dateString = ownershipTimes.split(' onwards')[0];
+                            console.log(dateString);
+                            //onwards
+                            convertedLines.push(<>
+                              {line.split(': ')[0]}: {new Date(dateString).toLocaleString()} onwards
+                            </>)
+                          } else {
+                            //date range
+                            convertedLines.push(<>
+                              {line.split(': ')[0]}: {new Date(timeRange[0].trim()).toLocaleString()} to {new Date(timeRange[1].trim()).toLocaleString()}
+                            </>)
+                          }
+
+                        } else if (trimmedLine.startsWith('Ownership Time')) {
+                          //date string or "Authentication Time"
+                          const time = trimmedLine.split(': ')[1].trim();
+                          if (time === 'Authentication Time') {
+                            convertedLines.push(line);
+                          } else {
+                            convertedLines.push(<>
+                              {line.split(': ')[0]}: {new Date(Number(BigInt(time))).toLocaleString()}
+                            </>)
+                          }
+                        } else if (trimmedLine.startsWith('Collection ID')) {
+                          //uint or string 
+                          currCollectionId = trimmedLine.split(': ')[1].trim();
+                          const chain = getChain(currChain, selectedChainInfo);
+
+                          const link = <LinkComponent
+                            url={chain.getCollectionExplorerUrl ? chain.getCollectionExplorerUrl(currCollectionId.toString()) : ''}
+                            text={chain.name + " Collection: " + currCollectionId.toString()}
+                          />
+                          convertedLines.push(<>
+                            {line.split('Collection ID: ')[0]}
+                            {/* <img src={chain.logo} height='20px' width='auto' style={{ height: 20, width: 'auto', marginLeft: 4, marginRight: 4 }} /> */}
+
+                            {link}
+                          </>)
+                        } else {
+                          convertedLines.push(line);
+                        }
+
+
+                      }
 
                       return <>
                         <div className='blockin-listitem' style={{ alignItems: 'normal' }}>
@@ -336,18 +458,12 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                             <div style={{ width: '100%' }}>
                               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                                 <div style={{ display: 'flex', }}>
-                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'normal' }}>
-                                    <div className='blockin-listitem-logo'>
-                                      <img src={elem.image ? elem.image : getChain(elem.chain).logo} height='51px' width='auto' style={{ height: 51, width: 'auto' }} />
-                                    </div>
-
-                                    {/* {elem.chain === 'BitBadges' &&
+                                  {elem.image &&
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'normal' }}>
                                       <div className='blockin-listitem-logo'>
-                                        <img src={getChain('Ethereum').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
-                                        <img src={getChain('Cosmos').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
-                                        <img src={getChain('Solana').logo} height='17px' width='auto' style={{ height: 17, width: 'auto' }} />
-                                      </div>} */}
-                                  </div>
+                                        <img src={elem.image} height='51px' width='auto' style={{ height: 51, width: 'auto' }} />
+                                      </div>
+                                    </div>}
                                   <div style={{ marginTop: 16 }}><b style={{ fontSize: 22 }}>{elem.name}</b></div>
                                 </div>
                                 {/* Button allows user to select / deselect asset. Uses passed in 'frozen' and 'defaultSelected'
@@ -376,57 +492,25 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
                               <br /> {elem.description}
                               <br />
                               <br />
-                              <div style={{ width: '100%' }}>
-                                <b>Ownership Requirements</b><br />
-                                For {elem.mustSatisfyForAllAssets ? 'all' : 'one'} of the specified assets ({elem.assetIds.map((assetId, index) => {
-                                  if (typeof assetId !== 'object') {
-                                    return <><LinkComponent
-                                      url={chain.getTokenExplorerUrl ? chain.getTokenExplorerUrl(elem.collectionId.toString(), assetId.toString()) : ''}
-                                      text={"ID: " + assetId.toString()}
-                                    />{index !== elem.assetIds.length - 1 ? ', ' : ''}</>
-                                  } else {
-                                    if (assetId.start === assetId.end) {
-                                      return <>ID {BigInt(assetId.start).toString()}{index !== elem.assetIds.length - 1 ? ', ' : ''}</>
-                                    }
-                                    return <>IDs {BigInt(assetId.start).toString()}-{BigInt(assetId.end).toString()}{index !== elem.assetIds.length - 1 ? ', ' : ''}</>
-                                  }
-                                })}), you must own {[elem.mustOwnAmounts].map(amount => {
-                                  if (typeof amount !== 'object') {
-                                    return 'x' + BigInt(amount).toString();
-                                  } else {
-                                    if (amount.start === amount.end) {
-                                      return `x${BigInt(amount.start).toString()}`
-                                    }
-                                    return `x${BigInt(amount.start).toString()}-${BigInt(amount.end).toString()}`
-                                  }
-                                }).join(', ')} from <LinkComponent
-                                  url={chain.getCollectionExplorerUrl ? chain.getCollectionExplorerUrl(elem.collectionId.toString()) : ''}
-                                  text={chain.name + " Collection: " + elem.collectionId.toString()}
-                                /> {elem.ownershipTimes ? 'from ' +
-                                  elem.ownershipTimes.map(time => {
-                                    if (typeof time === 'string') {
-                                      return new Date(time).toLocaleString();
-                                    } else if (typeof time !== 'object') {
-                                      return new Date(Number(BigInt(time))).toLocaleString();
-                                    } else {
-                                      return `${new Date(Number(BigInt(time.start))).toLocaleString()} until ${new Date(Number(BigInt(time.end))).toLocaleString()}`
-                                    }
-                                  }).join(', ') : 'at the time of sign-in'} to be approved.
-                              </div>
-                              {elem.additionalCriteria && <><br /><br /><b>Additional Criteria</b><br />{elem.additionalCriteria}</>}
+                              <b>Ownership Requirements</b><br /><br />
 
+                              {convertedLines.map(line => {
+                                //keep indentation
 
-                              {elem.additionalDisplay ? <>
-                                <br />
-                                {elem.additionalDisplay}
-                              </> : <></>}
-                              <br />
-                              <br />
+                                return <><div style={{ whiteSpace: 'pre-wrap' }}>
+                                  {line}<br />
+                                </div>
+                                </>
+                              })}
                             </div>
+
+                            {elem.additionalDisplay ? <>
+                              {elem.additionalDisplay}
+                            </> : <></>}
+                            <br />
+                            <br />
                           </div>
-
-
-                        </div >
+                        </div>
                       </>
                     }
                     )}
@@ -513,9 +597,16 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
               {/* Final Sign Challenge Button. Calls signChallenge() and verifyChallenge(). */}
               < div className='blockin-sign-challenge-button' >
                 <br /><Typography.Text strong style={{ color: 'inherit', fontSize: 22 }} >Sign Challenge and Submit</Typography.Text>
-                <p>Once you click the button below, this site will send a signature request to your connected {chain.name} wallet.
-                  This is a simple message signature. It is not a transaction and is free of charge.
-                  Only sign this message if you trust this site and all of the information above is correct.
+                <p>Upon clicking the button below, this site will send a signature request to your connected {chain.name} wallet.
+                  This is a simple message signature. It is not a transaction and is free of charge. The signature of this message is your secret authentication code.
+                </p>
+                <p>
+                  <WarningOutlined style={{ color: 'orange' }} /> Only proceed to sign this message if all of the information above is correct
+                  and you trust the site you are currently on ({currSiteOrigin}).
+                  {!onTrustedOrigin && <span style={{ color: 'orange' }}> Note that the site you are currently on is different from the site to be authenticated on.
+                    This site ({currSiteOrigin}) will be able to see your secret authentication code.
+                  </span>}
+                  {customBeforeSigningWarning && <span style={{ color: 'orange' }}> {customBeforeSigningWarning}</span>}
                 </p>
                 {/* <br /> */}
                 {/* Loading Spinner */}
@@ -537,4 +628,4 @@ const BlockinUIDisplay: React.FC<SignInModalProps<NumberType>> = ({
   </div >;
 }
 
-export default BlockinUIDisplay
+export default SignInModal

@@ -1,8 +1,7 @@
 // Generated with util/create-component.js
 import React, { useState } from "react";
-import { ChallengeParams } from "../../types/verify.types";
-import { SignAndVerifyChallengeResponse, SupportedChainMetadata } from "./BlockinUIDisplay.types";
 import BlockinUIDisplay from './BlockinUIDisplay';
+import { SupportedChainMetadata } from "./BlockinUIDisplay.types";
 
 export default {
   title: "BlockinUIDisplay"
@@ -152,6 +151,7 @@ export const SuccessfulSignAndVerify = () => {
       loggedIn={!!signedIn}
       address={'0xe00dd9d317573f7b4868d8f2578c65544b153a27'}
       loggedInDetails={signedIn}
+      customBeforeSigningWarning="This"
       signAndVerifyChallenge={async (challenge: string) => {
         // const signChallengeResponse = await handleSignChallengeSuccess(challenge);
 

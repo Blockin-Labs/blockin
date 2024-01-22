@@ -1,5 +1,5 @@
 import { CreateAssetParams, CreateTransferAssetParams } from "./auth.types.js";
-import { Asset, NumberType } from "./verify.types.js";
+import { AssetConditionGroup, NumberType } from "./verify.types.js";
 
 export type UniversalTxn = {
   txn: Uint8Array;
@@ -21,7 +21,7 @@ export interface ILookupTransactionById { (txnId: string): Promise<any> }
 export interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
 export interface IVerifySignature { (message: string, signature: string): Promise<void> }
 export interface IVerifyAssets<T extends NumberType> {
-  (address: string, resources: string[], assets: Asset<T>[], balancesSnapshot?: object): Promise<any>
+  (address: string, resources: string[], assets: AssetConditionGroup<T> | undefined, balancesSnapshot?: object): Promise<any>
 }
 
 /**

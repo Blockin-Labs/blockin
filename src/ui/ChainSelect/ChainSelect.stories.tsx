@@ -10,7 +10,7 @@ export default {
 
 const handleSignChallengeFailure = async (challenge: string) => {
   return {
-    message: 'Error: Problem signing challenge'
+    message: 'Problem signing challenge'
   }
 }
 

@@ -16,36 +16,39 @@ export type {
   IIsValidAddress,
   IGetPublicKey,
 
-} from './types/ChainDriver.types.js'
+} from './types/ChainDriver.types'
 
 export type {
   CreateAssetParams,
   CreateTransferAssetParams,
-} from './types/auth.types.js'
+} from './types/auth.types'
 
 export type {
   ChallengeParams,
   VerifyChallengeOptions,
   CreateChallengeOptions,
-  Asset,
-} from './types/verify.types.js'
+  AssetConditionGroup,
+  AndGroup,
+  OrGroup,
+  OwnershipRequirements,
+} from './types/verify.types'
 
 export {
-  convertAsset,
+  convertAssetConditionGroup,
   convertChallengeParams,
-} from './types/verify.types.js'
+} from './types/verify.types'
 
 export {
-  convertAssetWithUIDetails,
-} from './ui/BlockinUIDisplay/BlockinUIDisplay.types.js'
+  // convertAssetWithUIDetails,
+} from './ui/BlockinUIDisplay/BlockinUIDisplay.types'
 
 export type {
   SignAndVerifyChallengeResponse,
   PresetUri,
-  AssetWithUIDetails,
+  AssetUIDetails,
 
   SupportedChainMetadata
-} from './ui/BlockinUIDisplay/BlockinUIDisplay.types.js'
+} from './ui/BlockinUIDisplay/BlockinUIDisplay.types'
 
 /**
  * We have removed ChainDrivers from being exported for a few reasons. 
@@ -58,13 +61,13 @@ export type {
  */
 // export {
 //     AlgoDriver
-// } from './ChainDrivers/AlgoDriver.js'
+// } from './ChainDrivers/AlgoDriver'
 
 export {
   createChallenge,
   verifyChallenge,
   constructChallengeObjectFromString,
-  constructChallengeStringFromChallengeObject,
   validateChallengeObjectIsWellFormed,
-  generateNonceUsingLastBlockTimestamp
-} from './verify.js';
+  generateNonceUsingLastBlockTimestamp,
+  generateAssetConditionGroupString
+} from './verify';

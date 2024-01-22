@@ -15,13 +15,13 @@ export const getChain = (chainName: string, selectedChainInfo?: SupportedChainMe
     ...selectedChainInfo
   }
   let chainInfo: any = {};
-  if (selectedChainInfo && SUPPORTED_CHAIN_MAP[chainName]) {
+  if (selectedChainInfo && selectedChainInfo.name === chainName && SUPPORTED_CHAIN_MAP[chainName]) {
     chainInfo = {
       ...SUPPORTED_CHAIN_MAP[chainName],
       ...safeCopyOfCurrentChainInfo
     }
   }
-  else if (selectedChainInfo) {
+  else if (selectedChainInfo && selectedChainInfo.name === chainName) {
     chainInfo = safeCopyOfCurrentChainInfo
   }
   else if (SUPPORTED_CHAIN_MAP[chainName]) {

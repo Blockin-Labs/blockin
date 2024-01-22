@@ -1,6 +1,6 @@
 import { IChainDriver, IChainDriverWithHelpers } from './index.js';
-import { Asset, ChallengeParams, CreateChallengeOptions, NumberType, UintRange, VerifyChallengeOptions } from './types/verify.types.js';
-import { compareObjects } from './utils.js';
+import { AndGroup, AssetConditionGroup, AssetDetails, ChallengeParams, CreateChallengeOptions, NumberType, OrGroup, OwnershipRequirements, UintRange, VerifyChallengeOptions, convertAssetConditionGroup } from './types/verify.types';
+import { compareObjects } from './utils';
 
 const URI_REGEX: RegExp = /\w+:(\/?\/?)[^\s]+/;
 const ISO8601_DATE_REGEX: RegExp = /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/
@@ -54,7 +54,7 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
     expirationDate = undefined,
     notBefore = undefined,
     resources = undefined,
-    assets = undefined
+    assetOwnershipRequirements = undefined
   } = challengeParams;
 
   try {
@@ -70,14 +70,14 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
       expirationDate,
       notBefore,
       resources,
-      assets
+      assetOwnershipRequirements
     }
 
     validateChallengeObjectIsWellFormed(challenge); // will throw error if invalid
 
     return constructChallengeStringFromChallengeObject(challenge);
   } catch (error: unknown) {
-    throw `Error: ${error} - ${challengeParams.toString()}`;
+    throw `${error} - ${challengeParams.toString()}`;
   }
 }
 
@@ -91,15 +91,15 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
  * @returns Returns { message: 'success' } object upon success. Throws an error if challenge is invalid.
  */
 export async function verifyChallenge<T extends NumberType>(
-  chainDriver: IChainDriver<T>,
-  message: string, signature: string,
-  convertFunction: (item: NumberType) => T,
+  chainDriver: IChainDriver<NumberType> | undefined,
+  message: string,
+  signature: string,
   options?: VerifyChallengeOptions
 ) {
   const verificationData: any = {};
   const generatedEIP4361ChallengeStr: string = message;
-
-  const challenge: ChallengeParams<T> = constructChallengeObjectFromString(generatedEIP4361ChallengeStr, convertFunction);
+  const convertFunction = BigIntify;
+  const challenge = constructChallengeObjectFromString(generatedEIP4361ChallengeStr, convertFunction);
 
   if (options?.beforeVerification) {
     await options.beforeVerification(challenge);
@@ -114,33 +114,66 @@ export async function verifyChallenge<T extends NumberType>(
   const skipTimestampVerification = options?.skipTimestampVerification ?? false;
   if (!skipTimestampVerification) {
     if (challenge.expirationDate && currDate >= new Date(challenge.expirationDate)) {
-      throw `Error: Challenge expired: ${challenge.expirationDate}`
+      throw `Challenge expired: ${challenge.expirationDate}`
     }
 
     if (challenge.notBefore && currDate <= new Date(challenge.notBefore)) {
-      throw `Error: Challenge invalid until: ${challenge.notBefore}`
+      throw `Challenge invalid until: ${challenge.notBefore}`
     }
   }
 
-  await verifyChallengeSignature(chainDriver, message, signature)
+  if (options?.earliestIssuedAt) {
+    const earliestIssuedAt = new Date(options.earliestIssuedAt);
+    if (!challenge.issuedAt) {
+      throw `Challenge issued at date is missing but specified earliestIssuedAt: ${options.earliestIssuedAt}`
+    }
+
+    if (new Date(challenge.issuedAt) < earliestIssuedAt) {
+      throw `This sign in was issued too long ago: ${challenge.issuedAt}. Earliest allowed: ${earliestIssuedAt}`
+    }
+  }
+
+  if (options?.issuedAtTimeWindowMs) {
+    const earliestIssuedAt = new Date(Date.now() - options.issuedAtTimeWindowMs);
+    if (!challenge.issuedAt) {
+      throw `Challenge issued at date is missing but specified issuedAtTimeWindowMs: ${options.issuedAtTimeWindowMs}`
+    }
+
+    if (new Date(challenge.issuedAt) < earliestIssuedAt) {
+      throw `This sign in was issued too long ago: ${challenge.issuedAt}. Must be issued less than ${options.issuedAtTimeWindowMs / 1000} seconds ago`
+    }
+  }
+
+  const toSkipSignatureVerification = options?.skipSignatureVerification ?? false;
+  if (!toSkipSignatureVerification) {
+    if (!chainDriver) throw `ChainDriver is required to verify assets`;
+    await verifyChallengeSignature(chainDriver, message, signature)
+  }
 
   if (options?.expectedChallengeParams) {
+    //convert any fields that need to be converted to BigInt
+    //This also handles the undefined stuff
+    if (options.expectedChallengeParams.assetOwnershipRequirements) options.expectedChallengeParams.assetOwnershipRequirements = convertAssetConditionGroup(options.expectedChallengeParams.assetOwnershipRequirements, convertFunction, true);
+    if (challenge.assetOwnershipRequirements) challenge.assetOwnershipRequirements = convertAssetConditionGroup(challenge.assetOwnershipRequirements, convertFunction, true);
 
 
     for (const key of Object.keys(options?.expectedChallengeParams ?? {})) {
-      const expected = JSON.parse(JSON.stringify(options?.expectedChallengeParams[key as keyof ChallengeParams<bigint>]));
-      const actual = JSON.parse(JSON.stringify(challenge[key as keyof ChallengeParams<bigint>]));
+
+      const expected = options?.expectedChallengeParams[key as keyof ChallengeParams<NumberType>];
+      const actual = challenge[key as keyof ChallengeParams<NumberType>];
+
       if (compareObjects(expected, actual) !== true) {
-        throw `Error: unexpected value for ${key}: ${JSON.stringify(challenge[key as keyof ChallengeParams<bigint>])} !== ${JSON.stringify(options?.expectedChallengeParams[key as keyof ChallengeParams<bigint>] ?? 'undefined')}`;
+        throw `unexpected value for ${key}: ${JSON.stringify(challenge[key as keyof ChallengeParams<NumberType>])} !== ${JSON.stringify(options?.expectedChallengeParams[key as keyof ChallengeParams<NumberType>] ?? 'undefined')}`;
       }
-
     }
-
   }
+
+
   const toSkipAssetVerification = options?.skipAssetVerification ?? false;
-  if (challenge.resources || challenge.assets) {
+  if (challenge.resources || challenge.assetOwnershipRequirements) {
     if (!toSkipAssetVerification) {
-      const assetLookupData = await verifyAssets(chainDriver, challenge.address, (challenge.resources ?? []), (challenge.assets ?? []), options?.balancesSnapshot);
+      if (!chainDriver) throw `ChainDriver is required to verify assets`;
+      const assetLookupData = await verifyAssets(chainDriver, challenge.address, (challenge.resources ?? []), challenge.assetOwnershipRequirements ?? undefined, options?.balancesSnapshot);
       verificationData.assetLookupData = assetLookupData
     }
   }
@@ -164,7 +197,7 @@ export async function generateNonceUsingLastBlockTimestamp(chainDriver: IChainDr
 }
 
 //Thanks ChatGPT :)
-function assertAssetType<T extends NumberType>(asset: Asset<T>): void {
+function assertAssetType<T extends NumberType>(asset: AssetDetails<T>): void {
   if (typeof asset.chain !== "string") throw new Error("Invalid chain type");
   if (
     typeof asset.collectionId !== "string"
@@ -214,106 +247,209 @@ function assertAssetType<T extends NumberType>(asset: Asset<T>): void {
     )) throw new Error("Invalid mustOwnAmounts type");
 }
 
+function parseAssetConditionGroup<T extends NumberType>(lines: string[], convertFunction: (item: NumberType) => T): AssetConditionGroup<T> {
 
-export function parseChallengeAssets<T extends NumberType, U extends NumberType>(challengeString: string, convertFunction: (item: U) => T): Asset<T>[] {
-  const assets: Asset<T>[] = [];
+  //lines 0 and 1 are same whitespace
+  const isAllCondition = lines[0].trim().includes('(satisfied if all')
+  const isOrCondition = lines[0].trim().includes('(satisfied if one')
+
+  //Little weird bc normal ones are not an array but $and and $or are
+  //For normal ones, we are already at the Requirement X line and we want to parse the whole condition until Requirement X+1 as its own non-array object
+  //For $and and $or, we need to parse everything indented as a single array
+  //We add two lines bc we have Requirement X: then Must satisfy line
+
+  //Pretty much, if we have an $and or $or, we will have the following
+  //Requirement X:
+  //Must satisfy...
+  //  Requirement 1: 
+  //  ...
+  // We want to parse everything indented as a single array ($and or $or)
+
+  //If we are parsing a non $and or $or, we will already be indented to the Requirement X line we want to parse
+  //We want to parse everything on the same indent level as the Requirement X line
+  //If this is the case, we can assume that we have no more $ands or $ors going down the tree (this is the leaf assets)
+  let nextIndentDepth = lines[0].search(/\S/);
+  if (isAllCondition || isOrCondition) {
+    nextIndentDepth = lines[1].search(/\S/);
+  }
+
+  //Find the lines with matching depths = to the first lines depth
+  const idxs = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].search(/\S/) === nextIndentDepth) {
+      idxs.push(i);
+      i++; //avoid the edge case where the next line is the same depth ($ands and $ors)
+    }
+  }
+  idxs.push(lines.length);
+
+  const andItem: AndGroup<T> = { $and: [] };
+  const orItem: OrGroup<T> = { $or: [] };
+
+  //In all of these the startIdx should be the next Requirement line to parse
+  if (isAllCondition) {
+    //Parse all subsequent conditions as an array of asset details and options
+    andItem['$and'] = [];
+    for (let i = 0; i < idxs.length - 1; i++) {
+      andItem['$and'].push(parseAssetConditionGroup(lines.slice(idxs[i], idxs[i + 1]), convertFunction));
+    }
+
+    return andItem as AssetConditionGroup<T>;
+  } else if (isOrCondition) {
+    //Parse all subsequent conditions as an array of asset details and options
+    orItem['$or'] = [];
+    for (let i = 0; i < idxs.length - 1; i++) {
+      orItem['$or'].push(parseAssetConditionGroup(lines.slice(idxs[i], idxs[i + 1]), convertFunction));
+    }
+
+    return orItem as AssetConditionGroup<T>;
+  } else {
+    //Parse 
+    const assets: AssetDetails<T>[] = [];
+    let options: { numMatchesForVerification?: T } = {};
+    const trimmedLine = lines[0].trim();
+    if (trimmedLine.includes('(must satisfy for a minimum of')) {
+      const numMatches = trimmedLine.split(" ")[9];
+      options = { numMatchesForVerification: convertFunction(numMatches) };
+    }
+
+
+    for (let i = 0; i < idxs.length - 1; i++) {
+
+      const assetDetails = parseChallengeAssetDetails(lines.slice(idxs[i], idxs[i + 1]), convertFunction);
+      assets.push(...assetDetails.assets);
+      if (options) {
+        options.numMatchesForVerification = options.numMatchesForVerification ? convertFunction(options.numMatchesForVerification) : undefined;
+      }
+    }
+
+    return convertAssetConditionGroup({ assets, options }, convertFunction);
+  }
+}
+
+export function parseChallengeAssets<T extends NumberType, U extends NumberType>(challengeString: string, convertFunction: (item: NumberType) => T): AssetConditionGroup<T> | undefined {
+  const assetGroup: AssetConditionGroup<T> | undefined = undefined;
   const lines = challengeString.split("\n");
+  const assetIdx = lines.findIndex(line => line.trim().startsWith('Asset Ownership Requirements:'));
+  if (assetIdx === -1) return undefined;
 
-  let currentAsset: Partial<Asset<T>> | null = null;
+  const assetLines = lines.slice(assetIdx + 1);
+  return parseAssetConditionGroup(assetLines, convertFunction);
+}
+
+function parseChallengeAssetDetails<T extends NumberType, U extends NumberType>(lines: string[], convertFunction: (item: U) => T): { assets: AssetDetails<T>[] } {
+
+  const assets: AssetDetails<T>[] = [];
+  let currentAsset: Partial<AssetDetails<T>> | null = null;
 
   for (const line of lines) {
+
     const trimmedLine = line.trim();
 
-    if (trimmedLine.startsWith("- Chain:")) {
+    if (trimmedLine.startsWith("Chain:")) {
       if (currentAsset) {
         if (currentAsset.assetIds) {
-          assets.push(currentAsset as Asset<T>);
+          assets.push(currentAsset as AssetDetails<T>);
         }
       }
-      currentAsset = { chain: trimmedLine.substring(9).trim() };
+      currentAsset = { chain: trimmedLine.substring(7).trim() };
     } else if (trimmedLine.startsWith("Collection ID:")) {
       if (currentAsset) {
-        currentAsset.collectionId = convertFunction(trimmedLine.substring(15).trim() as U);
+        try {
+          currentAsset.collectionId = convertFunction(trimmedLine.substring(15).trim() as U);
+        } catch (e) {
+          currentAsset.collectionId = trimmedLine.substring(15).trim();
+        }
       }
-    } else if (trimmedLine.startsWith("- ID Range:")) {
+    } else if (trimmedLine.startsWith("Asset IDs:")) {
       if (currentAsset) {
         if (!currentAsset.assetIds) {
           currentAsset.assetIds = [];
         }
-        const range = trimmedLine.substring(11).trim().split(" to ");
+        const range = trimmedLine.substring(10).trim().split(" to ");
         currentAsset.assetIds.push({ start: convertFunction(range[0] as U), end: convertFunction(range[1] as U) } as UintRange<T>);
       }
-    } else if (trimmedLine.startsWith("- Time Range:")) {
+    } else if (trimmedLine.startsWith("Ownership Times:")) {
       if (currentAsset) {
         if (!currentAsset.ownershipTimes) {
           currentAsset.ownershipTimes = [];
         }
-        const range = trimmedLine.substring(14).trim().split(" to ");
-        currentAsset.ownershipTimes.push({
-          start: convertFunction(new Date(range[0].substring(0, range[0].length - 5).trim()).valueOf() as U),
-          end: convertFunction(new Date(range[1].substring(0, range[1].length - 5).trim()).valueOf() as U),
-        });
+
+        const hasOnwards = trimmedLine.endsWith("onwards");
+        if (hasOnwards) {
+          const range = trimmedLine.substring(17).trim().split(" onwards");
+          const firstDate = new Date(range[0].trim());
+          currentAsset.ownershipTimes.push({
+            start: convertFunction(firstDate.valueOf() as U),
+            end: convertFunction("18446744073709551615" as U),
+          });
+        } else {
+          const range = trimmedLine.substring(17).trim().split(" to ");
+          currentAsset.ownershipTimes.push({
+            start: convertFunction(new Date(range[0].substring(0, range[0].length).trim()).valueOf() as U),
+            end: convertFunction(new Date(range[1].substring(0, range[1].length).trim()).valueOf() as U),
+          });
+        }
       }
-    } else if (trimmedLine.startsWith("- Range: x")) {
+    } else if (trimmedLine.startsWith("Ownership Amounts: x")) {
       if (currentAsset) {
-        const range = trimmedLine.substring(9).trim().split(" to ");
-        const firstAmount = range[0].substring(0, range[0].length - 5).trim().substring(1);
+        const range = trimmedLine.substring(12).trim().split(" to ");
+        const firstAmount = range[0].substring(0, range[0].length - 5).trim().substring(1); //-5 to account for (min) (max)
         const secondAmount = range[1].substring(0, range[1].length - 5).trim().substring(1);
         currentAsset.mustOwnAmounts = {
           start: convertFunction(firstAmount as U),
           end: convertFunction(secondAmount as U),
         }
       }
-    } else if (trimmedLine.startsWith("- Amount: Exactly x")) {
+    } else if (trimmedLine.startsWith("Ownership Amount: x")) {
       if (currentAsset) {
-        const range = trimmedLine.substring(17).trim().split(" to ");
+        const range = trimmedLine.substring(25 - 8).trim().split(" to ");
         const firstAmount = range[0].substring(1).trim();
         currentAsset.mustOwnAmounts = {
           start: convertFunction(firstAmount as U),
           end: convertFunction(firstAmount as U),
         }
       }
-    } else if (trimmedLine.startsWith("- Time: ")) {
+    } else if (trimmedLine.startsWith("Ownership Time: ")) {
       if (currentAsset) {
         if (!currentAsset.ownershipTimes) {
           currentAsset.ownershipTimes = [];
         }
-        const range = trimmedLine.substring(7).trim();
-        currentAsset.ownershipTimes.push({
-          start: convertFunction(new Date(range).valueOf() as U),
-          end: convertFunction(new Date(range).valueOf() as U),
-        });
+        const range = trimmedLine.substring(15).trim();
+
+        if (range === "Authentication Time") {
+
+        } else {
+          currentAsset.ownershipTimes.push({
+            start: convertFunction(new Date(range).valueOf() as U),
+            end: convertFunction(new Date(range).valueOf() as U),
+          });
+        }
       }
     } else if (trimmedLine.startsWith('- Sign-In Time')) {
 
-    } else if (trimmedLine.startsWith('Additional Criteria:')) {
+    } else if (trimmedLine.startsWith('Other:')) {
       if (currentAsset) {
         currentAsset.additionalCriteria = trimmedLine.substring(20).trim();
       }
-    } else if (trimmedLine.startsWith("- ")) {
+    } else if (trimmedLine.startsWith("Asset ID: ")) {
       if (currentAsset) {
         if (!currentAsset.assetIds) {
           currentAsset.assetIds = [];
         }
-        const range = trimmedLine.substring(2).trim();
+        const range = trimmedLine.substring(10).trim();
         currentAsset.assetIds.push(range);
-      }
-    } else if (trimmedLine.startsWith("Must meet ownership requirements for all assets")) {
-      if (currentAsset) {
-        currentAsset.mustSatisfyForAllAssets = true;
-      }
-    } else if (trimmedLine.startsWith("Must meet ownership requirements for one of the assets")) {
-      if (currentAsset) {
-        currentAsset.mustSatisfyForAllAssets = false;
       }
     }
   }
 
   if (currentAsset && currentAsset.assetIds && currentAsset.chain && currentAsset.collectionId && currentAsset.mustOwnAmounts) {
-    assets.push(currentAsset as Asset<T>);
+    assets.push(currentAsset as AssetDetails<T>);
   }
 
-  return assets;
+  return {
+    assets,
+  }
 }
 
 /**
@@ -362,21 +498,125 @@ export function validateChallengeObjectIsWellFormed<T extends NumberType>(challe
     }
   }
 
-  if (challenge.assets) {
-    for (const asset of challenge.assets) {
+  if (challenge.assetOwnershipRequirements) {
+    validateAssetConditionGroup(challenge.assetOwnershipRequirements);
+  }
+}
+
+function validateAssetConditionGroup<T extends NumberType>(assetConditionGroup: AssetConditionGroup<T>) {
+  const andItem = assetConditionGroup as AndGroup<T>;
+  const orItem = assetConditionGroup as OrGroup<T>;
+  const ownershipRequirements = assetConditionGroup as OwnershipRequirements<T>;
+
+  if (andItem['$and'] !== undefined) {
+    for (const item of andItem['$and']) {
+      validateAssetConditionGroup(item);
+    }
+  } else if (orItem['$or'] !== undefined) {
+    for (const item of orItem['$or']) {
+      validateAssetConditionGroup(item);
+    }
+  } else {
+    for (const asset of ownershipRequirements.assets) {
       assertAssetType(asset);
     }
+    if (ownershipRequirements.options) {
+      try {
+        if (ownershipRequirements.options.numMatchesForVerification) BigInt(ownershipRequirements.options.numMatchesForVerification)
+      } catch (e) {
+        throw new Error("Invalid numMatchesForVerification type");
+      }
+    }
   }
+}
+
+export function generateAssetConditionGroupString<T extends NumberType>(assetConditionGroup: AssetConditionGroup<T>, depth: number = 0, bulletNumber: number, parentBullet: number): string {
+  let message = "";
+  const andItem = assetConditionGroup as AndGroup<T>;
+  const orItem = assetConditionGroup as OrGroup<T>;
+  const ownershipRequirements = assetConditionGroup as OwnershipRequirements<T>;
+
+  const depthLetter = String.fromCharCode(65 + depth);
+  const nextDepthLetter = String.fromCharCode(65 + depth + 1);
+  message += ' '.repeat(depth * 2) + `- Requirement ${depthLetter}${parentBullet}-${bulletNumber}`;
+  if (andItem['$and'] !== undefined) {
+    message += ` (satisfied if all of ${nextDepthLetter}${bulletNumber} are satisfied):\n`;
+    for (let i = 0; i < andItem['$and'].length; i++) {
+      message += generateAssetConditionGroupString(andItem['$and'][i], depth + 1, i + 1, bulletNumber);
+    }
+  } else if (orItem['$or'] !== undefined) {
+    message += ` (satisfied if one of ${nextDepthLetter}${bulletNumber} is satisfied):\n`;
+    for (let i = 0; i < orItem['$or'].length; i++) {
+      message += generateAssetConditionGroupString(orItem['$or'][i], depth + 1, i + 1, bulletNumber);
+    }
+  } else {
+
+    const groupOptions = ownershipRequirements.options;
+    if (groupOptions?.numMatchesForVerification && groupOptions.numMatchesForVerification) {
+      message += ` (must satisfy for a minimum of ${groupOptions.numMatchesForVerification} of the asset IDs):\n`;
+    } else {
+      message += `:\n`;
+    }
+    for (const asset of ownershipRequirements.assets) {
+      message += ' '.repeat(depth * 2 + 2) + `  Chain: ${asset.chain}\n`;
+      message += ' '.repeat(depth * 2 + 2) + `  Collection ID: ${asset.collectionId}\n`;
+
+      if (asset.assetIds) {
+
+        for (const assetId of asset.assetIds) {
+          if (typeof assetId === "string") {
+            message += ' '.repeat(depth * 2 + 4) + `Asset ID: ${assetId}\n`;
+          } else if (typeof assetId === "object") {
+            message += ' '.repeat(depth * 2 + 4) + `Asset IDs: ${assetId.start} to ${assetId.end}\n`;
+          }
+        }
+      }
+
+      if (asset.ownershipTimes && asset.ownershipTimes.length > 0) {
+        for (const time of asset.ownershipTimes) {
+          if (typeof time === "string") {
+            message += ' '.repeat(depth * 2 + 4) + `Ownership Time: ${new Date(time).toISOString}\n`;
+          } else if (typeof time === "object") {
+            const startDate = new Date(Number(BigInt(time.start))).toISOString();
+            const endDateNumber = BigInt(time.end);
+            if (endDateNumber > Number.MAX_SAFE_INTEGER) {
+              message += ' '.repeat(depth * 2 + 4) + `Ownership Times: ${startDate} onwards\n`;
+            } else {
+              message += ' '.repeat(depth * 2 + 4) + `Ownership Times: ${startDate} to ${new Date(Number(BigInt(time.end))).toISOString()}\n`;
+            }
+          }
+        }
+      } else {
+        message += ' '.repeat(depth * 2 + 4) + `Ownership Time: Authentication Time\n`;
+      }
+
+      if (asset.mustOwnAmounts) {
+        if (asset.mustOwnAmounts.start === asset.mustOwnAmounts.end) {
+          message += ' '.repeat(depth * 2 + 4) + `Ownership Amount: x${asset.mustOwnAmounts.start}\n`;
+        }
+        else {
+          message += ' '.repeat(depth * 2 + 4) + `Ownership Amounts: x${asset.mustOwnAmounts.start} (min) to x${asset.mustOwnAmounts.end} (max)\n`;
+        }
+      }
+
+      if (asset.additionalCriteria) {
+        message += ' '.repeat(depth * 2 + 4) + `Other: ${asset.additionalCriteria}\n`;
+      }
+
+      message += '\n';
+    }
+  }
+
+  return message;
 }
 
 /**
  * Parses a JSON object that specifies the challenge fields and returns a well-formatted EIP-4361 string. 
  * Note that there is no validity checks on the inputs. It is a precondition that it is well-formed. 
  * @param challenge - Well-formatted JSON object specifying the EIP-4361 fields.
- * @param chainName - Name of the blockchain to include in the statement - "Sign in with your ____ account"
  * @returns - Well-formatted EIP-4361 challenge string to be signed.
  */
-export function constructChallengeStringFromChallengeObject<T extends NumberType>(challenge: ChallengeParams<T>): string {
+function constructChallengeStringFromChallengeObject<T extends NumberType>(challenge: ChallengeParams<T>): string {
   const chain = getChainForAddress(challenge.address);
 
   let message = "";
@@ -404,56 +644,9 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
     }
   }
 
-  if (challenge.assets) {
-    message += `\nAssets:\n`;
-    for (const asset of challenge.assets) {
-      message += `- Chain: ${asset.chain}\n`;
-      message += `  Collection ID: ${asset.collectionId}\n`;
-
-      message += `  ${asset.mustSatisfyForAllAssets ? "Must meet ownership requirements for all assets" : "Must meet ownership requirements for one of the assets"}\n`;
-
-      message += `  Asset IDs:\n`;
-      for (const assetId of asset.assetIds) {
-        if (typeof assetId === "string") {
-          message += `    - ${assetId}\n`;
-        } else if (typeof assetId === "object") {
-          message += `    - ID Range: ${assetId.start} to ${assetId.end}\n`;
-        }
-      }
-
-
-      message += `  Ownership Times:\n`;
-      if (!asset.ownershipTimes) {
-        message += `    - Sign-In Time\n`;
-      }
-
-      if (asset.ownershipTimes) {
-        for (const time of asset.ownershipTimes) {
-          if (typeof time === "string") {
-            message += `    - Time: ${new Date(time).toISOString}\n`;
-          } else if (typeof time === "object") {
-            message += `    - Time Range: ${new Date(Number(BigInt(time.start))).toISOString()} (min) to ${new Date(Number(BigInt(time.end))).toISOString()} (max)\n`;
-          }
-        }
-      }
-
-      message += `  Ownership Amounts:\n`;
-      if (typeof asset.mustOwnAmounts === "object") {
-        if (asset.mustOwnAmounts.start === asset.mustOwnAmounts.end) {
-          message += `    - Amount: Exactly x${asset.mustOwnAmounts.start}\n`;
-        } else {
-          message += `    - Range: x${asset.mustOwnAmounts.start} (min) to x${asset.mustOwnAmounts.end} (max)\n`;
-        }
-
-      }
-
-
-      if (asset.additionalCriteria) {
-        message += `  Additional Criteria: ${asset.additionalCriteria}\n`;
-      }
-
-      message += `\n`;
-    }
+  if (challenge.assetOwnershipRequirements) {
+    message += `\nAsset Ownership Requirements:\n`;
+    message += generateAssetConditionGroupString(challenge.assetOwnershipRequirements, 0, 1, 1);
   }
 
   return message;
@@ -466,7 +659,7 @@ export function constructChallengeStringFromChallengeObject<T extends NumberType
  * @param challenge - Valid EIP-4361 challenge string
  * @returns JSON challenge object with all specified EIP-4361 fields
  */
-export function constructChallengeObjectFromString<T extends NumberType, U extends NumberType>(challenge: string, convertFunction: (item: U) => T): ChallengeParams<T> {
+export function constructChallengeObjectFromString<T extends NumberType>(challenge: string, convertFunction: (item: NumberType) => T): ChallengeParams<T> {
   const messageArray = challenge.split("\n");
   const domain = messageArray[0].split(' ')[0];
   const address = messageArray[1];
@@ -480,7 +673,7 @@ export function constructChallengeObjectFromString<T extends NumberType, U exten
   let expirationDate;
   let notBefore;
   let resources = [];
-  let assets: Asset<T>[] = [];
+  let assetOwnershipRequirements;
 
   for (let i = 10; i < messageArray.length; i++) {
     if (messageArray[i].indexOf('Expiration Time:') !== -1) {
@@ -490,19 +683,19 @@ export function constructChallengeObjectFromString<T extends NumberType, U exten
     } else if (messageArray[i].indexOf('Resources:') !== -1) {
       resources = [];
       for (let j = i + 1; j < messageArray.length; j++) {
-        if (messageArray[j].indexOf('Assets:') !== -1) {
+        if (messageArray[j].indexOf('Asset Ownership Requirements:') !== -1) {
           break;
         }
         const resource = messageArray[j].split(' ').slice(1).join(' ').trim();
         resources.push(resource);
       }
-    } else if (messageArray[i].indexOf('Assets:') !== -1) {
-      assets = parseChallengeAssets(challenge, convertFunction);
+    } else if (messageArray[i].indexOf('Asset Ownership Requirements:') !== -1) {
+      assetOwnershipRequirements = parseChallengeAssets(challenge, convertFunction);
       break;
     }
   }
 
-  return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce, assets };
+  return { domain, address, statement, expirationDate, notBefore, resources, issuedAt, uri, version, chainId, nonce, assetOwnershipRequirements };
 }
 
 
@@ -530,7 +723,7 @@ async function verifyChallengeSignature<T extends NumberType>(chainDriver: IChai
  * @returns If successful, verification was successful. Looked up asset data is also returned for convenience. 
  * Throws error if invalid.
  */
-async function verifyAssets<T extends NumberType>(chainDriver: IChainDriver<T>, address: string, resources: string[], assets: Asset<T>[], balancesSnapshot?: object) {
+async function verifyAssets<T extends NumberType>(chainDriver: IChainDriver<T>, address: string, resources: string[], assets: AssetConditionGroup<T> | undefined, balancesSnapshot?: object) {
   const assetLookupData = await chainDriver.verifyAssets(address, resources, assets, balancesSnapshot);
   return assetLookupData;
 }
