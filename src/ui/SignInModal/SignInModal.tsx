@@ -354,16 +354,14 @@ const SignInModal: React.FC<SignInModalProps<NumberType>> = ({
 
                     {displayedAssetGroups.map(elem => {
 
-                      const ownershipString = generateAssetConditionGroupString(elem.assetConditionGroup, 0, 1, 1);
-                      
+                      const ownershipString = generateAssetConditionGroupString(elem.assetConditionGroup, 0, 1, '')
+
 
                       const lines = ownershipString.split('\n');
                       let currChain = 'Ethereum';
                       let currCollectionId: string | NumberType = '';
                       const convertedLines: ReactNode[] = [];
                       const chains: string[] = [];
-                      console.log(elem.assetConditionGroup);
-                      console.log(ownershipString);
 
                       for (const line of lines) {
                         const trimmedLine = line.trim();

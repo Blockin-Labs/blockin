@@ -63,11 +63,11 @@ export function convertAssetConditionGroup<T extends NumberType, U extends Numbe
 
   if (andItem['$and'] !== undefined) {
     return {
-      $and: andItem.$and.map(group => convertAssetConditionGroup(group, convertFunction))
+      $and: andItem.$and.map(group => convertAssetConditionGroup(group, convertFunction, populateDefaults))
     }
   } else if (orItem['$or'] !== undefined) {
     return {
-      $or: orItem.$or.map(group => convertAssetConditionGroup(group, convertFunction))
+      $or: orItem.$or.map(group => convertAssetConditionGroup(group, convertFunction, populateDefaults))
     }
   } else {
     return {
@@ -104,8 +104,9 @@ export function convertAssetConditionGroup<T extends NumberType, U extends Numbe
       }),
 
       options: ownershipRequirements.options ? {
-        numMatchesForVerification: ownershipRequirements.options.numMatchesForVerification ? convertFunction(ownershipRequirements.options.numMatchesForVerification) :
-          populateDefaults ? 0 as U : undefined
+        numMatchesForVerification:
+          ownershipRequirements.options.numMatchesForVerification ? convertFunction(ownershipRequirements.options.numMatchesForVerification) :
+            populateDefaults ? 0 as U : undefined
       } : populateDefaults ? {
         numMatchesForVerification: 0 as U
       } : undefined

@@ -146,7 +146,7 @@ export async function verifyChallenge<T extends NumberType>(
 
   const toSkipSignatureVerification = options?.skipSignatureVerification ?? false;
   if (!toSkipSignatureVerification) {
-    if (!chainDriver) throw `ChainDriver is required to verify assets`;
+    if (!chainDriver) throw `ChainDriver is required to verify signatures`;
     await verifyChallengeSignature(chainDriver, message, signature)
   }
 
@@ -530,24 +530,22 @@ function validateAssetConditionGroup<T extends NumberType>(assetConditionGroup: 
   }
 }
 
-export function generateAssetConditionGroupString<T extends NumberType>(assetConditionGroup: AssetConditionGroup<T>, depth: number = 0, bulletNumber: number, parentBullet: number): string {
+export function generateAssetConditionGroupString<T extends NumberType>(assetConditionGroup: AssetConditionGroup<T>, depth: number = 0, bulletNumber: number, parentBullet: string): string {
   let message = "";
   const andItem = assetConditionGroup as AndGroup<T>;
   const orItem = assetConditionGroup as OrGroup<T>;
   const ownershipRequirements = assetConditionGroup as OwnershipRequirements<T>;
 
-  const depthLetter = String.fromCharCode(65 + depth);
-  const nextDepthLetter = String.fromCharCode(65 + depth + 1);
-  message += ' '.repeat(depth * 2) + `- Requirement ${depthLetter}${parentBullet}-${bulletNumber}`;
+  message += ' '.repeat(depth * 2) + `- Requirement ${depth == 0 ? '' : `${parentBullet ? parentBullet + '.' : ''}${bulletNumber}`}`;
   if (andItem['$and'] !== undefined) {
-    message += ` (satisfied if all of ${nextDepthLetter}${bulletNumber} are satisfied):\n`;
+    message += ` (must satisfy all in group ${depth == 0 ? '' : `${parentBullet ? parentBullet + '.' : ''}${bulletNumber}`}):\n`;
     for (let i = 0; i < andItem['$and'].length; i++) {
-      message += generateAssetConditionGroupString(andItem['$and'][i], depth + 1, i + 1, bulletNumber);
+      message += generateAssetConditionGroupString(andItem['$and'][i], depth + 1, i + 1, depth == 0 ? '' : `${parentBullet ? parentBullet + '.' : ''}${bulletNumber}`);
     }
   } else if (orItem['$or'] !== undefined) {
-    message += ` (satisfied if one of ${nextDepthLetter}${bulletNumber} is satisfied):\n`;
+    message += ` (must satisfy one in group ${depth == 0 ? '' : `${parentBullet ? parentBullet + '.' : ''}${bulletNumber}`}):\n`;
     for (let i = 0; i < orItem['$or'].length; i++) {
-      message += generateAssetConditionGroupString(orItem['$or'][i], depth + 1, i + 1, bulletNumber);
+      message += generateAssetConditionGroupString(orItem['$or'][i], depth + 1, i + 1, depth == 0 ? '' : `${parentBullet ? parentBullet + '.' : ''}${bulletNumber}`);
     }
   } else {
 
@@ -646,7 +644,7 @@ function constructChallengeStringFromChallengeObject<T extends NumberType>(chall
 
   if (challenge.assetOwnershipRequirements) {
     message += `\nAsset Ownership Requirements:\n`;
-    message += generateAssetConditionGroupString(challenge.assetOwnershipRequirements, 0, 1, 1);
+    message += generateAssetConditionGroupString(challenge.assetOwnershipRequirements, 0, 1, '');
   }
 
   return message;
