@@ -149,4 +149,9 @@ export type SignInModalProps<T extends NumberType> = {
    * Provide a warning, such as other sites that the signature / authentication code will be given to (i.e. other sites that are to be trusted).
    */
   customBeforeSigningWarning?: string
+
+  /**
+   * If this is true, we will not display wallet-specific sign-in options.
+   */
+  nonWalletSignIn?: boolean,
 }

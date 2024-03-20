@@ -88,13 +88,16 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
  * @param message - The string that represent the original challenge.
  * @param signature - The result of signing the message, formatted to the chain's specifications
  * @param options - Additional checks to perform when verifying the challenge.
+ * @param publicKey - The public key of the user's address. Required for some ChainDrivers, not all.
+ * 
  * @returns Returns { message: 'success' } object upon success. Throws an error if challenge is invalid.
  */
 export async function verifyChallenge<T extends NumberType>(
   chainDriver: IChainDriver<NumberType> | undefined,
   message: string,
   signature: string,
-  options?: VerifyChallengeOptions
+  options?: VerifyChallengeOptions,
+  publicKey?: string
 ) {
   const verificationData: any = {};
   const generatedEIP4361ChallengeStr: string = message;
@@ -147,7 +150,7 @@ export async function verifyChallenge<T extends NumberType>(
   const toSkipSignatureVerification = options?.skipSignatureVerification ?? false;
   if (!toSkipSignatureVerification) {
     if (!chainDriver) throw `ChainDriver is required to verify signatures`;
-    await verifyChallengeSignature(chainDriver, message, signature)
+    await verifyChallengeSignature(chainDriver, message, signature, publicKey);
   }
 
   if (options?.expectedChallengeParams) {
@@ -250,8 +253,8 @@ function assertAssetType<T extends NumberType>(asset: AssetDetails<T>): void {
 function parseAssetConditionGroup<T extends NumberType>(lines: string[], convertFunction: (item: NumberType) => T): AssetConditionGroup<T> {
 
   //lines 0 and 1 are same whitespace
-  const isAllCondition = lines[0].trim().includes('(satisfied if all')
-  const isOrCondition = lines[0].trim().includes('(satisfied if one')
+  const isAllCondition = lines[0].trim().includes('(must satisfy all in group')
+  const isOrCondition = lines[0].trim().includes('(must satisfy one in group')
 
   //Little weird bc normal ones are not an array but $and and $or are
   //For normal ones, we are already at the Requirement X line and we want to parse the whole condition until Requirement X+1 as its own non-array object
@@ -703,8 +706,8 @@ export function constructChallengeObjectFromString<T extends NumberType>(challen
  * @param message - The string that represent the original challenge.
  * @param signature - The result of signing the message, formatted to the chain's specifications
  */
-async function verifyChallengeSignature<T extends NumberType>(chainDriver: IChainDriver<T>, message: string, signature: string) {
-  await chainDriver.verifySignature(message, signature);
+async function verifyChallengeSignature<T extends NumberType>(chainDriver: IChainDriver<T>, message: string, signature: string, publicKey?: string) {
+  await chainDriver.verifySignature(message, signature, publicKey);
 }
 
 /**

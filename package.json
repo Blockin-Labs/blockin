@@ -1,6 +1,6 @@
 {
   "name": "blockin",
-  "version": "1.2.107",
+  "version": "1.2.114",
   "description": "",
   "files": [
     "dist"
@@ -32,7 +32,7 @@
     "build:ui": "rollup --config ./ui-rollup.config.js && npm run postuirollup",
     "build:core": "rollup --config ./rollup.config.js && npm run postcorerollup",
     "postcorerollup": "cp ./dist/index.d.ts ./dist/index.d.cts",
-    "postuirollup": "mv ./dist/index*  ./dist/ui && cp ./dist/ui/index.d.ts ./dist/ui/index.d.cts",
+    "postuirollup": "mv ./dist/index.js*  ./dist/ui && mv ./dist/index.cjs*  ./dist/ui && cp ./dist/ui/index.d.ts ./dist/ui/index.d.cts",
     "storybook": "storybook dev -p 6006",
     "storybook:export": "storybook build",
     "build-storybook": "storybook build"

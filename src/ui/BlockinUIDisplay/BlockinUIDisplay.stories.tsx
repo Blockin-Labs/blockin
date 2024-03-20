@@ -180,6 +180,7 @@ export const SuccessfulSignAndVerify = () => {
       // }
       // ]}
       allowTimeSelect
+      skipModalStep
     />
   </div>
 }

@@ -19,7 +19,7 @@ export interface IGetPublicKey { (address: string): Uint8Array }
 export interface IGetAssetDetails { (txnId: string): Promise<any> }
 export interface ILookupTransactionById { (txnId: string): Promise<any> }
 export interface IGetChallengeStringFromBytesToSign { (originalBytes: Uint8Array): Promise<string> }
-export interface IVerifySignature { (message: string, signature: string): Promise<void> }
+export interface IVerifySignature { (message: string, signature: string, publicKey?: string): Promise<void> }
 export interface IVerifyAssets<T extends NumberType> {
   (address: string, resources: string[], assets: AssetConditionGroup<T> | undefined, balancesSnapshot?: object): Promise<any>
 }

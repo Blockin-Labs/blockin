@@ -67,6 +67,7 @@ export const SuccessfulSignAndVerify = () => {
       setModalIsVisible={setModalIsVisible}
       selectedChainName={chain}
       address={'0xe00dd9d317573f7b4868d8f2578c65544b153a27'}
+      nonWalletSignIn
       customBeforeSigningWarning="This sign-in will also be given to the parent window that sent you here."
       signAndVerifyChallenge={async (challenge: string) => {
         const signChallengeResponse = await handleSignChallengeSuccess(challenge);

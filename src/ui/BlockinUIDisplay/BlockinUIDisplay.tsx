@@ -9,6 +9,7 @@ import { CopyOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Typography, Tooltip } from "antd";
 import "./BlockinUIDisplay.scss";
 import { NumberType } from "../../types/verify.types";
+import { createChallenge } from "../..";
 
 const Link = ({ url, text }: { url: string, text?: string }) => {
   return <a className="blockin-link" href={url} target='_blank' rel="noreferrer">{text ? text : url}</a>
@@ -44,7 +45,8 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps<NumberType>> = ({
   hideConnectVsSignInHelper,
   allowTimeSelect,
   maxTimeInFuture,
-  customBeforeSigningWarning
+  customBeforeSigningWarning,
+  skipModalStep,
 
 }) => {
   const [signInModalIsVisible, setSignInModalIsVisible] = useState(false);
@@ -165,8 +167,20 @@ const BlockinUIDisplay: React.FC<BlockinUIDisplayProps<NumberType>> = ({
             </button> :
             <>{connected &&
               <button className='blockin-button main-button main-display button-style-override' style={buttonStyle} onClick={
-                () => setSignInModalIsVisible(!signInModalIsVisible)
-              }>
+                async () => {
+                  if (skipModalStep) {
+                    if (!challengeParams) {
+                      throw new Error('You must provide challengeParams')
+                    }
+                    if (!signAndVerifyChallenge) {
+                      throw new Error('You must provide signAndVerifyChallenge')
+                    }
+
+                    await signAndVerifyChallenge(createChallenge(challengeParams));
+                  } else {
+                    setSignInModalIsVisible(!signInModalIsVisible)
+                  }
+                }}>
                 Sign In
               </button>
             }</>

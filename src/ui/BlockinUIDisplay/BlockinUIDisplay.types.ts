@@ -204,4 +204,10 @@ export type BlockinUIDisplayProps<T extends NumberType> = {
     * Provide a warning, such as other sites that the signature / authentication code will be given to (i.e. other sites that are to be trusted).
     */
   customBeforeSigningWarning?: string
+
+
+  /**
+   * If true, the modal will not be displayed. We go directly to prompt the user to sign the challenge.
+   */
+  skipModalStep?: boolean
 }

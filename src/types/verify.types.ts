@@ -1,4 +1,5 @@
-export type NumberType = string | bigint | number | boolean;
+export type NumberType = string | bigint | number;
+
 export interface UintRange<T extends NumberType> {
   start: T,
   end: T,
@@ -106,9 +107,9 @@ export function convertAssetConditionGroup<T extends NumberType, U extends Numbe
       options: ownershipRequirements.options ? {
         numMatchesForVerification:
           ownershipRequirements.options.numMatchesForVerification ? convertFunction(ownershipRequirements.options.numMatchesForVerification) :
-            populateDefaults ? 0 as U : undefined
+            populateDefaults ? convertFunction(0 as T) : undefined
       } : populateDefaults ? {
-        numMatchesForVerification: 0 as U
+        numMatchesForVerification: convertFunction(0 as T)
       } : undefined
     }
   }
