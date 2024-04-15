@@ -11,31 +11,33 @@ import postcss from 'rollup-plugin-postcss';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: 'src/ui/index.ts',
-    output: [
-        {
-            file: 'dist/index.js',
-            format: 'esm',
-            name: 'blockin-ui',
-            sourcemap: true,
-        },
-        {
-            file: 'dist/index.cjs',
-            format: 'cjs',
-            name: 'blockin-ui',
-            sourcemap: true,
-        },
-    ],
-    plugins: [
-        peerDepsExternal(),
-        resolve({ browser: true }),
-        commonjs(),
-        typescript({ tsconfig: './ui-tsconfig.json' }),
-        postcss(),
-        json(),
-    ],
-    globals: {
-        react: 'React',
+  input: 'src/ui/index.ts',
+  output: [
+    {
+      file: 'dist/index.js',
+      format: 'esm',
+      name: 'blockin-ui',
+      sourcemap: true
     },
-    external: ['react', 'react-dom'],
+    {
+      file: 'dist/index.cjs',
+      format: 'cjs',
+      name: 'blockin-ui',
+      sourcemap: true
+    }
+  ],
+  plugins: [
+    peerDepsExternal(),
+    resolve({ browser: true }),
+    commonjs(),
+    typescript({ tsconfig: './ui-tsconfig.json' }),
+    postcss({
+      inject: true
+    }),
+    json()
+  ],
+  globals: {
+    react: 'React'
+  },
+  external: ['react', 'react-dom']
 };

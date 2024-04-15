@@ -1,17 +1,17 @@
-import { ReactNode } from "react";
-import { AssetConditionGroup, ChallengeParams, NumberType, convertAssetConditionGroup } from "../../types/verify.types";
-import { AssetConditionGroupWithUIDetails } from "../SignInModal/SignInModal.types";
+import { ReactNode } from 'react';
+import { ChallengeParams, NumberType } from '../../types/verify.types';
+import { AccessTier } from '../SignInModal/SignInModal.types';
 /**
  * Defines schema for displaying a resource within the pop-up modal.
  */
 export type PresetUri = {
   uri: string;
   name: string;
-  description?: string
+  description?: string;
   frozen: boolean;
   defaultSelected: boolean;
   additionalDisplay?: ReactNode;
-}
+};
 
 export interface AssetUIDetails<T extends NumberType> {
   name: string;
@@ -34,15 +34,13 @@ export interface AssetUIDetails<T extends NumberType> {
 //   }
 // }
 
-
 /**
  * Expected return trype for signAndVerifyChallenge()
  */
 export type SignAndVerifyChallengeResponse = {
-  success: boolean,
-  message: string
-}
-
+  success: boolean;
+  message: string;
+};
 
 /**
  * Defines metadata details about a supported chain.
@@ -56,7 +54,7 @@ export type SupportedChainMetadata = {
   getCollectionExplorerUrl?: (collectionId: string) => string;
   getTokenExplorerUrl?: (collectionId: string, tokenId: string) => string;
   getNameForAddress?: (address: string) => Promise<string | undefined>;
-}
+};
 
 /**
  * Props to pass into the BlockinUIDisplay component
@@ -64,14 +62,14 @@ export type SupportedChainMetadata = {
 export type BlockinUIDisplayProps<T extends NumberType> = {
   /**
    * String name of current selected chain to use. There are a few chains that are preset as supported chains. If
-   * selectedChainName does not match any of the supported chains, you must specify selectedChainInfo to provide metadata 
+   * selectedChainName does not match any of the supported chains, you must specify selectedChainInfo to provide metadata
    * about the chain.
    */
-  selectedChainName: string,
+  selectedChainName: string;
   /**
    * This should be defined if selectedChainName is not in the preset supported chains. See the SupportedChainMetadata type.
    */
-  selectedChainInfo?: SupportedChainMetadata,
+  selectedChainInfo?: SupportedChainMetadata;
   /**
    * If true, chain select will be hidden.
    */
@@ -95,119 +93,109 @@ export type BlockinUIDisplayProps<T extends NumberType> = {
   /**
    * Valid CSS style JSON. Will be applied as an inline style to the button.
    */
-  buttonStyle?: any,
+  buttonStyle?: any;
   /**
    * Valid CSS style JSON. Will be applied as an inline style to the modal.
    */
-  modalStyle?: any,
+  modalStyle?: any;
 
   /**
    * Defaults to false. If set to true, will hide the connect button and other connect props will be ignored.
    */
-  hideConnect?: boolean,
+  hideConnect?: boolean;
   /**
-   * Defaults to false. Determines whether to display the connect or disconnect button.  
+   * Defaults to false. Determines whether to display the connect or disconnect button.
    */
-  connected?: boolean,
+  connected?: boolean;
   /**
    * Function to be called when connect is clicked. Must update connected prop.
    */
-  connect?: () => Promise<void>,
+  connect?: () => Promise<void>;
   /**
    * Function to be called when disconnect is clicked. Must update connected prop.
    */
-  disconnect?: () => Promise<void>,
+  disconnect?: () => Promise<void>;
 
   /**
    * List of selectable options for supported blockchains. If a supported name,
    * you will only need to specify { name: string }, else you can optionally specify other
    * metadata as in the SupportedChainMetadata type.
    */
-  chainOptions?: SupportedChainMetadata[],
+  chainOptions?: SupportedChainMetadata[];
   /**
    * Function that is called after a new chain is selected. You will have to update the selectedChainName prop here.
    */
-  onChainUpdate?: (chain: SupportedChainMetadata) => Promise<void>
+  onChainUpdate?: (chain: SupportedChainMetadata) => Promise<void>;
 
   /**
    * Defaults to false. If set to true, will hide the login button and other login props will be ignored.
    */
-  hideLogin?: boolean,
+  hideLogin?: boolean;
   /**
-   * Defaults to false. Determines whether to display the login or logout button.  
+   * Defaults to false. Determines whether to display the login or logout button.
    */
-  loggedIn?: boolean,
+  loggedIn?: boolean;
   /**
    * Function to be called when logout is clicked. Must update loggedIn prop.
    */
-  logout?: () => Promise<void>,
+  logout?: () => Promise<void>;
 
   /**
    * EIP-4361 params that will make up the challenge. See ChallengeParams type.
    */
-  challengeParams?: ChallengeParams<T>,
+  challengeParams?: ChallengeParams<T>;
 
   /**
-  * This function will need to handle all the functionality to a) sign the challenge, and b) verify the challenge.
-  * 
-  * Note that the Blockin library doesn't handle any signing functionality. 
-  * When a user clicks sign-in, it will call thisfunction which is passed in as a prop. Once challenge is signed, 
-  * you should use the (challenge, signature) pair for verification. The verification should typically be done on 
-  * a backend because it will need a ChainDriver set with an API key. It is not recommended to be done on the 
-  * frontend.
-  * 
-  * During verification, this is where you perform the following: 1) call Blockin's verifyChallenge() within your backend,
-  * 2) include any other additional verification checks about the challenge (like nonce verification if using a custom scheme 
-  * or assert anything else about the challenge details that should be expected), 3) if verification passes, update whatever is
-  * needed on frontend and backend to authenticate the user (your methods of choice). 
-  * 
-  * Expects a response consistent with the SignAndVerifyChallengeResponse type. 
-  * 
-  * Must also update the loggedIn prop, if verified.
-  */
-  signAndVerifyChallenge?: (
-    challenge: string
-  ) => Promise<SignAndVerifyChallengeResponse>,
-
-  /**
-   * Resources to be displayed to sign-in with. See PresetResource type.
+   * This function will need to handle all the functionality to a) sign the challenge, and b) verify the challenge.
+   *
+   * Note that the Blockin library doesn't handle any signing functionality.
+   * When a user clicks sign-in, it will call thisfunction which is passed in as a prop. Once challenge is signed,
+   * you should use the (challenge, signature) pair for verification. The verification should typically be done on
+   * a backend because it will need a ChainDriver set with an API key. It is not recommended to be done on the
+   * frontend.
+   *
+   * During verification, this is where you perform the following: 1) call Blockin's verifyChallenge() within your backend,
+   * 2) include any other additional verification checks about the challenge (like nonce verification if using a custom scheme
+   * or assert anything else about the challenge details that should be expected), 3) if verification passes, update whatever is
+   * needed on frontend and backend to authenticate the user (your methods of choice).
+   *
+   * Expects a response consistent with the SignAndVerifyChallengeResponse type.
+   *
+   * Must also update the loggedIn prop, if verified.
    */
-  displayedResources?: PresetUri[],
+  signAndVerifyChallenge?: (challenge: string) => Promise<SignAndVerifyChallengeResponse>;
 
   /**
    * Assets to be displayed to sign-in with.
    */
-  displayedAssetGroups?: AssetConditionGroupWithUIDetails<T>[],
+  accessTiers?: AccessTier<T>[];
   // To do in the future:
   // canSetExpirationDate: boolean,
   // canSetNotBeforeDate: boolean,
 
-
   /**
    * Hides the hover to learn more tooltip
    */
-  hideConnectVsSignInHelper?: boolean,
+  hideConnectVsSignInHelper?: boolean;
 
   /**
-  * If true, the user will be prompted to select a time for the challenge to expire. If false, the challenge will expire according to the passed in challenge params.
-  */
-  allowTimeSelect?: boolean,
+   * If true, the user will be prompted to select a time for the challenge to expire. If false, the challenge will expire according to the passed in challenge params.
+   */
+  allowTimeSelect?: boolean;
 
   /**
    * maxTimeInFuture is the maximum amount of time in the future that a user can select for the challenge to expire (in Unix milliseconds). Defaults to no limit.
-   * 
+   *
    */
-  maxTimeInFuture?: number,
-
+  maxTimeInFuture?: number;
 
   /**
-    * Provide a warning, such as other sites that the signature / authentication code will be given to (i.e. other sites that are to be trusted).
-    */
-  customBeforeSigningWarning?: string
-
+   * Provide a warning, such as other sites that the signature / authentication code will be given to (i.e. other sites that are to be trusted).
+   */
+  customBeforeSigningWarning?: string;
 
   /**
    * If true, the modal will not be displayed. We go directly to prompt the user to sign the challenge.
    */
-  skipModalStep?: boolean
-}
+  skipModalStep?: boolean;
+};

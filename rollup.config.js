@@ -12,33 +12,35 @@ import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: 'src/index.ts',
-    output: [
-        {
-            file: 'dist/index.js',
-            format: 'esm',
-            sourcemap: true,
-        },
-        {
-            file: 'dist/index.cjs',
-            format: 'cjs',
-            sourcemap: true,
-        },
-    ],
-    plugins: [
-        peerDepsExternal(),
-        resolve({ browser: true }),
-        commonjs(),
-        typescript({ tsconfig: './tsconfig.json' }),
-        postcss(),
-        json(),
-        //If anything else is added to here, also confirm the postrollup script in package.json handles it
-        copy(),
-    ],
-    globals: {
-        react: 'React',
+  input: 'src/index.ts',
+  output: [
+    {
+      file: 'dist/index.js',
+      format: 'esm',
+      sourcemap: true
     },
+    {
+      file: 'dist/index.cjs',
+      format: 'cjs',
+      sourcemap: true
+    }
+  ],
+  plugins: [
+    peerDepsExternal(),
+    resolve({ browser: true }),
+    commonjs(),
+    typescript({ tsconfig: './tsconfig.json' }),
+    postcss({
+      inject: false
+    }),
+    json(),
+    //If anything else is added to here, also confirm the postrollup script in package.json handles it
+    copy()
+  ],
+  globals: {
+    react: 'React'
+  },
 
-    //use external react
-    external: ['react', 'react-dom'],
+  //use external react
+  external: ['react', 'react-dom']
 };

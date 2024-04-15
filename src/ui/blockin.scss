@@ -1,34 +1,13 @@
 .blockin-global {
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    box-sizing: content-box;
-    word-wrap: break-word;
+  box-sizing: content-box;
+  word-wrap: break-word;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
-
-
-.blockin-button {
-  background: linear-gradient(#98d1fc, #1c8fe7);
-  opacity: 0.85;
-  color: black;
-  padding: 12px 15px;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
-  // border: 1px solid black;
-}
-
-.blockin-button:hover {
-    opacity: 1;
-}
-
-.blockin-button:disabled {
-    cursor:not-allowed;
-}
-
 
 .blockin-button {
   width: 120px;
-  height: 50px;
+  height: 40px;
+  font-size: 14px;
   padding: 4px 8px;
   justify-content: center;
   border: 1px solid black;
@@ -69,12 +48,12 @@
 }
 
 .blockin-button-secondary:hover {
-    opacity: 1;
-    border: 2px solid black;
+  opacity: 1;
+  border: 2px solid black;
 }
 
 .blockin-button-secondary:disabled {
-    cursor:not-allowed;
+  cursor: not-allowed;
 }
 
 .blockin-input {
@@ -86,249 +65,233 @@
   text-align: center;
 }
 
-
 .blockin-closebutton {
-    background: none;
-    fill: black;
-    padding: 0px 0px 0px 0px;
-    margin: 0px 0px 20px 0px;
-    border: none;
-    float: right;
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-    cursor: pointer;
+  background: none;
+  fill: black;
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 20px 0px;
+  border: none;
+  float: right;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  cursor: pointer;
 }
 
 .blockin-root {
-    padding: 100px 0px;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.7);
-    top: 0;
-    left: 0;
-    transition: opacity 500ms;
-    z-index: 50;
-    min-height: 100vh;
-    min-width: 100vw;
-    display: flex;
-    justify-content: center;
-
+  padding: 100px 0px;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  top: 0;
+  left: 0;
+  transition: opacity 500ms;
+  z-index: 50;
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  justify-content: center;
 }
 
-
-
 .blockin-popup-container {
-    //media query
+  //media query
 
-    word-wrap: break-word;
-    background-color: #121212;
-    opacity: 100%;
-    max-width: 600px;
-    display: flex;
-    max-height: 600px;
-    
-    margin: 0px 10px 0px;
-    padding: 30px;
-    border-radius: 25px;
-    justify-content: center;
-    box-sizing: content-box;
-    color:white;
+  word-wrap: break-word;
+  opacity: 100%;
+  max-width: 600px;
+  display: flex;
+  max-height: 600px;
 
-    @media (max-width: 600px) {
-      width: 90%;
-      padding: 5px;
-      margin: 20px;
+  margin: 0px 10px 0px;
+  padding: 30px;
+  justify-content: center;
+  box-sizing: content-box;
+  color: white;
+
+  @media (max-width: 600px) {
+    width: 90%;
+    padding: 5px;
+    margin: 20px;
   }
 }
 
 .blockin-popup {
-    word-wrap: break-word;
-    background-color: #121212;
-    opacity: 100%;
-    max-width: 600px;
-    max-height: 600px;
-    justify-content: center;
-    overflow-y: auto;
-    padding-right: 10px;
-    box-sizing: content-box;
+  word-wrap: break-word;
+  opacity: 100%;
+  max-width: 600px;
+  max-height: 600px;
+  justify-content: center;
+  overflow-y: auto;
+  padding-right: 10px;
+  box-sizing: content-box;
 
-    @media (max-width: 600px) {
-      width: 90%;
-      padding: 5px;
-      margin: 20px;
+  @media (max-width: 600px) {
+    width: 90%;
+    padding: 5px;
+    margin: 20px;
   }
 }
 
-
 /* width */
 .blockin-popup::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 
 /* Track */
 .blockin-popup::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  background: #f1f1f1;
 }
 
 /* Handle */
 .blockin-popup::-webkit-scrollbar-thumb {
-    background: #888;
-    background-clip: padding-box;
+  background: #888;
+  background-clip: padding-box;
 }
 
 /* Handle on hover */
 .blockin-popup::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
 }
 
 .blockin-addcustom {
-    // display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  // display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .blockin-listitem {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .blockin-listitem-metadata {
-    text-align: left;
-    height: 100%;
-    max-width: 100%;
+  text-align: left;
+  height: 100%;
+  max-width: 100%;
 }
 
 .blockin-listitem-button {
-    display: flex;
-    text-align: right;
-    align-items: center;
-    height: 100%;
-    min-width: 80px;
-    margin-top: 16px;
+  display: flex;
+  text-align: right;
+  align-items: center;
+  height: 100%;
+  margin-top: 16px;
 }
 
 .blockin-listitem-button button {
-    width: 100%;
-    align-items: center;
-    text-align: center;
-    vertical-align:middle;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .blockin-listitem-logo {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .blockin-header {
-    display: flex;
-    width: 100%;
+  display: flex;
+  width: 100%;
 }
 
 .blockin-header-chain-info {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .blockin-header .header-end {
-    width: 10%
+  width: 10%;
 }
 
 .blockin-header .header-middle {
-    width: 80%;
-    text-align: center;
+  width: 80%;
+  text-align: center;
 }
 
 .blockin-header h1 {
-    margin-top: 0;
-    font-size: larger;
-    font-size: 24px;
+  margin-top: 0;
+  font-size: larger;
+  font-size: 24px;
 }
 
 .flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flex-column {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .blockin-challenge {
-   
 }
 
 .blockin-copy-address {
-    height: 25px;
-    width: 25px;
-    vertical-align: text-bottom;
-    cursor: pointer;
+  height: 25px;
+  width: 25px;
+  vertical-align: text-bottom;
+  cursor: pointer;
 }
 
 .blockin-challenge-details {
 }
 
 .blockin-challenge-item {
-    
 }
 
 .blockin-preset-resources {
-    
 }
 
 .blockin-custom-add-resources {
-
 }
 
 .blockin-sign-challenge-button {
-
 }
 
 .blockin-selected-resources-summary {
-    
 }
 
 .blockin-chain-select button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .blockin-chain-select .blockin-popup button {
-    width: 100%;
-    margin: 5px;
+  width: 100%;
+  margin: 5px;
 }
 
 .blockin-chain-select-logo-left {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .blockin-chain-select-logo-right {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .blockin-global .main-button {
-    height: 50px;
-    text-align: center;
-    vertical-align: middle;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  text-align: center;
+  vertical-align: middle;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .blockin-global .main-display {
-    margin: 3px;
+  margin: 3px;
 }
 
 .blockin-link {
-    color: #1890ff;
-    text-decoration: none;
+  color: #1890ff;
+  text-decoration: none;
 }
 
 .blockin-link:hover {
-    color: #40a9ff;
-    text-decoration: underline;
+  color: #40a9ff;
+  text-decoration: underline;
 }
 
 .non-mobile-only {

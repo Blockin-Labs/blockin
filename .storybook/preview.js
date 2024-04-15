@@ -65,3 +65,4 @@
  *
  * Will add a new dropdown in your toolbar with options light and dark.
  **/
+import '../src/index.css';
