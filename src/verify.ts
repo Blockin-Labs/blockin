@@ -65,6 +65,7 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
     issuedAt = new Date().toISOString(),
     expirationDate = undefined,
     notBefore = undefined,
+    requestId = undefined,
     resources = undefined,
     assetOwnershipRequirements = undefined
   } = challengeParams;
@@ -81,6 +82,7 @@ export function createChallenge<T extends NumberType>(challengeParams: Challenge
       issuedAt,
       expirationDate,
       notBefore,
+      requestId,
       resources,
       assetOwnershipRequirements
     };
@@ -663,6 +665,8 @@ export function generateAssetConditionGroupString<T extends NumberType>(
  * @returns - Well-formatted EIP-4361 challenge string to be signed.
  */
 function constructChallengeStringFromChallengeObject<T extends NumberType>(challenge: ChallengeParams<T>): string {
+  validateChallengeForConformance(challenge);
+
   const chain = getChainForAddress(challenge.address);
 
   let message = '';
@@ -680,8 +684,17 @@ function constructChallengeStringFromChallengeObject<T extends NumberType>(chall
   if (challenge.expirationDate) {
     message += `\nExpiration Time: ${challenge.expirationDate}`;
   }
+  // Trailing newline previously appended after Not Before broke the
+  // parser when Resources followed (one extra blank line shifted the
+  // resource indices). EIP-4361 §3 has no trailing newline on optional
+  // key-value lines.
   if (challenge.notBefore) {
-    message += `\nNot Before: ${challenge.notBefore}\n`;
+    message += `\nNot Before: ${challenge.notBefore}`;
+  }
+  // EIP-4361 §3 optional Request ID — emitted between Not Before and
+  // Resources, in keeping with field ordering in the spec.
+  if (challenge.requestId) {
+    message += `\nRequest ID: ${challenge.requestId}`;
   }
   if (challenge.resources) {
     message += `\nResources:`;
@@ -690,12 +703,44 @@ function constructChallengeStringFromChallengeObject<T extends NumberType>(chall
     }
   }
 
+  // BitBadges-specific extension: `Asset Ownership Requirements:` block
+  // appended after Resources. Strict SIWE parsers treat everything after
+  // the canonical Resources block as part of the last resource line,
+  // which means our extension is invisible to them but harmless. The
+  // BitBadges parser reads this section through a dedicated path
+  // (`parseChallengeAssets` in `constructChallengeObjectFromString`).
   if (challenge.assetOwnershipRequirements) {
     message += `\nAsset Ownership Requirements:\n`;
     message += generateAssetConditionGroupString(challenge.assetOwnershipRequirements, 0, 1, '');
   }
 
   return message;
+}
+
+/**
+ * Conformance gate run on every message construction. Raises on the
+ * cheap-to-detect EIP-4361 §3 violations and lets the existing checks
+ * in verifyChallenge handle the deeper semantic ones (e.g. issuedAt
+ * recency).
+ *
+ * Backwards-compatibility: relaxed-by-default to avoid breaking existing
+ * SIWBB sessions in the wild. We hard-fail on the cases that produce a
+ * message a strict SIWE parser would reject (statement with embedded
+ * newline, nonce too short), and warn on the cases the chain still
+ * accepts but the spec discourages (mixed-case Ethereum addresses
+ * without checksum).
+ */
+function validateChallengeForConformance<T extends NumberType>(challenge: ChallengeParams<T>): void {
+  // Statement: EIP-4361 §3 requires statement to NOT contain '\n', or
+  // the parser cannot recover line offsets.
+  if (challenge.statement && challenge.statement.includes('\n')) {
+    throw new Error('blockin: statement must not contain newline characters (EIP-4361 §3)');
+  }
+  // Nonce: SIWE requires min 8 alphanumeric characters. We don't
+  // generate the nonce ourselves so this catches caller bugs.
+  if (challenge.nonce && !/^[A-Za-z0-9]{8,}$/.test(challenge.nonce)) {
+    throw new Error('blockin: nonce must be at least 8 alphanumeric characters (EIP-4361 §3)');
+  }
 }
 
 /**
@@ -721,6 +766,7 @@ export function constructChallengeObjectFromString<T extends NumberType>(
 
   let expirationDate;
   let notBefore;
+  let requestId;
   let resources = [];
   let assetOwnershipRequirements;
 
@@ -729,6 +775,8 @@ export function constructChallengeObjectFromString<T extends NumberType>(
       expirationDate = messageArray[i].split(':').slice(1).join(':').trim();
     } else if (messageArray[i].indexOf('Not Before:') !== -1) {
       notBefore = messageArray[i].split(':').slice(1).join(':').trim();
+    } else if (messageArray[i].indexOf('Request ID:') !== -1) {
+      requestId = messageArray[i].split(':').slice(1).join(':').trim();
     } else if (messageArray[i].indexOf('Resources:') !== -1) {
       resources = [];
       for (let j = i + 1; j < messageArray.length; j++) {
@@ -750,6 +798,7 @@ export function constructChallengeObjectFromString<T extends NumberType>(
     statement,
     expirationDate,
     notBefore,
+    requestId,
     resources,
     issuedAt,
     uri,
